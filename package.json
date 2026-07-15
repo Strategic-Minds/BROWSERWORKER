@@ -9,10 +9,10 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "test": "jest --passWithNoTests",
-    "test:integration": "jest --testPathPattern=integration --passWithNoTests"
+    "test:integration": "jest --testPathPattern=integration --passWithNoTests",
+    "postinstall": "npx playwright install chromium"
   },
   "dependencies": {
-    "@sparticuz/chromium": "123.0.0",
     "next": "16.2.10",
     "playwright-core": "1.44.0",
     "react": "^19.0.0",
