@@ -95,7 +95,8 @@ export async function POST(request: Request) {
   const warnings: string[] = [];
   let browserVersion = 'unknown';
   let finalUrl = job.url ?? '';
-  let overallStatus: 'pass' | 'warn' | 'fail' | 'blocked' = 'pass';
+  type JobStatus = 'pass' | 'warn' | 'fail' | 'blocked';
+  let overallStatus: JobStatus = 'pass';
 
   try {
     // Handle launch-check without URL validation
@@ -237,7 +238,7 @@ export async function POST(request: Request) {
   }
 
   return Response.json({
-    ok: overallStatus !== 'fail' && overallStatus !== 'blocked',
+    ok: (overallStatus === 'pass' || overallStatus === 'warn'),
     status: overallStatus,
     job_id: jobId,
     correlation_id: correlationId,
