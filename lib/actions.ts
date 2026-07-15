@@ -211,8 +211,16 @@ export async function executeStep(page: Page, step: Step, captures: Captures): P
         break;
 
       case 'capture_accessibility_snapshot': {
-        const snapshot = await page.accessibility.snapshot();
-        result = { snapshot: JSON.stringify(snapshot).slice(0, 3000) };
+        // accessibility.snapshot was removed in playwright-core 1.47+
+        // Use ARIA roles query as alternative
+        const roles = await page.evaluate(() => {
+          const els = document.querySelectorAll('[role]');
+          return Array.from(els).slice(0, 50).map(el => ({
+            role: el.getAttribute('role'),
+            label: el.getAttribute('aria-label') || el.textContent?.trim().slice(0, 50) || '',
+          }));
+        });
+        result = { roles, count: roles.length };
         break;
       }
 
