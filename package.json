@@ -10,7 +10,7 @@
     "type-check": "tsc --noEmit",
     "test": "jest --passWithNoTests",
     "test:integration": "jest --testPathPattern=integration --passWithNoTests",
-    "postinstall": "npx playwright install chromium"
+    "postinstall": "node -e \"require('playwright-core/lib/server/registry').installBrowsersForNpmInstall().catch(e=>{})\" || true"
   },
   "dependencies": {
     "next": "16.2.10",
