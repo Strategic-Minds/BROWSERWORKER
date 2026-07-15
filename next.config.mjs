@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverExternalPackages: ['playwright-core', '@sparticuz/chromium-min'],
+  serverExternalPackages: ['playwright-core'],
 };
 
 export default nextConfig;
