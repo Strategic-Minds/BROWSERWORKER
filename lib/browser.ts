@@ -1,44 +1,51 @@
 import { chromium } from 'playwright-core';
 import type { Browser } from 'playwright-core';
 
-export const WORKER_VERSION = '2.1.0';
+export const WORKER_VERSION = '3.0.0';
+
+const BROWSERBASE_API_KEY = process.env.BROWSERBASE_API_KEY || '';
+const BROWSERBASE_PROJECT_ID = process.env.BROWSERBASE_PROJECT_ID || '';
 
 /**
- * Launches Chromium using @sparticuz/chromium-min.
- * chromium-min downloads a binary that bundles its own NSS libraries,
- * solving the libnss3.so missing error on Vercel Lambda (Amazon Linux 2023).
- * The remote URL points to the official Sparticuz S3 release.
+ * Launches a browser session via Browserbase (remote CDP).
+ * This is required on Vercel Lambda which lacks system NSS libraries
+ * needed by any local Chromium binary (sparticuz, playwright, etc).
+ * 
+ * Browserbase provides a fully managed headless browser in the cloud.
+ * playwright-core connects via CDP WebSocket — no local binary needed.
  */
 export async function launchBrowser(): Promise<{ browser: Browser; version: string }> {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const chromiumMin = require('@sparticuz/chromium-min');
+  if (!BROWSERBASE_API_KEY) {
+    throw new Error('BROWSERBASE_API_KEY environment variable is required');
+  }
 
-  // Remote tar containing Chromium binary + bundled NSS + shared libs
-  const CHROMIUM_PACK_URL =
-    'https://github.com/Sparticuz/chromium/releases/download/v131.0.0/chromium-v131.0.0-pack.tar';
-
-  const executablePath: string = await chromiumMin.executablePath(CHROMIUM_PACK_URL);
-
-  const launchArgs: string[] = [
-    ...(chromiumMin.args as string[]),
-    '--no-sandbox',
-    '--disable-setuid-sandbox',
-    '--disable-dev-shm-usage',
-    '--disable-gpu',
-    '--no-first-run',
-    '--no-zygote',
-    '--single-process',
-    '--disable-extensions',
-  ];
-
-  const browser = await chromium.launch({
-    args: launchArgs,
-    executablePath,
-    headless: true,
-    timeout: 60000,
+  // Create a Browserbase session
+  const sessionResp = await fetch('https://www.browserbase.com/v1/sessions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-bb-api-key': BROWSERBASE_API_KEY,
+    },
+    body: JSON.stringify({
+      projectId: BROWSERBASE_PROJECT_ID || undefined,
+      browserSettings: {
+        fingerprint: { browsers: ['chrome'] },
+        viewport: { width: 1440, height: 900 },
+      },
+    }),
   });
 
+  if (!sessionResp.ok) {
+    const err = await sessionResp.text();
+    throw new Error(`Browserbase session creation failed: ${sessionResp.status} ${err}`);
+  }
+
+  const session = await sessionResp.json() as { id: string; connectUrl: string };
+  const connectUrl = session.connectUrl || `wss://connect.browserbase.com?apiKey=${BROWSERBASE_API_KEY}&sessionId=${session.id}`;
+
+  const browser = await chromium.connectOverCDP(connectUrl);
   const version = browser.version();
+
   return { browser, version };
 }
 
