@@ -1,37 +1,22 @@
 import { chromium } from 'playwright-core';
 import type { Browser } from 'playwright-core';
-import { execSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
 
-export const WORKER_VERSION = '1.0.5';
-
-// Find playwright's installed chromium binary
-function findChromiumPath(): string | undefined {
-  // Let playwright find its own binary (installed via postinstall)
-  return undefined; // undefined = let playwright use its own downloaded binary
-}
+export const WORKER_VERSION = '1.0.6';
 
 export async function launchBrowser(): Promise<{ browser: Browser; version: string }> {
-  const executablePath = findChromiumPath();
+  // @sparticuz/chromium downloads a pre-built binary to /tmp at runtime
+  // and sets LD_LIBRARY_PATH so NSS and other libs resolve correctly
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const chromiumPack = require('@sparticuz/chromium');
+
+  // This call downloads + extracts the chromium binary to /tmp if not cached
+  const executablePath = await chromiumPack.executablePath();
 
   const browser = await chromium.launch({
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-gpu',
-      '--no-first-run',
-      '--no-zygote',
-      '--single-process',
-      '--disable-extensions',
-      '--disable-background-networking',
-      '--disable-background-timer-throttling',
-      '--mute-audio',
-      '--hide-scrollbars',
-    ],
+    args: chromiumPack.args,
     executablePath,
     headless: true,
+    timeout: 30000,
   });
 
   const version = browser.version();
@@ -43,6 +28,6 @@ export async function closeBrowser(browser: Browser | null): Promise<void> {
   try {
     await browser.close();
   } catch {
-    console.error('[browser] Failed to close browser gracefully');
+    // ignore
   }
 }
