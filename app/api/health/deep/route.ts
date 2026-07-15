@@ -1,43 +1,40 @@
-import { verifyAuth, authResponse } from '@/lib/auth';
 import { launchBrowser, closeBrowser, WORKER_VERSION } from '@/lib/browser';
+import { validateAuth } from '@/lib/auth';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
 
 export async function GET(request: Request) {
-  const auth = verifyAuth(request);
-  if (!auth.ok) return authResponse();
+  const authResult = validateAuth(request);
+  if (!authResult.ok) {
+    return Response.json(
+      { ok: false, code: 'AUTHENTICATION_FAILED', error: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
 
-  const start = Date.now();
   let browser = null;
-
   try {
-    const launched = await launchBrowser();
-    browser = launched.browser;
-
-    const context = await browser.newContext();
-    const page = await context.newPage();
-    await page.goto('about:blank');
-    const version = launched.version;
-    await page.close();
-    await context.close();
-
+    const { browser: b, version } = await launchBrowser();
+    browser = b;
     return Response.json({
       ok: true,
       launched: true,
       browser: 'chromium',
       version,
       worker_version: WORKER_VERSION,
-      duration_ms: Date.now() - start,
+      provider: 'browserbase',
+      configured: !!process.env.BROWSERBASE_API_KEY,
     });
   } catch (err) {
     return Response.json({
       ok: false,
       launched: false,
-      error: (err as Error).message,
-      code: 'CHROMIUM_LAUNCH_FAILED',
-      duration_ms: Date.now() - start,
+      error: err instanceof Error ? err.message.slice(0, 200) : 'Unknown error',
+      worker_version: WORKER_VERSION,
+      provider: 'browserbase',
+      configured: !!process.env.BROWSERBASE_API_KEY,
     }, { status: 500 });
   } finally {
     await closeBrowser(browser);
