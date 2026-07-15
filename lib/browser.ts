@@ -1,7 +1,7 @@
 import { chromium } from 'playwright-core';
 import type { Browser } from 'playwright-core';
 
-export const WORKER_VERSION = '1.0.0';
+export const WORKER_VERSION = '1.0.1';
 
 export async function launchBrowser(): Promise<{ browser: Browser; version: string }> {
   // Dynamic import to avoid bundler issues
