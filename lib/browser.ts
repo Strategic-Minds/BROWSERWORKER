@@ -1,17 +1,25 @@
 import { chromium } from 'playwright-core';
 import type { Browser } from 'playwright-core';
 
-export const WORKER_VERSION = '1.0.1';
+export const WORKER_VERSION = '1.0.2';
 
 export async function launchBrowser(): Promise<{ browser: Browser; version: string }> {
-  // Dynamic import to avoid bundler issues
-  const chromiumPack = await import('@sparticuz/chromium').then(m => m.default || m);
+  const chromiumPack = (await import('@sparticuz/chromium')).default;
+  
+  // Use the executablePath from the package
   const executablePath = await chromiumPack.executablePath();
 
   const browser = await chromium.launch({
-    args: chromiumPack.args,
+    args: [
+      ...chromiumPack.args,
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu',
+      '--single-process',
+    ],
     executablePath,
-    headless: true,
+    headless: chromiumPack.headless,
   });
 
   const version = browser.version();
@@ -23,7 +31,6 @@ export async function closeBrowser(browser: Browser | null): Promise<void> {
   try {
     await browser.close();
   } catch {
-    // Best-effort close — log but don't throw
     console.error('[browser] Failed to close browser gracefully');
   }
 }
