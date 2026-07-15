@@ -6,28 +6,27 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   // Lightweight — does NOT launch Chromium
   let playwrightOk = false;
-  let chromiumOk = false;
 
   try {
-    require('playwright-core');
+    await import('playwright-core');
     playwrightOk = true;
   } catch {}
 
-  try {
-    require('@sparticuz/chromium-min');
-    chromiumOk = true;
-  } catch {}
-
-  const configured = !!process.env.BROWSER_WORKER_SECRET;
+  const authConfigured = !!process.env.BROWSER_WORKER_SECRET;
+  const providerConfigured = !!process.env.BROWSERBASE_API_KEY;
 
   return Response.json({
     ok: true,
     status: 'online',
     worker_version: WORKER_VERSION,
-    configured,
+    configured: authConfigured && providerConfigured,
+    auth_configured: authConfigured,
+    provider: {
+      name: 'browserbase',
+      configured: providerConfigured,
+    },
     packages: {
       playwright_core: playwrightOk,
-      chromium: chromiumOk,
     },
     timestamp: new Date().toISOString(),
   });
