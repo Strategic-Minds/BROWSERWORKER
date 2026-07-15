@@ -1,21 +1,33 @@
 import { chromium } from 'playwright-core';
 import type { Browser } from 'playwright-core';
 
-export const WORKER_VERSION = '1.0.6';
+export const WORKER_VERSION = '2.0.0';
 
+// chromium-min downloads a binary that bundles NSS and other required libs
+// This is required for Vercel Lambda (Amazon Linux 2023) which lacks system NSS
 export async function launchBrowser(): Promise<{ browser: Browser; version: string }> {
-  // @sparticuz/chromium downloads a pre-built binary to /tmp at runtime
-  // and sets LD_LIBRARY_PATH so NSS and other libs resolve correctly
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const chromiumPack = require('@sparticuz/chromium');
-
-  // This call downloads + extracts the chromium binary to /tmp if not cached
-  const executablePath = await chromiumPack.executablePath();
-
+  const chromiumMin = require('@sparticuz/chromium-min');
+  
+  // The remote URL for the chromium binary that includes bundled NSS libs
+  // Use the official sparticuz S3 release for v131
+  const remoteExecutablePath = 'https://github.com/Sparticuz/chromium/releases/download/v131.0.0/chromium-v131.0.0-pack.tar';
+  
+  const executablePath = await chromiumMin.executablePath(remoteExecutablePath);
+  
   const browser = await chromium.launch({
-    args: chromiumPack.args,
+    args: [
+      ...chromiumMin.args,
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu',
+      '--no-first-run',
+      '--no-zygote',
+      '--single-process',
+    ],
     executablePath,
-    headless: true,
+    headless: chromiumMin.headless as boolean | 'shell' | undefined,
     timeout: 30000,
   });
 
@@ -25,9 +37,5 @@ export async function launchBrowser(): Promise<{ browser: Browser; version: stri
 
 export async function closeBrowser(browser: Browser | null): Promise<void> {
   if (!browser) return;
-  try {
-    await browser.close();
-  } catch {
-    // ignore
-  }
+  try { await browser.close(); } catch { /* ignore */ }
 }

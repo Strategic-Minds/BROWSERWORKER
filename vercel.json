@@ -2,13 +2,13 @@
   "version": 2,
   "framework": "nextjs",
   "functions": {
+    "app/api/run/route.ts": {
+      "maxDuration": 60,
+      "memory": 3008
+    },
     "app/api/health/deep/route.ts": {
       "maxDuration": 30,
       "memory": 1024
-    },
-    "app/api/run/route.ts": {
-      "maxDuration": 120,
-      "memory": 3009
     }
   },
   "headers": [

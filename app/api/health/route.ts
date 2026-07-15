@@ -14,7 +14,7 @@ export async function GET() {
   } catch {}
 
   try {
-    require('@sparticuz/chromium');
+    require('@sparticuz/chromium-min');
     chromiumOk = true;
   } catch {}
 
