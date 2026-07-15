@@ -1,6 +1,4 @@
 {
-  "version": 2,
-  "framework": "nextjs",
   "functions": {
     "app/api/run/route.ts": {
       "maxDuration": 60,
@@ -10,19 +8,5 @@
       "maxDuration": 30,
       "memory": 1024
     }
-  },
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "X-XSS-Protection", "value": "1; mode=block" },
-        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" },
-        { "key": "Access-Control-Allow-Origin", "value": "https://www.autobuilderos.com" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization, X-Browser-Worker-Secret, X-Correlation-Id" }
-      ]
-    }
-  ]
+  }
 }
