@@ -1,12 +1,13 @@
 import { chromium } from 'playwright-core';
 import type { Browser } from 'playwright-core';
 
-export const WORKER_VERSION = '1.0.2';
+export const WORKER_VERSION = '1.0.3';
 
 export async function launchBrowser(): Promise<{ browser: Browser; version: string }> {
-  const chromiumPack = (await import('@sparticuz/chromium')).default;
+  // Use require for CommonJS compat with @sparticuz/chromium
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const chromiumPack = require('@sparticuz/chromium');
   
-  // Use the executablePath from the package
   const executablePath = await chromiumPack.executablePath();
 
   const browser = await chromium.launch({
@@ -17,9 +18,10 @@ export async function launchBrowser(): Promise<{ browser: Browser; version: stri
       '--disable-dev-shm-usage',
       '--disable-gpu',
       '--single-process',
+      '--no-zygote',
     ],
     executablePath,
-    headless: chromiumPack.headless,
+    headless: true,
   });
 
   const version = browser.version();
