@@ -9,15 +9,15 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "test": "jest --passWithNoTests",
-    "test:integration": "jest --testPathPattern=integration --passWithNoTests",
-    "postinstall": "node -e \"require('playwright-core/lib/server/registry').installBrowsersForNpmInstall().catch(e=>{})\" || true"
+    "test:integration": "jest --testPathPattern=integration --passWithNoTests"
   },
   "dependencies": {
     "next": "16.2.10",
     "playwright-core": "1.44.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "@sparticuz/chromium": "123.0.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
