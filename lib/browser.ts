@@ -27,7 +27,7 @@ export async function launchBrowser(): Promise<{ browser: Browser; version: stri
       '--single-process',
     ],
     executablePath,
-    headless: chromiumMin.headless as boolean | 'shell' | undefined,
+    headless: chromiumMin.headless === true,
     timeout: 30000,
   });
 
