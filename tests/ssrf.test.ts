@@ -50,4 +50,19 @@ describe('SSRF Protection', () => {
     expect(validateUrl('not-a-url').ok).toBe(false);
     expect(validateUrl('').ok).toBe(false);
   });
+  test('ignores a configured allowlist unless strict mode is enabled', () => {
+    process.env.BROWSER_ALLOWED_HOSTS = 'www.autobuilderos.com';
+    delete process.env.BROWSER_STRICT_ALLOWLIST;
+    expect(validateUrl('https://example.com').ok).toBe(true);
+    delete process.env.BROWSER_ALLOWED_HOSTS;
+  });
+
+  test('enforces the allowlist only in explicit strict mode', () => {
+    process.env.BROWSER_ALLOWED_HOSTS = 'www.autobuilderos.com';
+    process.env.BROWSER_STRICT_ALLOWLIST = 'true';
+    expect(validateUrl('https://example.com').ok).toBe(false);
+    expect(validateUrl('https://www.autobuilderos.com').ok).toBe(true);
+    delete process.env.BROWSER_ALLOWED_HOSTS;
+    delete process.env.BROWSER_STRICT_ALLOWLIST;
+  });
 });

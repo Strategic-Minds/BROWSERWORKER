@@ -1,5 +1,5 @@
 import { verifyAuth, authResponse } from '@/lib/auth';
-import { validateUrl } from '@/lib/ssrf';
+import { validatePublicUrl } from '@/lib/ssrf';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
@@ -17,6 +17,6 @@ export async function POST(request: Request) {
     return Response.json({ ok: false, error: 'url is required', code: 'INVALID_PAYLOAD' }, { status: 400 });
   }
 
-  const result = validateUrl(body.url);
+  const result = await validatePublicUrl(body.url);
   return Response.json({ ...result, url: body.url });
 }

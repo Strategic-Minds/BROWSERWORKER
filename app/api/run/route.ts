@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { verifyAuth, authResponse } from '@/lib/auth';
-import { validateUrl } from '@/lib/ssrf';
+import { validatePublicUrl } from '@/lib/ssrf';
 import { JobRequestSchema } from '@/lib/schemas';
 import { launchBrowser, closeBrowser, WORKER_VERSION } from '@/lib/browser';
 import { executeStep } from '@/lib/actions';
@@ -132,7 +132,7 @@ export async function POST(request: Request) {
 
     // URL validation required for all other types
     if (job.url) {
-      const urlCheck = validateUrl(job.url);
+      const urlCheck = await validatePublicUrl(job.url);
       if (!urlCheck.ok) {
         return Response.json({
           ok: false,
@@ -164,13 +164,24 @@ export async function POST(request: Request) {
     });
 
     // Block downloads
+    const validatedHosts = new Map<string, boolean>();
     await context.route('**', async (route) => {
-      const resourceType = route.request().resourceType();
-      if (['eventsource', 'websocket'].includes(resourceType)) {
-        route.continue();
-        return;
+      const requestUrl = route.request().url();
+      if (requestUrl.startsWith('http://') || requestUrl.startsWith('https://')) {
+        const host = new URL(requestUrl).hostname.toLowerCase();
+        let allowed = validatedHosts.get(host);
+        if (allowed === undefined) {
+          const check = await validatePublicUrl(requestUrl);
+          allowed = check.ok;
+          validatedHosts.set(host, allowed);
+          if (!allowed) warnings.push(`Blocked unsafe browser request to ${host}: ${check.error}`);
+        }
+        if (!allowed) {
+          await route.abort('blockedbyclient');
+          return;
+        }
       }
-      route.continue();
+      await route.continue();
     });
 
     const page = await context.newPage();
