@@ -1,46 +1,34 @@
-import { chromium } from 'playwright-core';
-import chromiumPack from '@sparticuz/chromium';
+import { WORKER_VERSION } from '@/lib/browser';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-async function launchChromiumReceipt() {
-  const executablePath = await chromiumPack.executablePath();
-  const browser = await chromium.launch({
-    args: chromiumPack.args,
-    executablePath,
-    headless: true,
-  });
-
-  const page = await browser.newPage();
-  await page.goto('about:blank');
-  await page.close();
-  const version = browser.version();
-  await browser.close();
-
-  return {
-    ok: true,
-    status: 'pass',
-    launched: true,
-    browser: 'chromium',
-    version,
-    executablePath,
-  };
-}
-
 export async function GET() {
+  // Lightweight — does NOT launch Chromium
+  let playwrightOk = false;
+  let chromiumOk = false;
+
   try {
-    const receipt = await launchChromiumReceipt();
-    return Response.json(receipt, { status: 200 });
-  } catch (error) {
-    return Response.json(
-      {
-        ok: false,
-        status: 'fail',
-        launched: false,
-        error: error instanceof Error ? error.message : String(error),
-      },
-      { status: 500 }
-    );
-  }
+    require('playwright-core');
+    playwrightOk = true;
+  } catch {}
+
+  try {
+    require('@sparticuz/chromium-min');
+    chromiumOk = true;
+  } catch {}
+
+  const configured = !!process.env.BROWSER_WORKER_SECRET;
+
+  return Response.json({
+    ok: true,
+    status: 'online',
+    worker_version: WORKER_VERSION,
+    configured,
+    packages: {
+      playwright_core: playwrightOk,
+      chromium: chromiumOk,
+    },
+    timestamp: new Date().toISOString(),
+  });
 }
