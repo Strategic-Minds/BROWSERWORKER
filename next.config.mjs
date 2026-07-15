@@ -6,21 +6,16 @@ const nextConfig = {
 
   serverExternalPackages: [
     'playwright-core',
-    '@sparticuz/chromium',
   ],
 
   outputFileTracingIncludes: {
-    '/api/health': [
-      './node_modules/playwright-core/**/*',
-      './node_modules/@sparticuz/chromium/**/*',
-    ],
     '/api/health/deep': [
       './node_modules/playwright-core/**/*',
-      './node_modules/@sparticuz/chromium/**/*',
+      './node_modules/.cache/ms-playwright/**/*',
     ],
     '/api/run': [
       './node_modules/playwright-core/**/*',
-      './node_modules/@sparticuz/chromium/**/*',
+      './node_modules/.cache/ms-playwright/**/*',
     ],
   },
 };
