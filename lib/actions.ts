@@ -8,7 +8,9 @@ export interface StepResult {
   error?: string;
 }
 
-const MAX_INLINE_SCREENSHOT_KB = parseInt(process.env.BROWSER_MAX_INLINE_SCREENSHOT_KB || '2500', 10);\n\nexport interface Captures {
+const MAX_INLINE_SCREENSHOT_KB = parseInt(process.env.BROWSER_MAX_INLINE_SCREENSHOT_KB || '2500', 10);
+
+export interface Captures {
   consoleErrors: string[];
   networkErrors: string[];
   screenshots: string[];
