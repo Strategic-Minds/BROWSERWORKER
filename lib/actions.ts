@@ -8,7 +8,7 @@ export interface StepResult {
   error?: string;
 }
 
-export interface Captures {
+const MAX_INLINE_SCREENSHOT_KB = parseInt(process.env.BROWSER_MAX_INLINE_SCREENSHOT_KB || '2500', 10);\n\nexport interface Captures {
   consoleErrors: string[];
   networkErrors: string[];
   screenshots: string[];
@@ -142,7 +142,7 @@ export async function executeStep(page: Page, step: Step, captures: Captures): P
         });
         const b64 = buffer.toString('base64');
         const sizeKB = buffer.length / 1024;
-        if (sizeKB < 100) {
+        if (sizeKB <= MAX_INLINE_SCREENSHOT_KB) {
           captures.screenshots.push(`data:image/png;base64,${b64}`);
           result = { size_kb: Math.round(sizeKB), stored: 'inline_base64' };
         } else {
