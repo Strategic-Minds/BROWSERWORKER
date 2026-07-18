@@ -1,8 +1,7 @@
 import { timingSafeEqual } from 'node:crypto';
 
-const BROWSER_WORKER_SECRET = process.env.BROWSER_WORKER_SECRET;
-
 export function verifyAuth(request: Request): { ok: boolean; error?: string; code?: string } {
+  const BROWSER_WORKER_SECRET = process.env.BROWSER_WORKER_SECRET;
   if (!BROWSER_WORKER_SECRET) {
     return { ok: false, error: 'Worker secret not configured', code: 'AUTHENTICATION_FAILED' };
   }
