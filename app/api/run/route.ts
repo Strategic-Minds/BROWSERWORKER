@@ -11,7 +11,7 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 120;
 
-const MAX_SCREENSHOTS = parseInt(process.env.BROWSER_MAX_SCREENSHOTS || '6', 10);
+const MAX_SCREENSHOTS = parseInt(process.env.BROWSER_MAX_SCREENSHOTS || '6', 10);\nconst MAX_INLINE_SCREENSHOT_BYTES = parseInt(process.env.BROWSER_MAX_INLINE_SCREENSHOT_KB || '2500', 10) * 1024;
 
 // Predefined steps for website-generator-proof
 function buildGeneratorProofSteps(url: string) {
@@ -227,7 +227,7 @@ export async function POST(request: Request) {
     if (job.capture?.screenshot && captures.screenshots.length === 0) {
       try {
         const buf = await page.screenshot({ fullPage: false, type: 'png' });
-        if (buf.length < 102400) {
+        if (buf.length <= MAX_INLINE_SCREENSHOT_BYTES) {
           captures.screenshots.push(`data:image/png;base64,${buf.toString('base64')}`);
         }
       } catch { /* best-effort */ }
