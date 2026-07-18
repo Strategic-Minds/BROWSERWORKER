@@ -4,21 +4,10 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  // Lightweight — does NOT launch Chromium
-  let playwrightOk = false;
-  let chromiumOk = false;
-
-  try {
-    require('playwright-core');
-    playwrightOk = true;
-  } catch {}
-
-  try {
-    require('@sparticuz/chromium-min');
-    chromiumOk = true;
-  } catch {}
-
-  const configured = !!process.env.BROWSER_WORKER_SECRET;
+  // Lightweight — Browserbase provides the Chromium runtime over CDP.
+  const workerSecretConfigured = !!process.env.BROWSER_WORKER_SECRET;
+  const browserbaseConfigured = !!process.env.BROWSERBASE_API_KEY;
+  const configured = workerSecretConfigured && browserbaseConfigured;
 
   return Response.json({
     ok: true,
@@ -26,8 +15,9 @@ export async function GET() {
     worker_version: WORKER_VERSION,
     configured,
     packages: {
-      playwright_core: playwrightOk,
-      chromium: chromiumOk,
+      playwright_core: true,
+      browser_provider: 'browserbase',
+      browserbase_configured: browserbaseConfigured,
     },
     timestamp: new Date().toISOString(),
   });
