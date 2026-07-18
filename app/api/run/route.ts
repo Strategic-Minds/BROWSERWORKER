@@ -11,7 +11,8 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 120;
 
-const MAX_SCREENSHOTS = parseInt(process.env.BROWSER_MAX_SCREENSHOTS || '6', 10);\nconst MAX_INLINE_SCREENSHOT_BYTES = parseInt(process.env.BROWSER_MAX_INLINE_SCREENSHOT_KB || '2500', 10) * 1024;
+const MAX_SCREENSHOTS = parseInt(process.env.BROWSER_MAX_SCREENSHOTS || '6', 10);
+const MAX_INLINE_SCREENSHOT_BYTES = parseInt(process.env.BROWSER_MAX_INLINE_SCREENSHOT_KB || '2500', 10) * 1024;
 
 // Predefined steps for website-generator-proof
 function buildGeneratorProofSteps(url: string) {
