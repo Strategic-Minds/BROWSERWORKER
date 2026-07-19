@@ -33,7 +33,7 @@ export async function GET(request: Request) {
     await page.close();
     await context.close();
 
-    return new Response(image, {
+    return new Response(new Uint8Array(image), {
       status: 200,
       headers: {
         'Content-Type': 'image/jpeg',
