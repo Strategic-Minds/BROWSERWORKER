@@ -87,7 +87,7 @@ export async function POST(request: Request) {
     await page.close()
     await context.close()
 
-    return new Response(png, {
+    return new Response(new Uint8Array(png), {
       status: 200,
       headers: {
         'Content-Type': 'image/png',
