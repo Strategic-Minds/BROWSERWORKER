@@ -16,6 +16,8 @@ type CaptureRequest = {
   }
   wait_ms?: number
   full_page?: boolean
+  image_type?: 'png' | 'jpeg'
+  quality?: number
 }
 
 export async function POST(request: Request) {
@@ -42,6 +44,8 @@ export async function POST(request: Request) {
   const height = Math.min(2160, Math.max(240, Math.floor(body.viewport?.height || 900)))
   const deviceScaleFactor = Math.min(3, Math.max(0.5, body.viewport?.deviceScaleFactor || 1))
   const waitMs = Math.min(10000, Math.max(0, Math.floor(body.wait_ms || 2500)))
+  const imageType = body.image_type === 'jpeg' ? 'jpeg' : 'png'
+  const quality = Math.min(95, Math.max(20, Math.floor(body.quality || 60)))
 
   if (!acquireSlot()) {
     return Response.json({ ok: false, error: 'Too many concurrent jobs', code: 'RATE_LIMITED' }, { status: 429 })
@@ -79,25 +83,26 @@ export async function POST(request: Request) {
 
     const title = await page.title()
     const finalUrl = page.url()
-    const png = await page.screenshot({
-      type: 'png',
-      fullPage: Boolean(body.full_page),
-    })
+    const image = imageType === 'jpeg'
+      ? await page.screenshot({ type: 'jpeg', quality, fullPage: Boolean(body.full_page) })
+      : await page.screenshot({ type: 'png', fullPage: Boolean(body.full_page) })
 
     await page.close()
     await context.close()
 
-    return new Response(new Uint8Array(png), {
+    return new Response(new Uint8Array(image), {
       status: 200,
       headers: {
-        'Content-Type': 'image/png',
+        'Content-Type': imageType === 'jpeg' ? 'image/jpeg' : 'image/png',
         'Cache-Control': 'no-store',
-        'Content-Length': String(png.length),
+        'Content-Length': String(image.length),
         'X-BrowserWorker-Version': WORKER_VERSION,
         'X-Browser-Version': launched.version,
         'X-Capture-Title': encodeURIComponent(title),
         'X-Capture-Final-Url': encodeURIComponent(finalUrl),
         'X-Capture-Viewport': `${width}x${height}@${deviceScaleFactor}`,
+        'X-Capture-Image-Type': imageType,
+        'X-Capture-Quality': imageType === 'jpeg' ? String(quality) : '',
         'X-Capture-Duration-Ms': String(Date.now() - startedAt),
         'X-Console-Errors': String(consoleErrors.length),
         'X-Network-Errors': String(networkErrors.length),
