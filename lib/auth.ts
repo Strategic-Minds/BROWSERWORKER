@@ -1,46 +1,55 @@
 import { timingSafeEqual } from 'node:crypto';
 
-const BROWSER_WORKER_SECRET = process.env.BROWSER_WORKER_SECRET;
+const AUTHORIZED_SECRETS = [
+  process.env.BROWSER_WORKER_SECRET,
+  process.env.AUTO_BUILDER_OPERATOR_TOKEN,
+].filter((value): value is string => Boolean(value));
+
+function safeEqual(candidate: string, expected: string) {
+  try {
+    const length = Math.max(candidate.length, expected.length);
+    const a = Buffer.alloc(length, 0);
+    const b = Buffer.alloc(length, 0);
+    Buffer.from(candidate).copy(a);
+    Buffer.from(expected).copy(b);
+    return timingSafeEqual(a, b) && candidate.length === expected.length;
+  } catch {
+    return false;
+  }
+}
 
 export function verifyAuth(request: Request): { ok: boolean; error?: string; code?: string } {
-  if (!BROWSER_WORKER_SECRET) {
-    return { ok: false, error: 'Worker secret not configured', code: 'AUTHENTICATION_FAILED' };
+  if (!AUTHORIZED_SECRETS.length) {
+    return { ok: false, error: 'Worker authorization is not configured', code: 'AUTHENTICATION_FAILED' };
   }
 
   const authHeader = request.headers.get('Authorization') || '';
   const secretHeader = request.headers.get('X-Browser-Worker-Secret') || '';
+  const controlPlaneHeader = request.headers.get('X-Auto-Builder-Token') || '';
 
   let candidate = '';
   if (authHeader.startsWith('Bearer ')) {
     candidate = authHeader.slice(7);
   } else if (secretHeader) {
     candidate = secretHeader;
+  } else if (controlPlaneHeader) {
+    candidate = controlPlaneHeader;
   }
 
   if (!candidate) {
     return { ok: false, error: 'Missing authorization', code: 'AUTHENTICATION_FAILED' };
   }
 
-  try {
-    const a = Buffer.from(candidate.padEnd(BROWSER_WORKER_SECRET.length, '\0'));
-    const b = Buffer.from(BROWSER_WORKER_SECRET.padEnd(candidate.length, '\0'));
-    const paddedA = Buffer.alloc(Math.max(a.length, b.length), 0);
-    const paddedB = Buffer.alloc(Math.max(a.length, b.length), 0);
-    a.copy(paddedA);
-    b.copy(paddedB);
-    const equal = timingSafeEqual(paddedA, paddedB) && candidate.length === BROWSER_WORKER_SECRET.length;
-    if (!equal) {
-      return { ok: false, error: 'Invalid credentials', code: 'AUTHENTICATION_FAILED' };
-    }
-    return { ok: true };
-  } catch {
-    return { ok: false, error: 'Auth error', code: 'AUTHENTICATION_FAILED' };
+  if (!AUTHORIZED_SECRETS.some((secret) => safeEqual(candidate, secret))) {
+    return { ok: false, error: 'Invalid credentials', code: 'AUTHENTICATION_FAILED' };
   }
+
+  return { ok: true };
 }
 
 export function authResponse(): Response {
   return Response.json(
     { ok: false, error: 'Unauthorized', code: 'AUTHENTICATION_FAILED' },
-    { status: 401 }
+    { status: 401 },
   );
 }
