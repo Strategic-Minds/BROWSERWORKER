@@ -14,6 +14,35 @@ export interface Captures {
   screenshots: string[];
 }
 
+const MAX_INLINE_SCREENSHOT_BYTES = parseInt(
+  process.env.BROWSER_MAX_INLINE_SCREENSHOT_BYTES || '2097152',
+  10,
+);
+
+async function captureScreenshot(page: Page, fullPage: boolean) {
+  let buffer = await page.screenshot({
+    fullPage,
+    type: 'jpeg',
+    quality: fullPage ? 60 : 75,
+  });
+  let captureMode = fullPage ? 'full_page_jpeg' : 'viewport_jpeg';
+
+  if (buffer.length > MAX_INLINE_SCREENSHOT_BYTES && fullPage) {
+    buffer = await page.screenshot({
+      fullPage: false,
+      type: 'jpeg',
+      quality: 45,
+    });
+    captureMode = 'viewport_jpeg_fallback';
+  }
+
+  return {
+    buffer,
+    captureMode,
+    sizeKB: Math.round(buffer.length / 1024),
+  };
+}
+
 export async function executeStep(page: Page, step: Step, captures: Captures): Promise<StepResult> {
   const start = Date.now();
   const timeout = step.timeout_ms ?? 30000;
@@ -136,17 +165,19 @@ export async function executeStep(page: Page, step: Step, captures: Captures): P
       }
 
       case 'screenshot': {
-        const buffer = await page.screenshot({
-          fullPage: step.fullPage ?? false,
-          type: 'png',
-        });
-        const b64 = buffer.toString('base64');
-        const sizeKB = buffer.length / 1024;
-        if (sizeKB < 100) {
-          captures.screenshots.push(`data:image/png;base64,${b64}`);
-          result = { size_kb: Math.round(sizeKB), stored: 'inline_base64' };
+        const { buffer, captureMode, sizeKB } = await captureScreenshot(page, step.fullPage ?? false);
+        if (buffer.length <= MAX_INLINE_SCREENSHOT_BYTES) {
+          captures.screenshots.push(`data:image/jpeg;base64,${buffer.toString('base64')}`);
+          result = {
+            size_kb: sizeKB,
+            stored: 'inline_base64',
+            capture_mode: captureMode,
+            max_inline_bytes: MAX_INLINE_SCREENSHOT_BYTES,
+          };
         } else {
-          result = { size_kb: Math.round(sizeKB), stored: 'size_limit_exceeded' };
+          throw new Error(
+            `Screenshot ${sizeKB}KB exceeds configured inline limit ${Math.round(MAX_INLINE_SCREENSHOT_BYTES / 1024)}KB`,
+          );
         }
         break;
       }
