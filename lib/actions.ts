@@ -14,6 +14,19 @@ export interface Captures {
   screenshots: string[];
 }
 
+const MAX_INLINE_SCREENSHOT_BYTES = 750 * 1024;
+
+async function captureCompressedScreenshot(page: Page, fullPage: boolean) {
+  const qualities = [60, 45, 30];
+  for (const quality of qualities) {
+    const buffer = await page.screenshot({ fullPage, type: 'jpeg', quality });
+    if (buffer.length <= MAX_INLINE_SCREENSHOT_BYTES) {
+      return { buffer, quality };
+    }
+  }
+  return null;
+}
+
 export async function executeStep(page: Page, step: Step, captures: Captures): Promise<StepResult> {
   const start = Date.now();
   const timeout = step.timeout_ms ?? 30000;
@@ -136,23 +149,17 @@ export async function executeStep(page: Page, step: Step, captures: Captures): P
       }
 
       case 'screenshot': {
-        const buffer = await page.screenshot({
-          fullPage: step.fullPage ?? false,
-          type: 'png',
-        });
-        const b64 = buffer.toString('base64');
-        const sizeKB = buffer.length / 1024;
-        if (sizeKB < 100) {
-          captures.screenshots.push(`data:image/png;base64,${b64}`);
-          result = { size_kb: Math.round(sizeKB), stored: 'inline_base64' };
-        } else {
-          result = { size_kb: Math.round(sizeKB), stored: 'size_limit_exceeded' };
+        const captured = await captureCompressedScreenshot(page, step.fullPage ?? false);
+        if (!captured) {
+          throw new Error(`Screenshot exceeds ${Math.round(MAX_INLINE_SCREENSHOT_BYTES / 1024)}KB after compression`);
         }
+        const sizeKB = captured.buffer.length / 1024;
+        captures.screenshots.push(`data:image/jpeg;base64,${captured.buffer.toString('base64')}`);
+        result = { size_kb: Math.round(sizeKB), quality: captured.quality, format: 'jpeg', stored: 'inline_base64' };
         break;
       }
 
       case 'evaluate_safe': {
-        // Only predefined safe operations — no raw JS from caller
         switch (step.operation) {
           case 'title':
             result = { title: await page.title() };
@@ -211,13 +218,16 @@ export async function executeStep(page: Page, step: Step, captures: Captures): P
         break;
 
       case 'capture_accessibility_snapshot': {
-        // accessibility.snapshot was removed in playwright-core 1.47+
-        // Use ARIA roles query as alternative
         const roles = await page.evaluate(() => {
-          const els = document.querySelectorAll('[role]');
-          return Array.from(els).slice(0, 50).map(el => ({
-            role: el.getAttribute('role'),
-            label: el.getAttribute('aria-label') || el.textContent?.trim().slice(0, 50) || '',
+          const implicitRoles: Record<string, string> = {
+            A: 'link', BUTTON: 'button', FORM: 'form', H1: 'heading', H2: 'heading', H3: 'heading',
+            HEADER: 'banner', FOOTER: 'contentinfo', MAIN: 'main', NAV: 'navigation', INPUT: 'textbox',
+            TEXTAREA: 'textbox', OL: 'list', UL: 'list', LI: 'listitem', ARTICLE: 'article',
+          };
+          const els = document.querySelectorAll('[role],a,button,form,h1,h2,h3,header,footer,main,nav,input,textarea,ol,ul,li,article');
+          return Array.from(els).slice(0, 100).map(el => ({
+            role: el.getAttribute('role') || implicitRoles[el.tagName] || 'generic',
+            label: el.getAttribute('aria-label') || el.getAttribute('name') || el.textContent?.trim().slice(0, 80) || '',
           }));
         });
         result = { roles, count: roles.length };
@@ -233,7 +243,7 @@ export async function executeStep(page: Page, step: Step, captures: Captures): P
         break;
 
       default:
-        throw new Error(`Unknown action`);
+        throw new Error('Unknown action');
     }
 
     return { status: 'pass', duration_ms: Date.now() - start, result };
