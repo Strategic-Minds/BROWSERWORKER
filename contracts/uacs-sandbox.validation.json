@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0.0",
+  "consumer": "Strategic-Minds/UNIVERSAL-AUTONOMOUS-CODING-SYSTEM-SANDBOX",
+  "canonical_target": "Strategic-Minds/UNIVERSAL-AUTONOMOUS-CODING-SYSTEM",
+  "mandatory": true,
+  "required_endpoints": [
+    "/api/health",
+    "/api/health/deep",
+    "/api/run",
+    "/api/capabilities",
+    "/api/version",
+    "/api/validate-url"
+  ],
+  "viewports": [
+    { "name": "desktop", "width": 1440, "height": 1200 },
+    { "name": "tablet", "width": 834, "height": 1112 },
+    { "name": "mobile", "width": 390, "height": 844 }
+  ],
+  "capture": ["screenshot", "console", "network_errors"],
+  "required_test_domains": [
+    "all_routes",
+    "navigation",
+    "forms",
+    "api_endpoints",
+    "auth_flows_if_applicable",
+    "responsive_states",
+    "pwa_if_applicable",
+    "accessibility",
+    "performance",
+    "visual_regression"
+  ],
+  "thresholds": {
+    "visual_parity_each_breakpoint": 99,
+    "operational_parity": 100,
+    "console_errors": 0,
+    "network_errors": 0
+  },
+  "max_repair_iterations": 5,
+  "required_receipt_fields": [
+    "job_id",
+    "correlation_id",
+    "status",
+    "screenshots",
+    "visual_parity",
+    "operational_parity",
+    "console_errors",
+    "network_errors",
+    "rollback_reference"
+  ],
+  "missing_or_failed_evidence_action": "block_promotion"
+}
