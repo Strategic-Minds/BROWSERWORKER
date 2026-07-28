@@ -5,15 +5,28 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 export const maxDuration = 180
 
-const REFERENCES = {
-  '/dashboard': {
-    fileId: '1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr',
-    title: '01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png',
-    theme: 'light',
-    viewport: 'mobile',
-    crop: { x: 178, y: 150, width: 570, height: 1387 },
-  },
-} as const
+type Reference = {
+  fileId: string
+  title: string
+  theme: 'light' | 'dark'
+  viewport: 'mobile' | 'mobile_large' | 'tablet' | 'desktop'
+  crop: { x: number; y: number; width: number; height: number }
+}
+
+const APPROVED_PHONE_CROP = { x: 178, y: 150, width: 570, height: 1387 }
+
+const REFERENCES: Record<string, Reference> = {
+  '/dashboard': { fileId: '1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr', title: '01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
+  '/analytics': { fileId: '1MWcZn7eUYBHpy99t3Mtwwcg85xtOS5j0', title: '02_BIDFAST_MOBILE_ANALYTICS_KPIS.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
+  '/approvals': { fileId: '17f9b8t1VnHRQ8sOl7y1of_4uws3KgoUr', title: '03_BIDFAST_MOBILE_APPROVAL_QUEUE.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
+  '/opportunities': { fileId: '1haXSs0QuoSMACLXzo-sVaSGPc1roz0jR', title: '04_BIDFAST_MOBILE_OPPORTUNITIES.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
+  '/estimates/new': { fileId: '1jhUC4Zzwi6JBRWD51jwZWutJhUJIDETH', title: '05_BIDFAST_MOBILE_ESTIMATE_BUILDER.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
+  '/proposals': { fileId: '1LkVtoUMfnOK690_4BJHcrdpHax_ta_pj', title: '06_BIDFAST_MOBILE_PROPOSAL_BUILDER.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
+  '/projects/demo-riverside': { fileId: '1vfHzBR7IJzaLV6kWrM67ApbqwUW044Cg', title: '07_BIDFAST_MOBILE_PROJECT_DETAIL.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
+  '/takeoffs/demo-riverside': { fileId: '1kmCENBUWbrUyt2XIRPBKaHytrKQo1plX', title: '08_BIDFAST_MOBILE_AI_TAKEOFF_WORKSPACE.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
+  '/settings/company': { fileId: '16PwtPY7HPvE7B0Mj68pF-m6xypZQ3XLI', title: '09_BIDFAST_MOBILE_COMPANY_SETTINGS.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
+  '/assistant': { fileId: '1h5b3hB2OnhozgzotwUi3h2hZkrlDIuRw', title: '10_BIDFAST_MOBILE_AI_ASSISTANT.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
+}
 
 function sha256(value: Uint8Array) {
   return createHash('sha256').update(value).digest('hex')
@@ -22,7 +35,7 @@ function sha256(value: Uint8Array) {
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
   const route = requestUrl.searchParams.get('route') || '/dashboard'
-  const reference = REFERENCES[route as keyof typeof REFERENCES]
+  const reference = REFERENCES[route]
   let browser: Awaited<ReturnType<typeof launchBrowser>>['browser'] | null = null
 
   if (!reference) {
@@ -40,7 +53,7 @@ export async function GET(request: Request) {
       fetch(`https://drive.google.com/uc?export=download&id=${reference.fileId}`, {
         redirect: 'follow',
         cache: 'no-store',
-        headers: { 'User-Agent': 'BIDFAST-Parity-Worker/2.0' },
+        headers: { 'User-Agent': 'BIDFAST-Parity-Worker/2.1' },
       }),
     ])
 
@@ -191,6 +204,7 @@ export async function GET(request: Request) {
       technical_pass: proof.evidence_pass,
       visual_pass: visualPass,
       visual_threshold: .99,
+      registered_routes: Object.keys(REFERENCES),
       route,
       theme: reference.theme,
       viewport: proof.viewport,
