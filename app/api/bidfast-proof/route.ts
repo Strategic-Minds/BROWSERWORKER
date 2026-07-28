@@ -40,6 +40,7 @@ export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
   const route = requestUrl.searchParams.get('route') || '/dashboard'
   const theme = requestUrl.searchParams.get('theme') === 'dark' ? 'dark' : 'light'
+  const format = requestUrl.searchParams.get('format') === 'image' ? 'image' : 'json'
   const requestedViewport = requestUrl.searchParams.get('viewport') || 'desktop'
   const viewportName: ViewportName = requestedViewport in VIEWPORTS ? requestedViewport as ViewportName : 'desktop'
   const viewport = VIEWPORTS[viewportName]
@@ -72,13 +73,27 @@ export async function GET(request: Request) {
 
     await page.addInitScript((nextTheme: string) => {
       localStorage.setItem('bidfast-theme', nextTheme)
-      document.documentElement.dataset.theme = nextTheme
     }, theme)
 
     await page.goto(target, { waitUntil: 'networkidle', timeout: 90000 })
     await page.waitForTimeout(1200)
 
-    const screenshot = await page.screenshot({ type: 'jpeg', quality: 72, fullPage: true })
+    const screenshot = await page.screenshot({ type: 'jpeg', quality: 78, fullPage: true })
+
+    if (format === 'image') {
+      await page.close()
+      return new Response(screenshot, {
+        headers: {
+          'Content-Type': 'image/jpeg',
+          'Content-Length': String(screenshot.byteLength),
+          'Cache-Control': 'no-store',
+          'X-BIDFAST-Route': route,
+          'X-BIDFAST-Theme': theme,
+          'X-BIDFAST-Viewport': viewportName,
+        },
+      })
+    }
+
     const result: CaptureResult = {
       ok: true,
       target,
