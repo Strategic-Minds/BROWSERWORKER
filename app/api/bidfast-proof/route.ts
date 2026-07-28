@@ -82,10 +82,11 @@ export async function GET(request: Request) {
 
     if (format === 'image') {
       await page.close()
-      return new Response(screenshot, {
+      const body = new Uint8Array(screenshot)
+      return new Response(body, {
         headers: {
           'Content-Type': 'image/jpeg',
-          'Content-Length': String(screenshot.byteLength),
+          'Content-Length': String(body.byteLength),
           'Cache-Control': 'no-store',
           'X-BIDFAST-Route': route,
           'X-BIDFAST-Theme': theme,
