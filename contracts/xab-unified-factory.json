@@ -1,17 +1,31 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "contract_id": "BROWSERWORKER-XAB-UNIFIED-FACTORY",
-  "request_sources": [
+  "operator_decision": "Xtreme AI Builder MCP is the primary MCP that operates the unified autonomous factory.",
+  "primary_request_authority": {
+    "name": "Xtreme AI Builder MCP",
+    "namespace": "Xtreme_AI_Builder",
+    "plugin_id": "dev-6a633e9ec62c8191aec60a9799309021",
+    "authority": "primary",
+    "rule": "Unified factory validation jobs must be originated or adopted by Xtreme AI Builder MCP before BrowserWorker execution."
+  },
+  "authorized_context_sources": [
     "Strategic-Minds/XAB",
     "Strategic-Minds/UNIVERSAL-AUTONOMOUS-CODING-SYSTEM",
     "Strategic-Minds/UNIVERSAL-AUTONOMOUS-CODING-SYSTEM-SANDBOX",
-    "AUTO BUILDER 2 MCP",
     "Base44 app 6a4ae522852a5e08bfa42450"
   ],
+  "compatibility_executor": {
+    "name": "AUTO BUILDER 2 MCP",
+    "authority": "subordinate",
+    "rule": "May submit a BrowserWorker job only when the envelope contains an Xtreme AI Builder MCP authority receipt or an explicit operator-authorized emergency fallback receipt."
+  },
   "required_request_fields": [
     "job_id",
     "project_id",
     "correlation_id",
+    "primary_mcp",
+    "authority_receipt",
     "preview_url",
     "approved_visual_references",
     "route_inventory",
@@ -46,12 +60,15 @@
   ],
   "operational_parity_required": 100,
   "missing_evidence_result": "fail",
+  "missing_or_invalid_authority_receipt_result": "reject",
   "maximum_repair_iterations": 5,
   "output_contract": [
     "result_id",
     "job_id",
     "project_id",
     "correlation_id",
+    "primary_mcp",
+    "authority_receipt",
     "desktop_screenshot_urls",
     "tablet_screenshot_urls",
     "mobile_screenshot_urls",
