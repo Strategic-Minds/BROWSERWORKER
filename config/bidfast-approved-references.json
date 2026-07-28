@@ -1,0 +1,97 @@
+{
+  "version": "2026-07-28",
+  "source": "BIDFAST Google Drive approved mobile-light reference pack",
+  "release_threshold": 0.99,
+  "references": [
+    {
+      "key": "mobile-dashboard",
+      "route": "/dashboard",
+      "theme": "light",
+      "viewport": "mobile",
+      "drive_file_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+      "title": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+      "implementation_status": "repairing"
+    },
+    {
+      "key": "mobile-analytics",
+      "route": "/analytics",
+      "theme": "light",
+      "viewport": "mobile",
+      "drive_file_id": "1MWcZn7eUYBHpy99t3Mtwwcg85xtOS5j0",
+      "title": "02_BIDFAST_MOBILE_ANALYTICS_KPIS.png",
+      "implementation_status": "pending"
+    },
+    {
+      "key": "mobile-approvals",
+      "route": "/approvals",
+      "theme": "light",
+      "viewport": "mobile",
+      "drive_file_id": "17f9b8t1VnHRQ8sOl7y1of_4uws3KgoUr",
+      "title": "03_BIDFAST_MOBILE_APPROVAL_QUEUE.png",
+      "implementation_status": "pending"
+    },
+    {
+      "key": "mobile-opportunities",
+      "route": "/opportunities",
+      "theme": "light",
+      "viewport": "mobile",
+      "drive_file_id": "1haXSs0QuoSMACLXzo-sVaSGPc1roz0jR",
+      "title": "04_BIDFAST_MOBILE_OPPORTUNITIES.png",
+      "implementation_status": "pending"
+    },
+    {
+      "key": "mobile-estimate-builder",
+      "route": "/estimates/new",
+      "theme": "light",
+      "viewport": "mobile",
+      "drive_file_id": "1jhUC4Zzwi6JBRWD51jwZWutJhUJIDETH",
+      "title": "05_BIDFAST_MOBILE_ESTIMATE_BUILDER.png",
+      "implementation_status": "pending"
+    },
+    {
+      "key": "mobile-proposal-builder",
+      "route": "/proposals",
+      "theme": "light",
+      "viewport": "mobile",
+      "drive_file_id": "1LkVtoUMfnOK690_4BJHcrdpHax_ta_pj",
+      "title": "06_BIDFAST_MOBILE_PROPOSAL_BUILDER.png",
+      "implementation_status": "pending"
+    },
+    {
+      "key": "mobile-project-detail",
+      "route": "/projects/demo-riverside",
+      "theme": "light",
+      "viewport": "mobile",
+      "drive_file_id": "1vfHzBR7IJzaLV6kWrM67ApbqwUW044Cg",
+      "title": "07_BIDFAST_MOBILE_PROJECT_DETAIL.png",
+      "implementation_status": "pending"
+    },
+    {
+      "key": "mobile-takeoff-workspace",
+      "route": "/takeoffs/demo-riverside",
+      "theme": "light",
+      "viewport": "mobile",
+      "drive_file_id": "1kmCENBUWbrUyt2XIRPBKaHytrKQo1plX",
+      "title": "08_BIDFAST_MOBILE_AI_TAKEOFF_WORKSPACE.png",
+      "implementation_status": "pending"
+    },
+    {
+      "key": "mobile-company-settings",
+      "route": "/settings/company",
+      "theme": "light",
+      "viewport": "mobile",
+      "drive_file_id": "16PwtPY7HPvE7B0Mj68pF-m6xypZQ3XLI",
+      "title": "09_BIDFAST_MOBILE_COMPANY_SETTINGS.png",
+      "implementation_status": "pending"
+    },
+    {
+      "key": "mobile-ai-assistant",
+      "route": "/assistant",
+      "theme": "light",
+      "viewport": "mobile",
+      "drive_file_id": "1h5b3hB2OnhozgzotwUi3h2hZkrlDIuRw",
+      "title": "10_BIDFAST_MOBILE_AI_ASSISTANT.png",
+      "implementation_status": "pending"
+    }
+  ]
+}
