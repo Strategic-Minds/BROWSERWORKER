@@ -36,7 +36,7 @@ type CaptureResult = {
   root_color?: string
   page_height?: number
   links_count?: number
-  screenshot?: { mime_type: 'image/jpeg'; encoding?: 'base64'; bytes: number; data?: string }
+  screenshot?: { mime_type: 'image/png'; encoding?: 'base64'; bytes: number; data?: string }
   console_errors: string[]
   app_network_errors: string[]
   http_errors: string[]
@@ -125,14 +125,14 @@ export async function GET(request: Request) {
       }
     })
 
-    const screenshot = await page.screenshot({ type: 'jpeg', quality: 78, fullPage: true })
+    const screenshot = await page.screenshot({ type: 'png', fullPage: true })
 
     if (format === 'image') {
       await page.close()
       const body = new Uint8Array(screenshot)
       return new Response(body, {
         headers: {
-          'Content-Type': 'image/jpeg',
+          'Content-Type': 'image/png',
           'Content-Length': String(body.byteLength),
           'Cache-Control': 'no-store',
           'X-BIDFAST-Route': route,
@@ -161,8 +161,8 @@ export async function GET(request: Request) {
       page_height: metrics.pageHeight,
       links_count: metrics.linksCount,
       screenshot: format === 'summary'
-        ? { mime_type: 'image/jpeg', bytes: screenshot.byteLength }
-        : { mime_type: 'image/jpeg', encoding: 'base64', bytes: screenshot.byteLength, data: Buffer.from(screenshot).toString('base64') },
+        ? { mime_type: 'image/png', bytes: screenshot.byteLength }
+        : { mime_type: 'image/png', encoding: 'base64', bytes: screenshot.byteLength, data: Buffer.from(screenshot).toString('base64') },
       console_errors: consoleErrors,
       app_network_errors: appNetworkErrors,
       http_errors: httpErrors,
