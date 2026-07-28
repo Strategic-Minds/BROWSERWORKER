@@ -4,7 +4,7 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 export const maxDuration = 120
 
-const ORIGIN = 'https://bidfast-69k7i0rwf-strategic-minds-advisory.vercel.app'
+const ORIGIN = 'https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app'
 const ROUTES = new Set([
   '/', '/pricing', '/login', '/signup', '/dashboard', '/analytics', '/opportunities',
   '/projects', '/documents', '/takeoffs', '/estimates', '/proposals', '/approvals',
