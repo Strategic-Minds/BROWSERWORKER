@@ -1,0 +1,69 @@
+{
+  "schema_version": "1.0.0",
+  "contract_id": "BROWSERWORKER-XAB-UNIFIED-FACTORY",
+  "request_sources": [
+    "Strategic-Minds/XAB",
+    "Strategic-Minds/UNIVERSAL-AUTONOMOUS-CODING-SYSTEM",
+    "Strategic-Minds/UNIVERSAL-AUTONOMOUS-CODING-SYSTEM-SANDBOX",
+    "AUTO BUILDER 2 MCP",
+    "Base44 app 6a4ae522852a5e08bfa42450"
+  ],
+  "required_request_fields": [
+    "job_id",
+    "project_id",
+    "correlation_id",
+    "preview_url",
+    "approved_visual_references",
+    "route_inventory",
+    "applicable_feature_inventory",
+    "breakpoints",
+    "receipt_destination",
+    "rollback_ref"
+  ],
+  "required_breakpoints": {
+    "desktop": {"width": 1440, "minimum_visual_parity": 99},
+    "tablet": {"width": 768, "minimum_visual_parity": 99},
+    "mobile": {"width": 390, "minimum_visual_parity": 99}
+  },
+  "required_operational_checks": [
+    "routes",
+    "links",
+    "buttons",
+    "navigation",
+    "forms",
+    "api_contracts",
+    "authentication_when_applicable",
+    "authorization_when_applicable",
+    "uploads_when_applicable",
+    "search_and_filters_when_applicable",
+    "loading_empty_error_success_states",
+    "mobile_navigation",
+    "back_button",
+    "pwa_when_applicable",
+    "console_errors",
+    "network_errors",
+    "accessibility"
+  ],
+  "operational_parity_required": 100,
+  "missing_evidence_result": "fail",
+  "maximum_repair_iterations": 5,
+  "output_contract": [
+    "result_id",
+    "job_id",
+    "project_id",
+    "correlation_id",
+    "desktop_screenshot_urls",
+    "tablet_screenshot_urls",
+    "mobile_screenshot_urls",
+    "visual_diff_artifacts",
+    "visual_parity_scores",
+    "operational_test_ledger",
+    "console_error_ledger",
+    "network_error_ledger",
+    "accessibility_receipt",
+    "defect_classification",
+    "promotion_eligible",
+    "receipt_url"
+  ],
+  "promotion_rule": "BrowserWorker may report eligibility but may never approve or execute production release."
+}
