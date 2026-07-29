@@ -1,6 +1,6 @@
 {
   "version": "2026-07-29",
-  "status": "core-reference-pack-installed-preview-url-pending",
+  "status": "canonical-reference-pack-installed-preview-url-and-full-folder-pagination-pending",
   "base44": {
     "app_id": "6a69978f9454039c6021d362",
     "app_name_at_discovery": "BidMaster AI",
@@ -16,18 +16,23 @@
   "visual_source": {
     "drive_folder_id": "1-QD449jtVs_tAArFmCdMYZiy_BdzkMvX",
     "approved_brand_board_file_id": "1n8tlZ4EJcV8TUHRjM0BO0qCw-ALcZs73",
-    "direct_image_records_discovered": 99,
-    "core_reference_count_transformed": 15,
-    "core_reference_pack_file_id": "1axj8eOHj6ampTGoUiva5kYCqNcpEV85s",
-    "core_contact_sheet_file_id": "11lPUIa1H6Ii0rncA5Hty7Jt6mi4GFCDX",
-    "core_manifest_json_file_id": "1WzCtAMxmXvujxYu5IAmQdlv8AYTLhCrm",
-    "core_manifest_csv_file_id": "1rV-RO4q9-Kem9N5yR2s8spb3s_uFYn40",
-    "deduplication_status": "pending-full-library-checksum-and-perceptual-hash",
-    "transformation_status": "15-core-reference-first-pass-complete-full-library-pending",
+    "direct_image_records_reported_by_drive_connector": 99,
+    "public_folder_rows_checksumming_complete": 46,
+    "public_folder_unique_sha256_count": 28,
+    "public_folder_exact_duplicate_group_count": 18,
+    "canonical_reference_count_transformed": 28,
+    "canonical_reference_pack_file_id": "1p_R7_Fcr2BGrTm2p9HEq2Qd7_0PqdEE-",
+    "canonical_contact_sheet_file_id": "1xPzk_NGjVAG_7ZTkl0reeykj9VCwSGZv",
+    "canonical_manifest_json_file_id": "1HuUI_HHOFz7RHEXEVHHZz5jjCrhOJcom",
+    "canonical_manifest_csv_file_id": "1fa7tYGU9iAzBOt5lin2UYmrNnQJFJtCw",
+    "dedup_summary_file_id": "1vLdiOTThGoN_7wopD2lPxeiWrZ1jEnLa",
+    "deduplication_status": "46-public-rows-checksummed-remaining-drive-records-pending-pagination",
+    "transformation_status": "28-checksum-unique-reference-first-pass-complete-remaining-drive-records-pending",
     "known_limitations": [
-      "Dense small-format webpack boards may retain tiny legacy text that requires manual route-level review.",
+      "Dense small-format boards may retain tiny legacy text requiring manual route-level review.",
       "Dark-mode counterparts are incomplete.",
-      "The remaining Drive source records are not yet transformed."
+      "The connected Drive listing reported more records than the public folder HTML exposed.",
+      "The 28-file reference pack is not a BrowserWorker live-application parity receipt."
     ]
   },
   "requirements": {
@@ -49,9 +54,10 @@
   },
   "release": {
     "production_approved": false,
-    "core_reference_pack_is_not_release_proof": true,
+    "canonical_reference_pack_is_not_release_proof": true,
     "missing_reference_is_failure": true,
     "missing_preview_url_is_failure": true,
+    "incomplete_drive_pagination_is_failure": true,
     "operator_approval_required": true
   }
 }
