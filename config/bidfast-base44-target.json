@@ -1,12 +1,15 @@
 {
   "version": "2026-07-29",
-  "status": "preview-target-prepared",
+  "status": "core-reference-pack-installed-preview-url-pending",
   "base44": {
     "app_id": "6a69978f9454039c6021d362",
     "app_name_at_discovery": "BidMaster AI",
     "canonical_product": "BIDFAST",
-    "rollback_checkpoint_id": "6a6a787023a1c7193aadf789",
-    "rollback_commit": "a79c791d480ff938fb482ce490334e53a6cf84f1",
+    "pre_change_rollback_checkpoint_id": "6a6a787023a1c7193aadf789",
+    "pre_change_rollback_commit": "a79c791d480ff938fb482ce490334e53a6cf84f1",
+    "post_core_brand_checkpoint_id": "6a6a7d7c2cd267f72025f681",
+    "post_core_brand_commit": "83f358f23ec54f019cf0be0ba0b67d972e79c6bf",
+    "build_status": "pass",
     "preview_url": null,
     "preview_url_required": true
   },
@@ -14,8 +17,18 @@
     "drive_folder_id": "1-QD449jtVs_tAArFmCdMYZiy_BdzkMvX",
     "approved_brand_board_file_id": "1n8tlZ4EJcV8TUHRjM0BO0qCw-ALcZs73",
     "direct_image_records_discovered": 99,
-    "deduplication_status": "pending-checksum-and-perceptual-hash",
-    "transformation_status": "partial-core-application-branding-complete"
+    "core_reference_count_transformed": 15,
+    "core_reference_pack_file_id": "1axj8eOHj6ampTGoUiva5kYCqNcpEV85s",
+    "core_contact_sheet_file_id": "11lPUIa1H6Ii0rncA5Hty7Jt6mi4GFCDX",
+    "core_manifest_json_file_id": "1WzCtAMxmXvujxYu5IAmQdlv8AYTLhCrm",
+    "core_manifest_csv_file_id": "1rV-RO4q9-Kem9N5yR2s8spb3s_uFYn40",
+    "deduplication_status": "pending-full-library-checksum-and-perceptual-hash",
+    "transformation_status": "15-core-reference-first-pass-complete-full-library-pending",
+    "known_limitations": [
+      "Dense small-format webpack boards may retain tiny legacy text that requires manual route-level review.",
+      "Dark-mode counterparts are incomplete.",
+      "The remaining Drive source records are not yet transformed."
+    ]
   },
   "requirements": {
     "visual_parity_per_scenario": 0.99,
@@ -36,6 +49,7 @@
   },
   "release": {
     "production_approved": false,
+    "core_reference_pack_is_not_release_proof": true,
     "missing_reference_is_failure": true,
     "missing_preview_url_is_failure": true,
     "operator_approval_required": true
