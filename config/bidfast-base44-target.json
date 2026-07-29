@@ -1,0 +1,43 @@
+{
+  "version": "2026-07-29",
+  "status": "preview-target-prepared",
+  "base44": {
+    "app_id": "6a69978f9454039c6021d362",
+    "app_name_at_discovery": "BidMaster AI",
+    "canonical_product": "BIDFAST",
+    "rollback_checkpoint_id": "6a6a787023a1c7193aadf789",
+    "rollback_commit": "a79c791d480ff938fb482ce490334e53a6cf84f1",
+    "preview_url": null,
+    "preview_url_required": true
+  },
+  "visual_source": {
+    "drive_folder_id": "1-QD449jtVs_tAArFmCdMYZiy_BdzkMvX",
+    "approved_brand_board_file_id": "1n8tlZ4EJcV8TUHRjM0BO0qCw-ALcZs73",
+    "direct_image_records_discovered": 99,
+    "deduplication_status": "pending-checksum-and-perceptual-hash",
+    "transformation_status": "partial-core-application-branding-complete"
+  },
+  "requirements": {
+    "visual_parity_per_scenario": 0.99,
+    "operational_parity": 1.0,
+    "max_repair_cycles": 5,
+    "required_viewports": [
+      {"name":"mobile-small","width":390,"height":844},
+      {"name":"mobile-large","width":430,"height":932},
+      {"name":"tablet","width":834,"height":1194},
+      {"name":"desktop","width":1440,"height":1200}
+    ],
+    "require_zero_dead_controls": true,
+    "require_zero_active_legacy_branding": true,
+    "require_zero_unexpected_console_errors": true,
+    "require_zero_unexpected_network_errors": true,
+    "require_tenant_isolation": true,
+    "require_rollback_receipt": true
+  },
+  "release": {
+    "production_approved": false,
+    "missing_reference_is_failure": true,
+    "missing_preview_url_is_failure": true,
+    "operator_approval_required": true
+  }
+}
