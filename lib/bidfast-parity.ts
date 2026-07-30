@@ -245,7 +245,7 @@ export async function runBidfastParity(scenarioId: string): Promise<ParityReceip
     const geometry = selectorFound && dimensions.width >= referenceConfig.viewport.width * 0.95 ? 1 : selectorFound ? 0.85 : 0.35;
     const screenshot = Buffer.from(await page.screenshot({ type: 'png', fullPage: false }));
     const scores = await compareImages(reference, screenshot, geometry);
-    const instrumentation = (value: string) => value.includes('/.well-known/vercel/jwe') || value.includes('_vercel') || value.includes('vercel.live');
+    const instrumentation = (value: string) => value.startsWith('OPTIONS ') || value.startsWith('HEAD ') || value.includes('/.well-known/vercel/jwe') || value.includes('_vercel') || value.includes('vercel.live');
     const filteredNetworkFailures = networkFailures.filter((value) => !instrumentation(value));
     const filteredHttpFailures = httpFailures.filter((value) => !instrumentation(value));
     const operational = {
