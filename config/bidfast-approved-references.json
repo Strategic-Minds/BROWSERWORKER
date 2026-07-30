@@ -1,0 +1,26 @@
+{
+  "job_id": "bidfast-autonomous-visual-rebuild-20260730",
+  "preview_origin": "https://bidfast-git-auto-builder-bidfas-d65545-strategic-minds-advisory.vercel.app",
+  "reference_pack": {
+    "drive_file_id": "17FgxtHo2EK7wKxBfLWYUgew2xR6b9PfJ",
+    "download_url": "https://drive.google.com/uc?export=download&id=17FgxtHo2EK7wKxBfLWYUgew2xR6b9PfJ"
+  },
+  "thresholds": {
+    "visual": 0.99,
+    "operational": 1,
+    "max_repair_iterations": 5
+  },
+  "viewport": { "width": 1487, "height": 1058 },
+  "production_locked": true,
+  "scenarios": [
+    { "id": "landing", "route": "/", "reference": "bidfast__marketing__landing__desktop__light__default__001.png", "selector": "[data-bw=\"landing-page\"]" },
+    { "id": "dashboard", "route": "/dashboard", "reference": "bidfast__dashboard__executive-overview__desktop__light__default__009.png", "selector": "[data-bw=\"dashboard-kpis\"]" },
+    { "id": "project-detail", "route": "/projects/riverside-office-tower", "reference": "bidfast__projects__project-detail__desktop__light__populated__010.png", "selector": "[data-bw=\"project-banner\"]" },
+    { "id": "document-viewer", "route": "/documents/a201-floor-plan-l2", "reference": "bidfast__documents__plan-viewer__desktop__light__default__011.png", "selector": "[data-bw=\"plan-canvas\"]" },
+    { "id": "takeoff", "route": "/takeoffs/riverside-office-tower", "reference": "bidfast__takeoffs__workspace__desktop__light__active__012.png", "selector": "[data-bw=\"plan-canvas\"]" },
+    { "id": "estimate-summary", "route": "/estimates/riverside-office-tower", "reference": "bidfast__estimates__summary__desktop__light__review__013.png", "selector": ".estimate-strip" },
+    { "id": "estimate-builder", "route": "/estimates/riverside-office-tower/edit", "reference": "bidfast__estimates__pricing-builder__desktop__light__draft__014.png", "selector": ".line-layout" },
+    { "id": "proposal-builder", "route": "/proposals/riverside-office-tower", "reference": "bidfast__proposals__builder__desktop__light__draft__015.png", "selector": ".proposal-layout" },
+    { "id": "proposal-send", "route": "/proposals/riverside-office-tower/send", "reference": "bidfast__proposals__send__desktop__light__ready__008.png", "selector": ".send-layout" }
+  ]
+}
