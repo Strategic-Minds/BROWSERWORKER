@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { Browser } from 'playwright-core';
 import referenceConfig from '../../../../config/bidfast-approved-references.json';
 import { closeBrowser, launchBrowser } from '../../../../lib/browser';
 import { scenarioById } from '../../../../lib/bidfast-parity';
@@ -17,7 +18,7 @@ export async function GET(request: Request): Promise<Response> {
 
   const scenario = scenarioById(query.scenario);
   const previewUrl = new URL(scenario.route, referenceConfig.preview_origin).toString();
-  let browser = null;
+  let browser: Browser | null = null;
   try {
     const launched = await launchBrowser();
     browser = launched.browser;
@@ -37,7 +38,7 @@ export async function GET(request: Request): Promise<Response> {
     await page.waitForTimeout(500);
     const screenshot = await page.screenshot({ type: 'jpeg', quality: 72, fullPage: false });
     await context.close();
-    return new Response(screenshot, {
+    return new Response(new Uint8Array(screenshot), {
       status: 200,
       headers: {
         'content-type': 'image/jpeg',
