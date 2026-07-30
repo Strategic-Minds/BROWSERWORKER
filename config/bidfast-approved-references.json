@@ -21,6 +21,6 @@
     { "id": "estimate-summary", "route": "/estimates/riverside-office-tower", "reference": "bidfast__reference__chatgpt-image-jul-26-2026-08-31-00-pm-7-1__light__013.png", "selector": ".estimate-strip" },
     { "id": "estimate-builder", "route": "/estimates/riverside-office-tower/edit", "reference": "bidfast__reference__chatgpt-image-jul-26-2026-08-31-00-pm-8-1__light__014.png", "selector": ".line-layout" },
     { "id": "proposal-builder", "route": "/proposals/riverside-office-tower", "reference": "bidfast__reference__chatgpt-image-jul-26-2026-08-31-00-pm-9-1__light__015.png", "selector": ".proposal-layout" },
-    { "id": "proposal-send", "route": "/proposals/riverside-office-tower/send", "reference": "bidfast__reference__chatgpt-image-jul-26-2026-08-31-00-pm-10-1__light__008.png", "selector": ".send-layout" }
+    { "id": "proposal-send", "route": "/proposals/riverside-office-tower/send", "reference": "bidfast__reference__chatgpt-image-jul-26-2026-08-31-00-pm-10-1__light__008.png", "selector": "[data-bw=\"proposal-send\"]" }
   ]
 }
