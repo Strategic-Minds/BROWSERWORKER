@@ -1,0 +1,43 @@
+name: Filter BIDFAST Preview Noise
+
+on:
+  push:
+    branches:
+      - auto-builder/bidfast-reference-parity-20260730
+    paths:
+      - .autobuilder/filter-bidfast-preview-noise.ready
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: auto-builder/bidfast-reference-parity-20260730
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Repair preview instrumentation filter
+        run: node scripts/filter-bidfast-preview-noise.mjs
+      - name: Verify worker
+        run: |
+          npm ci
+          npm run type-check
+          npm run build
+      - name: Commit verified filter
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .autobuilder/filter-bidfast-preview-noise.ready
+          rm -f .github/workflows/filter-bidfast-preview-noise.yml
+          rm -f scripts/filter-bidfast-preview-noise.mjs
+          git config user.name "BIDFAST Auto Builder"
+          git config user.email "actions@users.noreply.github.com"
+          git add lib/bidfast-parity.ts .autobuilder .github/workflows scripts
+          git commit -m "fix(browserworker): exclude preview control probes from operational parity"
+          git push origin HEAD:auto-builder/bidfast-reference-parity-20260730
