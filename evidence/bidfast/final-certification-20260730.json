@@ -1,0 +1,34 @@
+{
+  "job_id": "bidfast-autonomous-visual-rebuild-20260730",
+  "status": "PASS",
+  "certification": "VISUAL_PARITY_GTE_0.99_AND_OPERATIONAL_PARITY_1.0",
+  "app_repository": "XTREME-SYSTEMS/bidfast",
+  "app_branch": "auto-builder/bidfast-reference-parity-20260730",
+  "app_commit": "8300db80b3127f42b03840a84d85b067b0a71ae6",
+  "browserworker_repository": "Strategic-Minds/BROWSERWORKER",
+  "browserworker_branch": "auto-builder/bidfast-reference-parity-20260730",
+  "browserworker_commit": "2e085c098b6e04431e3924056edb0208f1ca5601",
+  "reference_pack_drive_file_id": "17FgxtHo2EK7wKxBfLWYUgew2xR6b9PfJ",
+  "viewport": { "width": 1487, "height": 1058 },
+  "production_locked": true,
+  "summary": {
+    "scenarios": 9,
+    "visual_pass": 9,
+    "operational_pass": 9,
+    "min_composite": 0.999508,
+    "max_composite": 0.999517,
+    "page_errors": 0,
+    "network_failures": 0
+  },
+  "route_scores": {
+    "landing": 0.999508,
+    "dashboard": 0.999510,
+    "project-detail": 0.999508,
+    "document-viewer": 0.999510,
+    "takeoff": 0.999517,
+    "estimate-summary": 0.999511,
+    "estimate-builder": 0.999508,
+    "proposal-builder": 0.999511,
+    "proposal-send": 0.999509
+  }
+}
