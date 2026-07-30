@@ -15,8 +15,8 @@ export type DiscoveredPlanLink = {
 const FILE_PATTERN = /\.(pdf|zip|docx?|xlsx?|dwg|dxf)(?:$|[?#])/i
 
 function documentType(value: string): DiscoveredPlanLink['documentType'] {
-  const text = value.toLowerCase()
-  if (/\bplans?\b/.test(text)) return 'plans'
+  const text = value.toLowerCase().replace(/[_-]+/g, ' ')
+  if (text.includes('plan')) return 'plans'
   if (/drawing|blueprint|sheet set/.test(text)) return 'drawings'
   if (/specification|\bspecs?\b/.test(text)) return 'specifications'
   if (/addendum|amendment|supplement/.test(text)) return 'addendum'
@@ -27,8 +27,8 @@ function documentType(value: string): DiscoveredPlanLink['documentType'] {
 }
 
 function relevanceScore(value: string, hints: string[]): number {
-  const text = value.toLowerCase()
-  let score = FILE_PATTERN.test(text) ? 20 : 0
+  const text = value.toLowerCase().replace(/[_-]+/g, ' ')
+  let score = FILE_PATTERN.test(value) ? 20 : 0
   for (const hint of hints) {
     if (text.includes(hint.toLowerCase())) score += hint.length > 7 ? 18 : 11
   }
@@ -43,6 +43,14 @@ function normalizeExtension(url: string): string | null {
   return match?.[1]?.toLowerCase() ?? null
 }
 
+function isAllowedCandidateHost(hostname: string, allowedHosts: string[]): boolean {
+  const host = hostname.toLowerCase()
+  return allowedHosts.some((allowed) => {
+    const normalized = allowed.toLowerCase()
+    return host === normalized || host.endsWith(`.${normalized}`)
+  })
+}
+
 export async function discoverPlanSource(sourceId: string, maxLinks = 60) {
   const source = getPlanSource(sourceId)
   if (!source) throw new Error(`Unknown BIDFAST plan source: ${sourceId}`)
@@ -50,7 +58,6 @@ export async function discoverPlanSource(sourceId: string, maxLinks = 60) {
   const urlCheck = await validatePublicUrl(source.probeUrl)
   if (!urlCheck.ok) throw new Error(urlCheck.error || 'Source URL failed SSRF validation')
 
-  const startedAt = new Date().toISOString()
   const startMs = Date.now()
   const warnings: string[] = []
   let browser = null
@@ -88,15 +95,23 @@ export async function discoverPlanSource(sourceId: string, maxLinks = 60) {
     const response = await page.goto(source.probeUrl, { waitUntil: 'domcontentloaded', timeout: 60000 })
     await page.waitForTimeout(1800)
 
+    if (source.id === 'sam-public-construction') {
+      const attachmentButton = page.getByRole('button', { name: /^Attachments$/i }).first()
+      if (await attachmentButton.count()) {
+        await attachmentButton.click({ timeout: 8000 }).catch(() => undefined)
+        await page.waitForTimeout(1200)
+      }
+    }
+
     const title = await page.title()
     const finalUrl = page.url()
-    const rawLinks = await page.locator('a').evaluateAll((anchors) => anchors.map((anchor) => {
+    const rawLinks = await page.locator('a[href]').evaluateAll((anchors) => anchors.map((anchor) => {
       const element = anchor as HTMLAnchorElement
-      const container = element.closest('tr,li,article,section,div')
+      const container = element.closest('tr,li,article') || element.parentElement
       return {
-        title: (element.innerText || element.textContent || '').replace(/\s+/g, ' ').trim(),
+        title: (element.innerText || element.textContent || element.getAttribute('aria-label') || '').replace(/\s+/g, ' ').trim(),
         href: element.href,
-        context: (container?.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 600),
+        context: (container?.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 280),
       }
     }))
 
@@ -104,13 +119,25 @@ export async function discoverPlanSource(sourceId: string, maxLinks = 60) {
     const candidates: DiscoveredPlanLink[] = []
     for (const link of rawLinks) {
       if (!link.href || seen.has(link.href)) continue
+      if (!/^https?:\/\//i.test(link.href)) continue
+      if (/#(?:maincontent|content)?$/i.test(link.href)) continue
+
+      let parsedUrl: URL
+      try {
+        parsedUrl = new URL(link.href)
+      } catch {
+        continue
+      }
+      if (!isAllowedCandidateHost(parsedUrl.hostname, source.allowedHosts)) continue
+
       seen.add(link.href)
       const combined = `${link.title} ${link.href} ${link.context}`
       const score = relevanceScore(combined, source.planHints)
       if (score < 20) continue
-      const controlled = /controlled|confidential|nda|login required|sign in required/i.test(combined)
+      const accessEvidence = `${link.title} ${link.context}`.slice(0, 360)
+      const controlled = /controlled|confidential|non-disclosure|\bnda\b|login required|sign in required/i.test(accessEvidence)
       candidates.push({
-        title: link.title || link.href.split('/').pop() || 'Construction document',
+        title: link.title || decodeURIComponent(parsedUrl.pathname.split('/').pop() || '') || 'Construction document',
         url: link.href,
         documentType: documentType(combined),
         accessClass: controlled ? 'RESTRICTED_MANUAL_ACTION' : source.accessClass,
