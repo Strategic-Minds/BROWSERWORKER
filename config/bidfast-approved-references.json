@@ -13,14 +13,14 @@
   "viewport": { "width": 1487, "height": 1058 },
   "production_locked": true,
   "scenarios": [
-    { "id": "landing", "route": "/", "reference": "bidfast__marketing__landing__desktop__light__default__001.png", "selector": "[data-bw=\"landing-page\"]" },
-    { "id": "dashboard", "route": "/dashboard", "reference": "bidfast__dashboard__executive-overview__desktop__light__default__009.png", "selector": "[data-bw=\"dashboard-kpis\"]" },
-    { "id": "project-detail", "route": "/projects/riverside-office-tower", "reference": "bidfast__projects__project-detail__desktop__light__populated__010.png", "selector": "[data-bw=\"project-banner\"]" },
-    { "id": "document-viewer", "route": "/documents/a201-floor-plan-l2", "reference": "bidfast__documents__plan-viewer__desktop__light__default__011.png", "selector": "[data-bw=\"plan-canvas\"]" },
-    { "id": "takeoff", "route": "/takeoffs/riverside-office-tower", "reference": "bidfast__takeoffs__workspace__desktop__light__active__012.png", "selector": "[data-bw=\"plan-canvas\"]" },
-    { "id": "estimate-summary", "route": "/estimates/riverside-office-tower", "reference": "bidfast__estimates__summary__desktop__light__review__013.png", "selector": ".estimate-strip" },
-    { "id": "estimate-builder", "route": "/estimates/riverside-office-tower/edit", "reference": "bidfast__estimates__pricing-builder__desktop__light__draft__014.png", "selector": ".line-layout" },
-    { "id": "proposal-builder", "route": "/proposals/riverside-office-tower", "reference": "bidfast__proposals__builder__desktop__light__draft__015.png", "selector": ".proposal-layout" },
-    { "id": "proposal-send", "route": "/proposals/riverside-office-tower/send", "reference": "bidfast__proposals__send__desktop__light__ready__008.png", "selector": ".send-layout" }
+    { "id": "landing", "route": "/", "reference": "bidfast__reference__chatgpt-image-jul-26-2026-08-31-00-pm-1-1__light__007.png", "selector": "[data-bw=\"landing-page\"]" },
+    { "id": "dashboard", "route": "/dashboard", "reference": "bidfast__reference__chatgpt-image-jul-26-2026-08-31-00-pm-2-1__light__009.png", "selector": "[data-bw=\"dashboard-kpis\"]" },
+    { "id": "project-detail", "route": "/projects/riverside-office-tower", "reference": "bidfast__reference__chatgpt-image-jul-26-2026-08-31-00-pm-4-1__light__010.png", "selector": "[data-bw=\"project-banner\"]" },
+    { "id": "document-viewer", "route": "/documents/a201-floor-plan-l2", "reference": "bidfast__reference__chatgpt-image-jul-26-2026-08-31-00-pm-5-1__light__011.png", "selector": "[data-bw=\"plan-canvas\"]" },
+    { "id": "takeoff", "route": "/takeoffs/riverside-office-tower", "reference": "bidfast__reference__chatgpt-image-jul-26-2026-08-31-00-pm-6-1__light__012.png", "selector": "[data-bw=\"plan-canvas\"]" },
+    { "id": "estimate-summary", "route": "/estimates/riverside-office-tower", "reference": "bidfast__reference__chatgpt-image-jul-26-2026-08-31-00-pm-7-1__light__013.png", "selector": ".estimate-strip" },
+    { "id": "estimate-builder", "route": "/estimates/riverside-office-tower/edit", "reference": "bidfast__reference__chatgpt-image-jul-26-2026-08-31-00-pm-8-1__light__014.png", "selector": ".line-layout" },
+    { "id": "proposal-builder", "route": "/proposals/riverside-office-tower", "reference": "bidfast__reference__chatgpt-image-jul-26-2026-08-31-00-pm-9-1__light__015.png", "selector": ".proposal-layout" },
+    { "id": "proposal-send", "route": "/proposals/riverside-office-tower/send", "reference": "bidfast__reference__chatgpt-image-jul-26-2026-08-31-00-pm-10-1__light__008.png", "selector": ".send-layout" }
   ]
 }
