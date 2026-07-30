@@ -1,4 +1,4 @@
-import { BIDFAST_PLAN_SOURCES } from '@/config/bidfast-plan-sources'
+import { BIDFAST_PLAN_SOURCES, getPlanSource } from '@/config/bidfast-plan-sources'
 import { discoverPlanSource } from '@/lib/bidfast/planDiscovery'
 import { authResponse, verifyAuth } from '@/lib/auth'
 
@@ -6,7 +6,26 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 export const maxDuration = 120
 
-export async function GET() {
+export async function GET(request: Request) {
+  const sourceId = new URL(request.url).searchParams.get('source_id')
+  if (sourceId) {
+    if (!getPlanSource(sourceId)) {
+      return Response.json({ ok: false, error: 'Unknown source_id' }, { status: 400 })
+    }
+    try {
+      const receipt = await discoverPlanSource(sourceId, 60)
+      return Response.json(receipt, {
+        headers: { 'Cache-Control': 'public, s-maxage=900, stale-while-revalidate=3600' },
+      })
+    } catch (error) {
+      return Response.json({
+        ok: false,
+        source_id: sourceId,
+        error: error instanceof Error ? error.message : 'Plan discovery failed',
+      }, { status: 500 })
+    }
+  }
+
   return Response.json({
     ok: true,
     sources: BIDFAST_PLAN_SOURCES.map(({ probeUrl, ...source }) => ({
@@ -18,6 +37,7 @@ export async function GET() {
       downloadsPerformed: false,
       registrationsPerformed: false,
       restrictedDownloadsBlocked: true,
+      publicDiscoveryScope: 'fixed official source registry only',
     },
   }, {
     headers: { 'Cache-Control': 'public, s-maxage=900, stale-while-revalidate=3600' },
