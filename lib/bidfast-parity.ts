@@ -98,7 +98,7 @@ async function referenceZip(): Promise<JSZip> {
   return cache.__bidfastReferenceZip;
 }
 
-async function referenceImage(filename: string): Promise<Buffer> {
+export async function referenceImage(filename: string): Promise<Buffer> {
   const zip = await referenceZip();
   const direct = zip.file(filename);
   if (direct) return Buffer.from(await direct.async('nodebuffer'));
@@ -187,7 +187,7 @@ function diagnose(scores: ParityReceipt['scores'], operational: ParityReceipt['o
   return issues;
 }
 
-async function readyPage(page: Page): Promise<void> {
+export async function readyPage(page: Page): Promise<void> {
   await page.addStyleTag({ content: '*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important}' });
   await page.evaluate(async () => {
     if ('fonts' in document) await document.fonts.ready;
@@ -245,14 +245,17 @@ export async function runBidfastParity(scenarioId: string): Promise<ParityReceip
     const geometry = selectorFound && dimensions.width >= referenceConfig.viewport.width * 0.95 ? 1 : selectorFound ? 0.85 : 0.35;
     const screenshot = Buffer.from(await page.screenshot({ type: 'png', fullPage: false }));
     const scores = await compareImages(reference, screenshot, geometry);
+    const instrumentation = (value: string) => value.includes('/.well-known/vercel/jwe') || value.includes('_vercel') || value.includes('vercel.live');
+    const filteredNetworkFailures = networkFailures.filter((value) => !instrumentation(value));
+    const filteredHttpFailures = httpFailures.filter((value) => !instrumentation(value));
     const operational = {
-      pass: httpStatus === 200 && selectorFound && !pageErrors.length && !networkFailures.length && !httpFailures.length,
+      pass: httpStatus === 200 && selectorFound && !pageErrors.length && !filteredNetworkFailures.length && !filteredHttpFailures.length,
       http_status: httpStatus,
       selector_found: selectorFound,
       console_errors: consoleErrors,
       page_errors: pageErrors,
-      network_failures: networkFailures,
-      http_failures: httpFailures,
+      network_failures: filteredNetworkFailures,
+      http_failures: filteredHttpFailures,
     };
     const pass = operational.pass && scores.composite >= referenceConfig.thresholds.visual;
     const receipt: ParityReceipt = {
@@ -271,11 +274,10 @@ export async function runBidfastParity(scenarioId: string): Promise<ParityReceip
       scores,
       threshold: referenceConfig.thresholds.visual,
       operational,
-      diagnosis: [],
+      diagnosis: diagnose(scores, operational),
       duration_ms: Date.now() - started,
       created_at: new Date().toISOString(),
     };
-    receipt.diagnosis = diagnose(receipt.scores, receipt.operational);
     await context.close();
     return receipt;
   } finally {
