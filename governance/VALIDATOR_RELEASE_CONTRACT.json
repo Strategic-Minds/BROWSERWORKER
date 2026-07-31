@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "system": "Xtreme AI Builder BrowserWorker",
+  "verified_at": "2026-07-31T05:26:00Z",
+  "canonical_repository": "Strategic-Minds/BROWSERWORKER",
+  "governed_branch": "auto-builder/global-system-integration-20260718",
+  "canonical_application": "Strategic-Minds/AUTOBUILDER-V2",
+  "control_plane": "XTREME-SYSTEMS/factory-control-plane",
+  "required_gates": {
+    "locked_dependencies": true,
+    "high_severity_audit_findings": 0,
+    "typescript": "pass",
+    "unit_and_integration_tests": "pass",
+    "production_build": "pass",
+    "runtime_secret_rotation_visible_without_restart": true,
+    "authenticated_multi_viewport_validation": "required",
+    "durable_supabase_lease": "required",
+    "private_content_addressed_artifacts": "required",
+    "approved_reference_parity": "required",
+    "operational_scenarios": "required",
+    "immutable_manifest": "required"
+  },
+  "promotion_policy": {
+    "production_mutation": false,
+    "protected_branch_merge_requires_operator_approval": true,
+    "database_migration_requires_operator_approval": true,
+    "secret_or_environment_change_requires_operator_approval": true,
+    "no_false_green_fallback": true
+  },
+  "branch_policy": {
+    "source_branch_may_be_used_for_validation": true,
+    "release_candidate_must_be_rebased_on_current_main": true,
+    "stale_branch_conflicts_must_not_be_force_merged": true
+  }
+}
