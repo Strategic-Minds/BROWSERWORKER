@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "type-check": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test __tests__/*.test.ts",
-    "test:integration": "node --experimental-strip-types --test __tests__/*.test.ts"
+    "test": "node --experimental-strip-types --test __tests__/*.test.ts tests/*.test.ts",
+    "test:integration": "node --experimental-strip-types --test __tests__/*.test.ts tests/*.test.ts"
   },
   "dependencies": {
     "next": "16.2.12",
