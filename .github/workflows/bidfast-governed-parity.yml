@@ -1,0 +1,114 @@
+name: BIDFAST Governed Parity Proof
+
+on:
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-governed-parity.yml'
+      - 'app/api/bidfast-*/**'
+      - 'config/bidfast-approved-references.json'
+      - 'lib/browser.ts'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  VISUAL_THRESHOLD: '0.99'
+
+jobs:
+  parity:
+    name: Exact approved route parity
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        route:
+          - /dashboard
+          - /analytics
+          - /approvals
+          - /opportunities
+          - /estimates/new
+          - /proposals
+          - /projects/demo-riverside
+          - /takeoffs/demo-riverside
+          - /settings/company
+          - /assistant
+    steps:
+      - name: Check out BrowserWorker proof branch
+        uses: actions/checkout@v4
+
+      - name: Wait for fixed-target parity endpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          encoded_route="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "${{ matrix.route }}")"
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-parity-v2?route=${encoded_route}"
+          for attempt in $(seq 1 20); do
+            status="$(curl -sS -o /tmp/readiness.json -w '%{http_code}' --max-time 210 "$endpoint" || true)"
+            if [[ "$status" =~ ^(200|409|422|500)$ ]]; then
+              echo "Endpoint responded with governed status $status on attempt $attempt."
+              exit 0
+            fi
+            echo "Attempt $attempt returned ${status:-no-status}; waiting for preview readiness."
+            sleep 15
+          done
+          echo 'Parity endpoint did not become reachable.' >&2
+          exit 1
+
+      - name: Execute measured parity proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          route_slug="$(printf '%s' '${{ matrix.route }}' | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
+          encoded_route="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "${{ matrix.route }}")"
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-parity-v2?route=${encoded_route}"
+          http_status="$(curl -sS --retry 2 --retry-all-errors --max-time 210 -o "evidence/${route_slug}.json" -w '%{http_code}' "$endpoint")"
+          printf '%s\n' "$http_status" > "evidence/${route_slug}.http-status.txt"
+          echo "HTTP status: $http_status"
+          cat "evidence/${route_slug}.json"
+
+      - name: Enforce technical, integrity, and visual gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          route_slug="$(printf '%s' '${{ matrix.route }}' | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
+          node - "evidence/${route_slug}.json" '${{ matrix.route }}' "$VISUAL_THRESHOLD" <<'NODE'
+          const fs = require('node:fs')
+          const [file, expectedRoute, thresholdText] = process.argv.slice(2)
+          const threshold = Number(thresholdText)
+          const body = JSON.parse(fs.readFileSync(file, 'utf8'))
+          const failures = []
+          if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
+          if (body.route !== expectedRoute) failures.push(`route=${String(body.route)}`)
+          if (body.integrity_pass !== true) failures.push(`integrity_pass=${String(body.integrity_pass)}`)
+          if (body.technical_pass !== true) failures.push(`technical_pass=${String(body.technical_pass)}`)
+          const score = body?.metrics?.composite_score
+          if (typeof score !== 'number' || !Number.isFinite(score)) failures.push('measured composite score missing')
+          else if (score < threshold) failures.push(`composite_score=${score} below ${threshold}`)
+          for (const [name, value] of [
+            ['console_errors', body.console_errors],
+            ['app_network_errors', body.app_network_errors],
+            ['http_errors', body.http_errors],
+          ]) {
+            if (!Array.isArray(value)) failures.push(`${name} missing`)
+            else if (value.length !== 0) failures.push(`${name}=${JSON.stringify(value)}`)
+          }
+          if (body.visual_pass !== true) failures.push(`visual_pass=${String(body.visual_pass)}`)
+          if (body.evidence_pass !== true) failures.push(`evidence_pass=${String(body.evidence_pass)}`)
+          console.log(JSON.stringify({ route: expectedRoute, score: score ?? null, threshold, failures }, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable parity evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-parity-${{ strategy.job-index }}
+          path: evidence/
+          if-no-files-found: warn
+          retention-days: 30
