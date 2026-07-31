@@ -121,3 +121,42 @@ jobs:
           path: evidence/
           if-no-files-found: warn
           retention-days: 30
+
+  dashboard-screenshot:
+    name: Dashboard implemented-component screenshot
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Wait for lightweight health endpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 20); do
+            status="$(curl -sS -o /tmp/health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            if [[ "$status" == "200" ]]; then
+              cat /tmp/health.json
+              exit 0
+            fi
+            sleep 15
+          done
+          exit 1
+
+      - name: Capture dashboard screenshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=%2Fdashboard&theme=light&viewport=mobile&format=image"
+          status="$(curl -sS --retry 2 --retry-all-errors --max-time 180 -D evidence/dashboard.headers.txt -o evidence/dashboard.live.png -w '%{http_code}' "$endpoint")"
+          printf '%s\n' "$status" > evidence/dashboard.status.txt
+          test "$status" = "200"
+          file evidence/dashboard.live.png
+
+      - name: Upload immutable dashboard screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-dashboard-screenshot
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30
