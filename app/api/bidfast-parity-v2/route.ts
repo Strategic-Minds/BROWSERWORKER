@@ -17,16 +17,16 @@ type Reference = {
 const APPROVED_PHONE_CROP = { x: 178, y: 150, width: 570, height: 1387 }
 
 const REFERENCES: Record<string, Reference> = {
-  '/dashboard': { fileId: '1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr', title: '01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
-  '/analytics': { fileId: '1MWcZn7eUYBHpy99t3Mtwwcg85xtOS5j0', title: '02_BIDFAST_MOBILE_ANALYTICS_KPIS.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
+  '/dashboard': { fileId: '1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr', title: '01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP, expectedSha256: 'f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb' },
+  '/analytics': { fileId: '1MWcZn7eUYBHpy99t3Mtwwcg85xtOS5j0', title: '02_BIDFAST_MOBILE_ANALYTICS_KPI.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP, expectedSha256: '5f8cba804e775ff9e774acdc8a9c92c2532dacd587fe3590c80fd8c24a42aef8' },
   '/approvals': { fileId: '17f9b8t1VnHRQ8sOl7y1of_4uws3KgoUr', title: '03_BIDFAST_MOBILE_APPROVAL_QUEUE.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP, expectedSha256: '555db1b73a207833fdce0f08572af263dc11a8105dab50af1c79f83f535fca1c' },
-  '/opportunities': { fileId: '1haXSs0QuoSMACLXzo-sVaSGPc1roz0jR', title: '04_BIDFAST_MOBILE_OPPORTUNITIES.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
-  '/estimates/new': { fileId: '1jhUC4Zzwi6JBRWD51jwZWutJhUJIDETH', title: '05_BIDFAST_MOBILE_ESTIMATE_BUILDER.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
-  '/proposals': { fileId: '1LkVtoUMfnOK690_4BJHcrdpHax_ta_pj', title: '06_BIDFAST_MOBILE_PROPOSAL_BUILDER.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
-  '/projects/demo-riverside': { fileId: '1vfHzBR7IJzaLV6kWrM67ApbqwUW044Cg', title: '07_BIDFAST_MOBILE_PROJECT_DETAIL.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
-  '/takeoffs/demo-riverside': { fileId: '1kmCENBUWbrUyt2XIRPBKaHytrKQo1plX', title: '08_BIDFAST_MOBILE_AI_TAKEOFF_WORKSPACE.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
-  '/settings/company': { fileId: '16PwtPY7HPvE7B0Mj68pF-m6xypZQ3XLI', title: '09_BIDFAST_MOBILE_COMPANY_SETTINGS.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
-  '/assistant': { fileId: '1h5b3hB2OnhozgzotwUi3h2hZkrlDIuRw', title: '10_BIDFAST_MOBILE_AI_ASSISTANT.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
+  '/opportunities': { fileId: '1haXSs0QuoSMACLXzo-sVaSGPc1roz0jR', title: '04_BIDFAST_MOBILE_OPPORTUNITIES_LIST.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP, expectedSha256: 'c3cd0b2ed394491128784384e19561457bfe800f4b0182a391b78b888db389ef' },
+  '/estimates/new': { fileId: '1jhUC4Zzwi6JBRWD51jwZWutJhUJIDETH', title: '05_BIDFAST_MOBILE_ESTIMATE_BUILDER.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP, expectedSha256: '3b50c10978f4e4ba111eba5cdd5dc15bf76c73a653920955cca894ee07e5854b' },
+  '/proposals': { fileId: '1LkVtoUMfnOK690_4BJHcrdpHax_ta_pj', title: '06_BIDFAST_MOBILE_PROPOSAL_BUILDER.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP, expectedSha256: '30cd512acf82876e2213094ceb84332ec048f006b2ab6f0e23adf5802ef16c9a' },
+  '/projects/demo-riverside': { fileId: '1vfHzBR7IJzaLV6kWrM67ApbqwUW044Cg', title: '07_BIDFAST_MOBILE_PROJECT_DETAIL.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP, expectedSha256: '422d62c3cff09b25aa8cbeba7b83ec75e06b5e694badcc2c9d9f176bb7a445d9' },
+  '/takeoffs/demo-riverside': { fileId: '1kmCENBUWbrUyt2XIRPBKaHytrKQo1plX', title: '08_BIDFAST_MOBILE_TAKEOFF_WORKSPACE.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP, expectedSha256: '669b2b1c7c6ce7b30fca878fb95fdddc4d1ec06c71b23d906144b278df3929bf' },
+  '/settings/company': { fileId: '16PwtPY7HPvE7B0Mj68pF-m6xypZQ3XLI', title: '09_BIDFAST_MOBILE_COMPANY_SETTINGS.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP, expectedSha256: '9c970f77a58082c5859b0d08e1042c7d025aa27e6be196e8bf024772f10f5e25' },
+  '/assistant': { fileId: '1h5b3hB2OnhozgzotwUi3h2hZkrlDIuRw', title: '10_BIDFAST_MOBILE_AI_ASSISTANT.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP, expectedSha256: '37ac9f0007621b57163b05200e4516657831a7640c0478fc36b1d4cd1e8ffd74' },
 }
 
 function sha256(value: Uint8Array) {
