@@ -107,6 +107,7 @@ export async function GET(request: Request) {
     const context = contexts[0] || await browser.newContext({ viewport })
     const page = await context.newPage()
     await page.setViewportSize(viewport)
+    await page.setExtraHTTPHeaders({ 'x-vercel-skip-toolbar': '1' })
 
     page.on('console', message => {
       if (message.type() === 'error') consoleErrors.push(message.text().slice(0, 1000))
