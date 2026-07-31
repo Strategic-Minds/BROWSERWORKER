@@ -33,6 +33,7 @@ jobs:
     timeout-minutes: 45
     strategy:
       fail-fast: false
+      max-parallel: 2
       matrix:
         route:
           - /dashboard
@@ -49,22 +50,22 @@ jobs:
       - name: Check out BrowserWorker proof branch
         uses: actions/checkout@v4
 
-      - name: Wait for fixed-target parity endpoint
+      - name: Wait for BrowserWorker health without launching Chromium
         shell: bash
         run: |
           set -euo pipefail
-          encoded_route="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "${{ matrix.route }}")"
-          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-parity-v2?route=${encoded_route}"
+          endpoint="${BROWSERWORKER_PREVIEW}/api/health"
           for attempt in $(seq 1 20); do
-            status="$(curl -sS -o /tmp/readiness.json -w '%{http_code}' --max-time 210 "$endpoint" || true)"
-            if [[ "$status" =~ ^(200|409|422|500)$ ]]; then
-              echo "Endpoint responded with governed status $status on attempt $attempt."
+            status="$(curl -sS -o /tmp/readiness.json -w '%{http_code}' --max-time 30 "$endpoint" || true)"
+            if [[ "$status" == "200" ]]; then
+              echo "Health endpoint responded on attempt $attempt."
+              cat /tmp/readiness.json
               exit 0
             fi
             echo "Attempt $attempt returned ${status:-no-status}; waiting for preview readiness."
             sleep 15
           done
-          echo 'Parity endpoint did not become reachable.' >&2
+          echo 'BrowserWorker health endpoint did not become reachable.' >&2
           exit 1
 
       - name: Execute measured parity proof
@@ -79,27 +80,6 @@ jobs:
           printf '%s\n' "$http_status" > "evidence/${route_slug}.http-status.txt"
           echo "HTTP status: $http_status"
           cat "evidence/${route_slug}.json"
-
-      - name: Collect bounded downstream proof diagnostic
-        if: always()
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p evidence
-          route_slug="$(printf '%s' '${{ matrix.route }}' | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
-          status_file="evidence/${route_slug}.http-status.txt"
-          if [[ ! -f "$status_file" ]] || [[ "$(cat "$status_file")" != "500" ]]; then
-            echo 'Parity endpoint did not return HTTP 500; no downstream proof diagnostic required.'
-            exit 0
-          fi
-          encoded_route="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "${{ matrix.route }}")"
-          proof_endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=${encoded_route}&theme=light&viewport=mobile&format=summary"
-          diagnostic_status="$(curl -sS --retry 1 --retry-all-errors --max-time 120 -o "evidence/${route_slug}.proof-diagnostic.json" -w '%{http_code}' "$proof_endpoint" || true)"
-          printf '%s\n' "$diagnostic_status" > "evidence/${route_slug}.proof-diagnostic.http-status.txt"
-          echo "Downstream proof diagnostic HTTP status: ${diagnostic_status:-no-status}"
-          if [[ -f "evidence/${route_slug}.proof-diagnostic.json" ]]; then
-            cat "evidence/${route_slug}.proof-diagnostic.json"
-          fi
 
       - name: Enforce technical, integrity, and visual gates
         shell: bash
