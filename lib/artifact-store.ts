@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { immutableEvidenceDigest } from './evidence';
+import { immutableEvidenceDigest } from './evidence.ts';
 
 type FetchLike = typeof fetch;
 type JsonRecord = Record<string, unknown>;
