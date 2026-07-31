@@ -1,0 +1,81 @@
+name: BIDFAST Proof Diagnostics
+
+on:
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-proof-diagnostics.yml'
+      - 'app/api/bidfast-proof-diagnostics/**'
+      - 'app/api/bidfast-proof/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+
+jobs:
+  diagnose:
+    name: Diagnose proof failure (${{ matrix.route }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        route:
+          - /takeoffs/demo-riverside
+          - /settings/company
+    steps:
+      - name: Wait for diagnostic endpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 24); do
+            status="$(curl -sS -o /tmp/health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            if [[ "$status" == "200" ]]; then
+              cat /tmp/health.json
+              exit 0
+            fi
+            sleep 15
+          done
+          exit 1
+
+      - name: Capture bounded proof diagnostics
+        id: capture
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          route_slug="$(printf '%s' '${{ matrix.route }}' | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
+          encoded_route="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' '${{ matrix.route }}')"
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof-diagnostics?route=${encoded_route}"
+          status="$(curl -sS --retry 2 --retry-all-errors --max-time 180 -o "evidence/${route_slug}.json" -w '%{http_code}' "$endpoint")"
+          printf '%s\n' "$status" > "evidence/${route_slug}.http-status.txt"
+          cat "evidence/${route_slug}.json"
+          echo "http_status=$status" >> "$GITHUB_OUTPUT"
+
+      - name: Upload immutable diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-proof-diagnostics-${{ strategy.job-index }}
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Fail closed when proof is not healthy
+        shell: bash
+        run: |
+          set -euo pipefail
+          route_slug="$(printf '%s' '${{ matrix.route }}' | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
+          test '${{ steps.capture.outputs.http_status }}' = '200'
+          node - "evidence/${route_slug}.json" <<'NODE'
+          const fs = require('node:fs')
+          const body = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'))
+          if (body.ok !== true || body.evidence_pass !== true) {
+            console.error(JSON.stringify(body, null, 2))
+            process.exit(1)
+          }
+          NODE
