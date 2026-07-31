@@ -1,0 +1,43 @@
+name: BrowserWorker Validator Release Candidate
+
+on:
+  pull_request:
+  push:
+    branches:
+      - auto-builder/global-system-integration-20260718
+
+permissions:
+  contents: read
+
+concurrency:
+  group: browserworker-validator-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Dependency audit
+        run: npm audit --audit-level=high
+
+      - name: TypeScript
+        run: npm run type-check
+
+      - name: Unit and integration tests
+        run: npm test -- --runInBand
+
+      - name: Production build
+        run: npm run build
