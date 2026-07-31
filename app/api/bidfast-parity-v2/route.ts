@@ -11,6 +11,7 @@ type Reference = {
   theme: 'light' | 'dark'
   viewport: 'mobile' | 'mobile_large' | 'tablet' | 'desktop'
   crop: { x: number; y: number; width: number; height: number }
+  expectedSha256?: string
 }
 
 const APPROVED_PHONE_CROP = { x: 178, y: 150, width: 570, height: 1387 }
@@ -18,7 +19,7 @@ const APPROVED_PHONE_CROP = { x: 178, y: 150, width: 570, height: 1387 }
 const REFERENCES: Record<string, Reference> = {
   '/dashboard': { fileId: '1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr', title: '01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
   '/analytics': { fileId: '1MWcZn7eUYBHpy99t3Mtwwcg85xtOS5j0', title: '02_BIDFAST_MOBILE_ANALYTICS_KPIS.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
-  '/approvals': { fileId: '17f9b8t1VnHRQ8sOl7y1of_4uws3KgoUr', title: '03_BIDFAST_MOBILE_APPROVAL_QUEUE.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
+  '/approvals': { fileId: '17f9b8t1VnHRQ8sOl7y1of_4uws3KgoUr', title: '03_BIDFAST_MOBILE_APPROVAL_QUEUE.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP, expectedSha256: '555db1b73a207833fdce0f08572af263dc11a8105dab50af1c79f83f535fca1c' },
   '/opportunities': { fileId: '1haXSs0QuoSMACLXzo-sVaSGPc1roz0jR', title: '04_BIDFAST_MOBILE_OPPORTUNITIES.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
   '/estimates/new': { fileId: '1jhUC4Zzwi6JBRWD51jwZWutJhUJIDETH', title: '05_BIDFAST_MOBILE_ESTIMATE_BUILDER.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
   '/proposals': { fileId: '1LkVtoUMfnOK690_4BJHcrdpHax_ta_pj', title: '06_BIDFAST_MOBILE_PROPOSAL_BUILDER.png', theme: 'light', viewport: 'mobile', crop: APPROVED_PHONE_CROP },
@@ -79,6 +80,25 @@ export async function GET(request: Request) {
 
     const liveBytes = new Uint8Array(Buffer.from(proof.screenshot.data, 'base64'))
     const referenceBytes = new Uint8Array(await referenceResponse.arrayBuffer())
+    const referenceSha256 = sha256(referenceBytes)
+    if (reference.expectedSha256 && referenceSha256 !== reference.expectedSha256) {
+      return Response.json({
+        ok: false,
+        evidence_pass: false,
+        integrity_pass: false,
+        route,
+        error: 'Approved Drive reference bytes do not match the pinned checkpoint hash.',
+        reference: {
+          drive_file_id: reference.fileId,
+          title: reference.title,
+          expected_sha256: reference.expectedSha256,
+          actual_sha256: referenceSha256,
+          bytes: referenceBytes.byteLength,
+        },
+        timestamp: new Date().toISOString(),
+      }, { status: 409, headers: { 'Cache-Control': 'no-store' } })
+    }
+
     const launched = await launchBrowser()
     browser = launched.browser
     const context = await browser.newContext({ viewport: { width: 390, height: 844 } })
@@ -203,6 +223,7 @@ export async function GET(request: Request) {
       evidence_pass: proof.evidence_pass && visualPass,
       technical_pass: proof.evidence_pass,
       visual_pass: visualPass,
+      integrity_pass: true,
       visual_threshold: .99,
       registered_routes: Object.keys(REFERENCES),
       route,
@@ -213,7 +234,8 @@ export async function GET(request: Request) {
         drive_file_id: reference.fileId,
         title: reference.title,
         crop: reference.crop,
-        sha256: sha256(referenceBytes),
+        expected_sha256: reference.expectedSha256 || null,
+        sha256: referenceSha256,
         bytes: referenceBytes.byteLength,
       },
       live: {
