@@ -23,7 +23,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: bidfast-browserbase-proof
+  group: bidfast-governed-parity-${{ github.ref }}
   cancel-in-progress: false
 
 env:
@@ -128,6 +128,7 @@ jobs:
 
   dashboard-screenshot:
     name: Dashboard implemented-component screenshot
+    if: always()
     needs: parity
     runs-on: ubuntu-latest
     timeout-minutes: 15
