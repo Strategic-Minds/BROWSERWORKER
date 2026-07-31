@@ -1,0 +1,72 @@
+name: BIDFAST Dashboard Screenshot Evidence
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/bidfast-dashboard-screenshot.yml'
+      - 'app/api/bidfast-proof/**'
+      - 'lib/browser.ts'
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-dashboard-screenshot.yml'
+      - 'app/api/bidfast-proof/**'
+      - 'lib/browser.ts'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+
+jobs:
+  capture:
+    name: Capture implemented dashboard components
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out BrowserWorker proof branch
+        uses: actions/checkout@v4
+
+      - name: Wait for lightweight health endpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 20); do
+            status="$(curl -sS -o /tmp/health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            if [[ "$status" == "200" ]]; then
+              cat /tmp/health.json
+              exit 0
+            fi
+            sleep 15
+          done
+          exit 1
+
+      - name: Capture dashboard screenshot and summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          image_endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=%2Fdashboard&theme=light&viewport=mobile&format=image"
+          summary_endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=%2Fdashboard&theme=light&viewport=mobile&format=summary"
+          image_status="$(curl -sS --retry 2 --retry-all-errors --max-time 180 -D evidence/dashboard.headers.txt -o evidence/dashboard.live.png -w '%{http_code}' "$image_endpoint")"
+          printf '%s\n' "$image_status" > evidence/dashboard.image-status.txt
+          test "$image_status" = "200"
+          summary_status="$(curl -sS --retry 2 --retry-all-errors --max-time 180 -o evidence/dashboard.summary.json -w '%{http_code}' "$summary_endpoint")"
+          printf '%s\n' "$summary_status" > evidence/dashboard.summary-status.txt
+          test "$summary_status" = "200"
+          file evidence/dashboard.live.png
+          cat evidence/dashboard.summary.json
+
+      - name: Upload immutable dashboard evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-dashboard-screenshot
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30
