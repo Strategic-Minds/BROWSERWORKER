@@ -80,6 +80,27 @@ jobs:
           echo "HTTP status: $http_status"
           cat "evidence/${route_slug}.json"
 
+      - name: Collect bounded downstream proof diagnostic
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          route_slug="$(printf '%s' '${{ matrix.route }}' | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
+          status_file="evidence/${route_slug}.http-status.txt"
+          if [[ ! -f "$status_file" ]] || [[ "$(cat "$status_file")" != "500" ]]; then
+            echo 'Parity endpoint did not return HTTP 500; no downstream proof diagnostic required.'
+            exit 0
+          fi
+          encoded_route="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "${{ matrix.route }}")"
+          proof_endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=${encoded_route}&theme=light&viewport=mobile&format=summary"
+          diagnostic_status="$(curl -sS --retry 1 --retry-all-errors --max-time 120 -o "evidence/${route_slug}.proof-diagnostic.json" -w '%{http_code}' "$proof_endpoint" || true)"
+          printf '%s\n' "$diagnostic_status" > "evidence/${route_slug}.proof-diagnostic.http-status.txt"
+          echo "Downstream proof diagnostic HTTP status: ${diagnostic_status:-no-status}"
+          if [[ -f "evidence/${route_slug}.proof-diagnostic.json" ]]; then
+            cat "evidence/${route_slug}.proof-diagnostic.json"
+          fi
+
       - name: Enforce technical, integrity, and visual gates
         shell: bash
         run: |
