@@ -37,6 +37,8 @@ type CaptureResult = {
   viewport: { name: ViewportName; width: number; height: number }
   title?: string
   final_url?: string
+  route_match?: boolean
+  auth_redirect_detected?: boolean
   main_document_status?: number
   document_theme?: string | null
   root_background?: string
@@ -57,6 +59,12 @@ function isInfrastructureUrl(url: string): boolean {
   return url.includes('/.well-known/vercel/jwe') ||
     url.includes('vercel.live/_next-live/') ||
     url.includes('/_next-live/')
+}
+
+function normalizePathname(value: string): string {
+  const pathname = new URL(value).pathname
+  if (pathname === '/') return pathname
+  return pathname.replace(/\/+$/, '')
 }
 
 function classifyFailedRequest(method: string, url: string, failure: string, target: string): 'ignored' | 'app' {
@@ -125,6 +133,11 @@ export async function GET(request: Request) {
     const mainResponse = await page.goto(target, { waitUntil: 'networkidle', timeout: 90000 })
     await page.waitForTimeout(1200)
 
+    const finalUrl = page.url()
+    const routeMatch = new URL(finalUrl).origin === ORIGIN && normalizePathname(finalUrl) === normalizePathname(target)
+    const finalPath = normalizePathname(finalUrl)
+    const authRedirectDetected = finalPath === '/login' || finalPath === '/signup'
+
     const metrics = await page.evaluate(() => {
       const styles = getComputedStyle(document.documentElement)
       return {
@@ -139,6 +152,18 @@ export async function GET(request: Request) {
     const screenshot = await page.screenshot({ type: 'png', fullPage: true })
 
     if (format === 'image') {
+      if (!routeMatch || authRedirectDetected) {
+        return Response.json({
+          ok: false,
+          evidence_pass: false,
+          error: authRedirectDetected ? 'AUTH_REDIRECT_DETECTED' : 'FINAL_ROUTE_MISMATCH',
+          target,
+          final_url: finalUrl,
+          route_match: routeMatch,
+          auth_redirect_detected: authRedirectDetected,
+        }, { status: 409, headers: { 'Cache-Control': 'no-store' } })
+      }
+
       await page.close()
       const body = new Uint8Array(screenshot)
       return new Response(body, {
@@ -153,7 +178,8 @@ export async function GET(request: Request) {
       })
     }
 
-    const evidencePass = consoleErrors.length === 0 && appNetworkErrors.length === 0 && httpErrors.length === 0 &&
+    const evidencePass = routeMatch && !authRedirectDetected &&
+      consoleErrors.length === 0 && appNetworkErrors.length === 0 && httpErrors.length === 0 &&
       mainResponse !== null && mainResponse.status() < 400 && metrics.documentTheme === theme
 
     const result: CaptureResult = {
@@ -164,7 +190,9 @@ export async function GET(request: Request) {
       theme,
       viewport: { name: viewportName, ...viewport },
       title: await page.title(),
-      final_url: page.url(),
+      final_url: finalUrl,
+      route_match: routeMatch,
+      auth_redirect_detected: authRedirectDetected,
       main_document_status: mainResponse?.status(),
       document_theme: metrics.documentTheme,
       root_background: metrics.rootBackground,
@@ -183,7 +211,7 @@ export async function GET(request: Request) {
     }
 
     await page.close()
-    return Response.json(result, { headers: { 'Cache-Control': 'no-store' } })
+    return Response.json(result, { status: evidencePass ? 200 : 422, headers: { 'Cache-Control': 'no-store' } })
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
     const result: CaptureResult = {
@@ -193,6 +221,8 @@ export async function GET(request: Request) {
       route,
       theme,
       viewport: { name: viewportName, ...viewport },
+      route_match: false,
+      auth_redirect_detected: false,
       console_errors: consoleErrors,
       app_network_errors: appNetworkErrors,
       http_errors: httpErrors,
