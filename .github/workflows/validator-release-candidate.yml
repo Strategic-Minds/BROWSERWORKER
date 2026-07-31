@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - auto-builder/global-system-integration-20260718
+      - consolidation/browserworker-validator-20260731
 
 permissions:
   contents: write
