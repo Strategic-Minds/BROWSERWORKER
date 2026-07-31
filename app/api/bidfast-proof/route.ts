@@ -1,19 +1,26 @@
 import { closeBrowser, launchBrowser } from '@/lib/browser'
+import approvedReferenceConfig from '@/config/bidfast-approved-references.json'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 export const maxDuration = 120
 
 const ORIGIN = 'https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app'
-const ROUTES = new Set([
+
+const PLATFORM_ROUTES = [
   '/', '/pricing', '/login', '/signup', '/dashboard', '/analytics', '/opportunities',
   '/projects', '/documents', '/takeoffs', '/estimates', '/proposals', '/approvals',
-  '/mission-control', '/assistant', '/admin', '/settings/company',
-])
+  '/mission-control', '/assistant', '/admin', '/settings/company', '/settings/branding',
+  '/settings/integrations', '/settings/billing',
+] as const
+
+const APPROVED_REFERENCE_ROUTES = approvedReferenceConfig.references.map(reference => reference.route)
+const ROUTES = new Set<string>([...PLATFORM_ROUTES, ...APPROVED_REFERENCE_ROUTES])
 
 const VIEWPORTS = {
   mobile: { width: 390, height: 844 },
   mobile_large: { width: 430, height: 932 },
+  large_mobile: { width: 430, height: 932 },
   tablet: { width: 834, height: 1194 },
   desktop: { width: 1440, height: 1200 },
 } as const
@@ -71,7 +78,11 @@ export async function GET(request: Request) {
   const viewport = VIEWPORTS[viewportName]
 
   if (!ROUTES.has(route)) {
-    return Response.json({ ok: false, error: 'Route is not allowlisted.' }, { status: 400 })
+    return Response.json({
+      ok: false,
+      error: 'Route is not allowlisted.',
+      allowlisted_routes: [...ROUTES].sort(),
+    }, { status: 400 })
   }
 
   const target = new URL(route, ORIGIN).toString()
