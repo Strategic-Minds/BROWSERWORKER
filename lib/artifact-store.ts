@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { immutableEvidenceDigest } from './evidence';
 
 type FetchLike = typeof fetch;
 type JsonRecord = Record<string, unknown>;
@@ -14,6 +15,7 @@ export type StoredArtifactRef = {
   sha256: string;
   content_type: string;
   bytes: number;
+  evidence_digest?: string;
 };
 
 const DEFAULT_BUCKET = 'xab-browser-evidence';
@@ -188,15 +190,16 @@ export async function persistValidationManifest(
   if (!url || !serviceRole) {
     return { ok: false, ref: null, failure: 'BROWSER_ARTIFACT_STORE_NOT_CONFIGURED' };
   }
-  const bytes = Buffer.from(JSON.stringify(input.manifest), 'utf8');
-  const digest = createHash('sha256').update(bytes).digest('hex');
-  if (digest !== input.digest) {
+  const evidenceDigest = immutableEvidenceDigest(input.manifest);
+  if (evidenceDigest !== input.digest) {
     return { ok: false, ref: null, failure: 'EVIDENCE_DIGEST_MISMATCH' };
   }
+  const bytes = Buffer.from(JSON.stringify(input.manifest), 'utf8');
+  const contentDigest = createHash('sha256').update(bytes).digest('hex');
   const path = [
     safeSegment(input.projectId),
     safeSegment(input.validationId),
-    `${digest}.json`,
+    `${evidenceDigest}.json`,
   ].join('/');
   try {
     await uploadObject(options.fetchImpl || fetch, url, serviceRole, bucket, path, bytes, 'application/json');
@@ -205,7 +208,8 @@ export async function persistValidationManifest(
       ref: {
         bucket,
         path,
-        sha256: digest,
+        sha256: contentDigest,
+        evidence_digest: evidenceDigest,
         content_type: 'application/json',
         bytes: bytes.length,
       } satisfies StoredArtifactRef,
