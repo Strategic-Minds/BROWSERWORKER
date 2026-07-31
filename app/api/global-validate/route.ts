@@ -4,6 +4,11 @@ import { verifyAuth, authResponse } from '@/lib/auth';
 import { validatePublicUrl } from '@/lib/ssrf';
 import { acquireBrowserValidationLease } from '@/lib/durable-lease';
 import {
+  persistValidationManifest,
+  persistWorkerScreenshots,
+  type StoredArtifactRef,
+} from '@/lib/artifact-store';
+import {
   buildPromotionDecision,
   immutableEvidenceDigest,
   summarizeWorkerEvidence,
@@ -136,6 +141,8 @@ export async function POST(request: Request) {
   const workerSecret = request.headers.get('x-browser-worker-secret') || '';
   const results: Record<string, unknown> = {};
   const summaries = [];
+  const artifactRefs: StoredArtifactRef[] = [];
+  const artifactFailures: string[] = [];
   const errors: string[] = [];
   let leaseReleased = false;
 
@@ -181,14 +188,28 @@ export async function POST(request: Request) {
           body: JSON.stringify(requestBody),
         });
         const response = await executeRunRequest(runRequest);
-        const payload = await readWorkerPayload(response);
-        const summary = summarizeWorkerEvidence(payload);
+        const rawPayload = await readWorkerPayload(response);
+        const summary = summarizeWorkerEvidence(rawPayload);
+        const stored = await persistWorkerScreenshots({
+          payload: rawPayload,
+          projectId: body.project_id,
+          validationId,
+          route,
+          viewport: viewportName,
+        });
         summaries.push(summary);
+        artifactRefs.push(...stored.refs);
+        artifactFailures.push(...stored.failures.map((failure) => `${route}:${viewportName}:${failure}`));
         results[`${route}:${viewportName}`] = {
           http_status: response.status,
           viewport,
-          payload,
-          summary,
+          payload: stored.sanitizedPayload,
+          summary: {
+            ...summary,
+            screenshot_hashes: stored.refs.map((ref) => ref.sha256),
+            screenshot_refs: stored.refs,
+            artifact_persistence_proven: stored.ok,
+          },
         };
       }
 
@@ -200,9 +221,14 @@ export async function POST(request: Request) {
     leaseReleased = await lease.release().catch(() => false);
   }
 
+  const expectedRunCount = body.routes.length * Object.keys(VIEWPORTS).length;
+  const expectedScreenshotCount = summaries.reduce((total, summary) => total + summary.screenshot_count, 0);
+  const screenshotPersistenceProven = expectedScreenshotCount > 0
+    && artifactFailures.length === 0
+    && artifactRefs.length === expectedScreenshotCount;
   const provenScenarioSet = new Set(body.proven_scenarios);
   const provenScenarioCount = body.required_scenarios.filter((scenario) => provenScenarioSet.has(scenario)).length;
-  const promotion = buildPromotionDecision({
+  const basePromotion = buildPromotionDecision({
     summaries,
     durableLease: lease.durable && leaseReleased,
     exactReferenceHashes: body.exact_reference_hashes,
@@ -210,19 +236,47 @@ export async function POST(request: Request) {
     provenScenarioCount,
   });
   const browserValidationPassed = errors.length === 0
-    && summaries.length === body.routes.length * Object.keys(VIEWPORTS).length
+    && summaries.length === expectedRunCount
     && summaries.every((summary) => summary.ok);
-  const evidenceDigest = immutableEvidenceDigest({
+
+  const manifest = {
     validation_id: validationId,
     correlation_id: correlationId,
     project_id: body.project_id,
     artifact_id: body.artifact_id || null,
+    surface: body.surface,
     url: body.url,
     routes: body.routes,
     summaries,
+    artifact_refs: artifactRefs,
     errors,
-    promotion,
-  });
+    artifact_failures: artifactFailures,
+    lease: {
+      durable: lease.durable,
+      mode: lease.mode,
+      code: lease.code,
+      released: leaseReleased,
+    },
+    promotion: basePromotion,
+    production_mutation: false,
+  };
+  const evidenceDigest = immutableEvidenceDigest(manifest);
+  const storedManifest = screenshotPersistenceProven
+    ? await persistValidationManifest({
+        projectId: body.project_id,
+        validationId,
+        digest: evidenceDigest,
+        manifest,
+      })
+    : { ok: false, ref: null, failure: 'SCREENSHOT_PERSISTENCE_INCOMPLETE' };
+  const durableArtifactPersistenceProven = screenshotPersistenceProven && storedManifest.ok;
+  const promotionBlockers = [
+    ...basePromotion.blockers,
+    ...(!durableArtifactPersistenceProven ? ['DURABLE_ARTIFACT_PERSISTENCE_NOT_PROVEN'] : []),
+  ];
+  const promotionEligible = browserValidationPassed
+    && basePromotion.promotion_eligible
+    && durableArtifactPersistenceProven;
 
   return Response.json({
     ok: browserValidationPassed,
@@ -245,13 +299,20 @@ export async function POST(request: Request) {
     evidence: {
       digest_algorithm: 'sha256',
       digest: evidenceDigest,
-      screenshot_count: summaries.reduce((total, summary) => total + summary.screenshot_count, 0),
-      persistence_owner: 'AUTOBUILDER-V2',
-      durable_artifact_persistence_proven: false,
+      screenshot_count: expectedScreenshotCount,
+      artifact_refs: artifactRefs,
+      manifest_ref: storedManifest.ref,
+      persistence_owner: 'BROWSERWORKER',
+      durable_artifact_persistence_proven: durableArtifactPersistenceProven,
+      artifact_failures: [
+        ...artifactFailures,
+        ...(storedManifest.failure ? [storedManifest.failure] : []),
+      ],
     },
     promotion: {
-      ...promotion,
-      promotion_eligible: promotion.promotion_eligible && browserValidationPassed,
+      ...basePromotion,
+      blockers: [...new Set(promotionBlockers)],
+      promotion_eligible: promotionEligible,
     },
     errors,
     production_mutation: false,
