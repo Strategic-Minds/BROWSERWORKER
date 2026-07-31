@@ -1,7 +1,12 @@
 import { timingSafeEqual } from 'node:crypto';
 
-function configuredSecret(): string {
-  return process.env.BROWSER_WORKER_SECRET?.trim() || '';
+function configuredSecrets(): string[] {
+  return [
+    process.env.BROWSER_WORKER_SECRET,
+    process.env.AUTO_BUILDER_OPERATOR_TOKEN,
+  ]
+    .map((value) => value?.trim() || '')
+    .filter((value, index, values) => Boolean(value) && values.indexOf(value) === index);
 }
 
 function safeEquals(candidate: string, expected: string): boolean {
@@ -15,19 +20,22 @@ function safeEquals(candidate: string, expected: string): boolean {
 }
 
 export function verifyAuth(request: Request): { ok: boolean; error?: string; code?: string } {
-  const secret = configuredSecret();
-  if (!secret) {
-    return { ok: false, error: 'Worker secret not configured', code: 'AUTHENTICATION_FAILED' };
+  const secrets = configuredSecrets();
+  if (secrets.length === 0) {
+    return { ok: false, error: 'Worker authorization is not configured', code: 'AUTHENTICATION_FAILED' };
   }
 
   const authHeader = request.headers.get('Authorization') || '';
   const secretHeader = request.headers.get('X-Browser-Worker-Secret') || '';
+  const controlPlaneHeader = request.headers.get('X-Auto-Builder-Token') || '';
 
   let candidate = '';
   if (authHeader.startsWith('Bearer ')) {
     candidate = authHeader.slice(7);
   } else if (secretHeader) {
     candidate = secretHeader;
+  } else if (controlPlaneHeader) {
+    candidate = controlPlaneHeader;
   }
 
   if (!candidate) {
@@ -35,7 +43,7 @@ export function verifyAuth(request: Request): { ok: boolean; error?: string; cod
   }
 
   try {
-    if (!safeEquals(candidate, secret)) {
+    if (!secrets.some((secret) => safeEquals(candidate, secret))) {
       return { ok: false, error: 'Invalid credentials', code: 'AUTHENTICATION_FAILED' };
     }
     return { ok: true };
@@ -47,6 +55,6 @@ export function verifyAuth(request: Request): { ok: boolean; error?: string; cod
 export function authResponse(): Response {
   return Response.json(
     { ok: false, error: 'Unauthorized', code: 'AUTHENTICATION_FAILED' },
-    { status: 401 }
+    { status: 401 },
   );
 }
