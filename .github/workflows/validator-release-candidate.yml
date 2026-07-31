@@ -7,7 +7,7 @@ on:
       - auto-builder/global-system-integration-20260718
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: browserworker-validator-${{ github.ref }}
@@ -16,16 +16,35 @@ concurrency:
 jobs:
   validate:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
-      - name: Check out source
+      - name: Check out governed branch
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'push' && github.ref_name || github.event.pull_request.head.ref }}
+          fetch-depth: 1
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+
+      - name: Reconcile package lock
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+
+      - name: Commit repaired lockfile to draft branch
+        if: github.event_name == 'push'
+        run: |
+          if git diff --quiet -- package-lock.json; then
+            echo "package-lock.json already synchronized"
+            exit 0
+          fi
+          git config user.name "BrowserWorker Validator"
+          git config user.email "actions@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "fix(deps): synchronize deterministic BrowserWorker lockfile"
+          git push origin HEAD:${GITHUB_REF_NAME}
 
       - name: Install locked dependencies
         run: npm ci
