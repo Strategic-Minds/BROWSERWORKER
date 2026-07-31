@@ -1,9 +1,22 @@
 import { timingSafeEqual } from 'node:crypto';
 
-const BROWSER_WORKER_SECRET = process.env.BROWSER_WORKER_SECRET;
+function configuredSecret(): string {
+  return process.env.BROWSER_WORKER_SECRET?.trim() || '';
+}
+
+function safeEquals(candidate: string, expected: string): boolean {
+  const size = Math.max(Buffer.byteLength(candidate), Buffer.byteLength(expected), 1);
+  const candidateBuffer = Buffer.alloc(size);
+  const expectedBuffer = Buffer.alloc(size);
+  Buffer.from(candidate).copy(candidateBuffer);
+  Buffer.from(expected).copy(expectedBuffer);
+  return timingSafeEqual(candidateBuffer, expectedBuffer)
+    && Buffer.byteLength(candidate) === Buffer.byteLength(expected);
+}
 
 export function verifyAuth(request: Request): { ok: boolean; error?: string; code?: string } {
-  if (!BROWSER_WORKER_SECRET) {
+  const secret = configuredSecret();
+  if (!secret) {
     return { ok: false, error: 'Worker secret not configured', code: 'AUTHENTICATION_FAILED' };
   }
 
@@ -22,14 +35,7 @@ export function verifyAuth(request: Request): { ok: boolean; error?: string; cod
   }
 
   try {
-    const a = Buffer.from(candidate.padEnd(BROWSER_WORKER_SECRET.length, '\0'));
-    const b = Buffer.from(BROWSER_WORKER_SECRET.padEnd(candidate.length, '\0'));
-    const paddedA = Buffer.alloc(Math.max(a.length, b.length), 0);
-    const paddedB = Buffer.alloc(Math.max(a.length, b.length), 0);
-    a.copy(paddedA);
-    b.copy(paddedB);
-    const equal = timingSafeEqual(paddedA, paddedB) && candidate.length === BROWSER_WORKER_SECRET.length;
-    if (!equal) {
+    if (!safeEquals(candidate, secret)) {
       return { ok: false, error: 'Invalid credentials', code: 'AUTHENTICATION_FAILED' };
     }
     return { ok: true };
