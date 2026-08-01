@@ -1,0 +1,143 @@
+{
+  "schema_version": "bidfast-browserworker-validation-receipt-v1",
+  "timestamp_utc": "2026-08-01T02:18:00Z",
+  "phase": "VALIDATION",
+  "step": "revision-pinned Riverside project component repair and full route non-regression matrix",
+  "bidfast": {
+    "repository": "XTREME-SYSTEMS/bidfast",
+    "branch": "auto-builder/bidfast-complete-visual-system",
+    "pull_request": 2,
+    "validated_head": "b8405a12a4adcb4d59be2cac62f56d884149ba2e",
+    "deployment_id": "dpl_9t5zPheTTBng2sDj9ubD2jMtbsiy",
+    "deployment_url": "bidfast-ktsujtkk1-strategic-minds-advisory.vercel.app",
+    "changes": [
+      {
+        "commit": "974ff5b4117d3447396b6d4c8a37ef1deb46a1e2",
+        "message": "feat(bidfast): add integrity-pinned Riverside project thumbnail asset"
+      },
+      {
+        "commit": "a09c48ce30449cf36b3d3ed9b2fade0b6d818553",
+        "message": "fix(bidfast): align Riverside project hero and header to approved reference"
+      },
+      {
+        "commit": "b8405a12a4adcb4d59be2cac62f56d884149ba2e",
+        "message": "fix(bidfast): activate project parity repair styles"
+      }
+    ]
+  },
+  "browserworker": {
+    "repository": "Strategic-Minds/BROWSERWORKER",
+    "branch": "auto-builder/bidfast-proof-20260728",
+    "pull_request": 9,
+    "project_proof_commits": [
+      "8fbd0cd4e8dc53b10c6d0eedf6911a1754f482bc",
+      "b5fbe136535b5c6859f4627a8232dbab515ad126"
+    ],
+    "matrix_pin_commit": "f871de1f323d324e54fb5fcf8c3f87c35dce3dc1",
+    "project_proof_run": 30679484730,
+    "project_proof_job": 91313499117,
+    "project_proof_artifact": {
+      "id": 8811696220,
+      "sha256": "21714676b6aa485cc037b69bb479152647492b2827ab2d80058ca45814cd3b24"
+    },
+    "full_matrix_run": 30679539395,
+    "full_matrix_artifacts": {
+      "0_dashboard": { "id": 8811712863, "sha256": "f45daad26ac4e07e29d4b6b3d47d5fd4ee28ee9380e837f303a5b5429af2125d" },
+      "1_analytics": { "id": 8811717958, "sha256": "6becfab7b65ffc16b5be197b8a2decf3755f0fae35204da29fcd04137092aabc" },
+      "2_approvals": { "id": 8811722956, "sha256": "1610af0a2f11d9730478029cff9bad8d77b3ca2d091933d2bf1b104db98a5d0d" },
+      "3_opportunities": { "id": 8811726442, "sha256": "4eb3a0cdb6ebda13154ef3ddb50491354d6d000c01f42f03e6d4e202c088ab59" },
+      "4_estimates_new": { "id": 8811730385, "sha256": "fbf87645c5c6667249b39946fa14f6b6b0580f8829f8f884a11eeb7e9d5230d3" },
+      "5_proposals": { "id": 8811734320, "sha256": "104e8c93a9e30e11710ccf2f505ffc2a602787e29079445f92de9bcd860fcaef" },
+      "6_projects_demo_riverside": { "id": 8811738263, "sha256": "d4d0b70b72a0b5448e566c946c6698946300d7a2aaccaf827b0e4c4c19788b33" },
+      "7_takeoffs_demo_riverside": { "id": 8811741707, "sha256": "fc706010b615b9671f7357961eee74bc1aac3324eb117f27b0e62240f3a9fc1a" },
+      "8_settings_company": { "id": 8811745723, "sha256": "9967f75ae6ec6a74012f0c668e5b0efddb8dc59fad44f66a7502aea0302ae7cd" },
+      "9_assistant": { "id": 8811750253, "sha256": "118597baf4bddbfc988449e8b79a8c8cc7ddf2b1f515098f422705857fee5f5d" }
+    }
+  },
+  "approved_reference": {
+    "route": "/projects/demo-riverside",
+    "drive_file_id": "1vfHzBR7IJzaLV6kWrM67ApbqwUW044Cg",
+    "sha256": "422d62c3cff09b25aa8cbeba7b83ec75e06b5e694badcc2c9d9f176bb7a445d9",
+    "allowed_use": "isolated project thumbnail only",
+    "full_screen_substitution": false
+  },
+  "project_repair_measurement": {
+    "viewport": "390x844",
+    "theme": "light",
+    "prior_composite": 0.724626,
+    "current_composite": 0.8188,
+    "absolute_improvement": 0.094174,
+    "relative_improvement_percent": 12.995,
+    "prior_metrics": {
+      "pixel_similarity": 0.871951,
+      "structure_similarity": 0.922395,
+      "edge_similarity": 0.032087,
+      "color_similarity": 0.891905
+    },
+    "current_metrics": {
+      "pixel_similarity": 0.922005,
+      "structure_similarity": 0.95721,
+      "edge_similarity": 0.307079,
+      "color_similarity": 0.971725
+    },
+    "page_height": 949,
+    "live_sha256": "b3148af83d407c1eb0e7a5beb6c559b7a4d81de3b978fa5f45b6c97c6ceccbe7",
+    "technical_pass": true,
+    "provenance_pass": true,
+    "reference_integrity_pass": true,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "non_regression_gate": "PASS",
+    "release_threshold_0_99": "FAIL"
+  },
+  "current_head_full_matrix": {
+    "viewport": "390x844",
+    "theme": "light",
+    "routes_measured": 10,
+    "routes_passing_0_99": 0,
+    "scores": {
+      "/dashboard": 0.810876,
+      "/analytics": 0.810237,
+      "/approvals": 0.80262,
+      "/opportunities": 0.742408,
+      "/estimates/new": 0.813012,
+      "/proposals": 0.795438,
+      "/projects/demo-riverside": 0.8188,
+      "/takeoffs/demo-riverside": 0.779775,
+      "/settings/company": 0.763501,
+      "/assistant": 0.778712
+    },
+    "exact_route_identity": "10/10",
+    "source_revision_provenance": "10/10",
+    "drive_reference_hash_integrity": "10/10",
+    "screenshot_hash_integrity": "10/10",
+    "zero_console_errors": "10/10",
+    "zero_application_network_errors": "10/10",
+    "zero_http_errors": "10/10"
+  },
+  "safety": {
+    "approved_full_screen_reference_used_as_page_background_overlay_or_hidden_layer": false,
+    "real_components_hidden_to_manufacture_parity": false,
+    "isolated_approved_asset_only": true,
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "production_mutated": false
+  },
+  "gates": {
+    "visual_parity_0_99_all_routes": false,
+    "operational_pass_rate_1_00": false,
+    "complete_light_dark_coverage": false,
+    "zero_dead_controls": false,
+    "zero_tenant_leaks": false,
+    "zero_authorization_bypasses": false,
+    "production_promotion": "LOCKED"
+  },
+  "remaining_blockers": [
+    "All ten current-head approved routes remain below 0.99 visual parity.",
+    "Complete approved light and dark reference pairs are unavailable.",
+    "Supabase security migrations and hostile tenant authorization tests remain unverified.",
+    "The Account to Audit operational workflow has not achieved a measured 1.00 pass rate.",
+    "BIDFAST PR 2 remains draft and non-mergeable."
+  ]
+}
