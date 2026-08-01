@@ -1,0 +1,124 @@
+{
+  "receipt_version": "1.0",
+  "created_at": "2026-08-01T09:26:07Z",
+  "phase": "VALIDATION",
+  "step": "approvals-repair-rejection-and-rollback",
+  "repositories": {
+    "bidfast": {
+      "repository": "XTREME-SYSTEMS/bidfast",
+      "branch": "auto-builder/bidfast-complete-visual-system",
+      "pull_request": 2,
+      "rollback_baseline_commit": "106579c02ab6da9af87d1747b9645e348509883e",
+      "candidate_commit": "6977420359478e02b4626a7f1c16243fdae26fb4",
+      "restored_commit": "9416fc1ac9ece38515b2459e409d622127cc147b",
+      "tree_compare": {
+        "base": "106579c02ab6da9af87d1747b9645e348509883e",
+        "head": "9416fc1ac9ece38515b2459e409d622127cc147b",
+        "changed_files": 0,
+        "status": "source-identical"
+      },
+      "candidate_commits": [
+        "a336b55eb6c54dbe412678deab32f38efddd55a1",
+        "fbf1701b3730bcf4a34e3dd8998930c72df8dcea",
+        "62893234fe015c0068cd63859d11b18e113e34b1",
+        "6977420359478e02b4626a7f1c16243fdae26fb4"
+      ],
+      "rollback_commits": [
+        "3cb771463975e1d5ad915cdb3cfb2d4a44c30eab",
+        "7a4735aaee467678c2ba2aecf3f392ddfc6d2079",
+        "9a3d4b45b10aa84e0203444f86ba4ecf08ef9670",
+        "9416fc1ac9ece38515b2459e409d622127cc147b"
+      ]
+    },
+    "browserworker": {
+      "repository": "Strategic-Minds/BROWSERWORKER",
+      "branch": "auto-builder/bidfast-proof-20260728",
+      "pull_request": 9,
+      "proof_commits": [
+        "f01d6948859cdda7f40fd48f40b95abe62220ee9",
+        "90c42d9557040f58d0af5d81907f3033244cd92a",
+        "cdba09862d04bf049ba00cf01f7d571fc1ca52c4",
+        "113cd0db6a3349429031661175a7dde8cf89ab30",
+        "8f82d58c42ce06077e63fa044231c69ed31bdd91"
+      ]
+    }
+  },
+  "reference": {
+    "route": "/approvals",
+    "theme": "light",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "drive_file_id": "17f9b8t1VnHRQ8sOl7y1of_4uws3KgoUr",
+    "title": "03_BIDFAST_MOBILE_APPROVAL_QUEUE.png",
+    "sha256": "555db1b73a207833fdce0f08572af263dc11a8105dab50af1c79f83f535fca1c"
+  },
+  "candidate": {
+    "deployment_id": "dpl_7CrQJvNM9LrxsE8gPdz3Tibbz5i3",
+    "deployment_url": "bidfast-9wp4ftjpp-strategic-minds-advisory.vercel.app",
+    "workflow_run": 30693377881,
+    "job": 91351983077,
+    "artifact": 8816442220,
+    "artifact_digest": "sha256:23ed1823942cb745b840118c2d8b80b6002e78faa8ce45db61debda9c27e7214",
+    "live_screenshot_sha256": "0909e21473079c80474177cb8023b1f98b29505f587887a0067f716a5fce6123",
+    "metrics": {
+      "pixel_similarity": 0.934035,
+      "structure_similarity": 0.967317,
+      "edge_similarity": 0.182557,
+      "color_similarity": 0.969867,
+      "composite_score": 0.799826,
+      "page_height": 949
+    },
+    "retained_baseline": 0.802620,
+    "delta": -0.002794,
+    "technical_pass": true,
+    "provenance_pass": true,
+    "integrity_pass": true,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "decision": "rejected-and-reverted"
+  },
+  "rollback": {
+    "deployment_id": "dpl_8jcXV4FWZ7HifSAaFrSiz9XndpwF",
+    "deployment_url": "bidfast-q7lmama2z-strategic-minds-advisory.vercel.app",
+    "workflow_run": 30693621285,
+    "job": 91352602394,
+    "artifact": 8816547338,
+    "artifact_digest": "sha256:b1edff08d4e5ec09536fe903cf954f2e5daf5102e1fecdae3df331e63e911c8e",
+    "live_screenshot_sha256": "c4478237e170fd3ef445cbd64fe65ae88b05085ccc925e4c81822e6a87ad647c",
+    "metrics": {
+      "pixel_similarity": 0.932877,
+      "structure_similarity": 0.949511,
+      "edge_similarity": 0.239183,
+      "color_similarity": 0.950612,
+      "composite_score": 0.802620,
+      "page_height": 1410
+    },
+    "technical_pass": true,
+    "provenance_pass": true,
+    "integrity_pass": true,
+    "screenshot_hash_match": true,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "rollback_restored": true
+  },
+  "governance": {
+    "full_screen_reference_substitution": false,
+    "hidden_real_ui": false,
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "database_mutated": false,
+    "production_promoted": false,
+    "production_locked": true
+  },
+  "remaining_blockers": [
+    "Approvals remains below the 0.99 visual threshold at 0.802620.",
+    "All approved current-head routes remain below 0.99.",
+    "The connected Supabase project still has zero public.bidfast_* entities, blocking Account-to-Audit operational and security validation.",
+    "Complete approved dark-mode reference coverage is unavailable.",
+    "BIDFAST pull request 2 remains draft and non-mergeable."
+  ]
+}
