@@ -23,11 +23,11 @@ concurrency:
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
   BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: 891776965615993c80fc935f018a73a6c00b901a
+  BIDFAST_EXPECTED_COMMIT: 42b8601a6dee4e7455b867f55cebe7c872f0ef7b
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   ROUTE: /takeoffs/demo-riverside
   REQUIRED_THRESHOLD: '0.99'
-  RETAINED_BASELINE: '0.779775'
+  RETAINED_BASELINE: '0.782488'
 
 jobs:
   takeoff-repair-proof:
@@ -125,7 +125,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-takeoff-repair-proof-89177696
+          name: bidfast-takeoff-repair-proof-42b8601a
           path: evidence/
           if-no-files-found: error
           retention-days: 30
