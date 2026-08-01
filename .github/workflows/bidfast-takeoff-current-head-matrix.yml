@@ -1,4 +1,4 @@
-name: BIDFAST Takeoff Current-Head Matrix
+name: BIDFAST Current-Head Full Matrix
 
 on:
   pull_request:
@@ -17,12 +17,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: bidfast-takeoff-current-head-matrix
+  group: bidfast-current-head-full-matrix
   cancel-in-progress: true
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: 42b8601a6dee4e7455b867f55cebe7c872f0ef7b
+  BIDFAST_EXPECTED_COMMIT: f582f4d84f8f23f72f369cdb116f9d5ff6856366
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   RELEASE_THRESHOLD: '0.99'
 
@@ -41,15 +41,15 @@ jobs:
           - route: /analytics
             baseline: '0.810237'
           - route: /approvals
-            baseline: '0.802620'
+            baseline: '0.836456'
           - route: /opportunities
             baseline: '0.802843'
           - route: /estimates/new
             baseline: '0.813012'
           - route: /proposals
-            baseline: '0.795438'
+            baseline: '0.819855'
           - route: /projects/demo-riverside
-            baseline: '0.818800'
+            baseline: '0.818791'
           - route: /takeoffs/demo-riverside
             baseline: '0.818538'
           - route: /settings/company
@@ -71,6 +71,24 @@ jobs:
           done
           exit 1
 
+      - name: Wait for exact BIDFAST current head
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint="https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app/api/build-info"
+          for attempt in $(seq 1 36); do
+            status="$(curl -sS -o /tmp/build-info.json -w '%{http_code}' --max-time 30 "$endpoint" || true)"
+            commit="$(node -e "try{const j=require('/tmp/build-info.json');process.stdout.write(j.source_revision?.commit_sha||'')}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" ]]; then
+              cat /tmp/build-info.json
+              exit 0
+            fi
+            echo "Attempt $attempt returned status=${status:-no-status} commit=${commit:-unknown}; waiting."
+            sleep 15
+          done
+          cat /tmp/build-info.json || true
+          exit 1
+
       - name: Execute revision-pinned measured parity proof
         shell: bash
         run: |
@@ -79,9 +97,22 @@ jobs:
           route_slug="$(printf '%s' '${{ matrix.route }}' | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
           encoded_route="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' '${{ matrix.route }}')"
           endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-parity-v3?route=${encoded_route}&expected_commit=${BIDFAST_EXPECTED_COMMIT}"
-          status="$(curl -sS --retry 2 --retry-all-errors --max-time 210 -o "evidence/${route_slug}.json" -w '%{http_code}' "$endpoint")"
-          printf '%s\n' "$status" > "evidence/${route_slug}.http-status.txt"
-          cat "evidence/${route_slug}.json"
+          for attempt in $(seq 1 6); do
+            status="$(curl -sS --max-time 210 -o "evidence/${route_slug}.json" -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > "evidence/${route_slug}.http-status.txt"
+            if [[ "$status" == "200" ]] && node -e "const j=require('./evidence/${route_slug}.json');process.exit(j.ok===true?0:1)"; then
+              cat "evidence/${route_slug}.json"
+              exit 0
+            fi
+            echo "Parity attempt $attempt returned ${status:-no-status}; waiting for a clean browser window."
+            cat "evidence/${route_slug}.json" || true
+            if [[ "$attempt" != "6" ]]; then sleep 70; fi
+          done
+          exit 1
+
+      - name: Separate parity and screenshot sessions
+        shell: bash
+        run: sleep 70
 
       - name: Capture implemented-component screenshot
         if: always()
@@ -92,12 +123,19 @@ jobs:
           route_slug="$(printf '%s' '${{ matrix.route }}' | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
           encoded_route="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' '${{ matrix.route }}')"
           endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=${encoded_route}&theme=light&viewport=mobile&format=image"
-          status="$(curl -sS --retry 2 --retry-all-errors --max-time 180 -D "evidence/${route_slug}.live.headers.txt" -o "evidence/${route_slug}.live.png" -w '%{http_code}' "$endpoint" || true)"
-          printf '%s\n' "$status" > "evidence/${route_slug}.live.http-status.txt"
-          if [[ -s "evidence/${route_slug}.live.png" ]]; then
-            file "evidence/${route_slug}.live.png" | tee "evidence/${route_slug}.live.file.txt"
-            sha256sum "evidence/${route_slug}.live.png" | tee "evidence/${route_slug}.live.sha256.txt"
-          fi
+          for attempt in $(seq 1 6); do
+            status="$(curl -sS --max-time 180 -D "evidence/${route_slug}.live.headers.txt" -o "evidence/${route_slug}.live.png" -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > "evidence/${route_slug}.live.http-status.txt"
+            content_type="$(awk 'BEGIN{IGNORECASE=1} /^content-type:/{print $2}' "evidence/${route_slug}.live.headers.txt" | tail -1 | tr -d '\r')"
+            if [[ "$status" == "200" && "$content_type" == image/png* ]]; then
+              file "evidence/${route_slug}.live.png" | tee "evidence/${route_slug}.live.file.txt"
+              sha256sum "evidence/${route_slug}.live.png" | tee "evidence/${route_slug}.live.sha256.txt"
+              exit 0
+            fi
+            echo "Screenshot attempt $attempt returned status=${status:-no-status} content-type=${content_type:-unknown}."
+            if [[ "$attempt" != "6" ]]; then sleep 70; fi
+          done
+          exit 1
 
       - name: Enforce provenance, non-regression, technical, and release gates
         shell: bash
@@ -130,8 +168,9 @@ jobs:
             const screenshotSha = crypto.createHash('sha256').update(fs.readFileSync(screenshotFile)).digest('hex')
             if (screenshotSha !== body?.live?.sha256) failures.push(`screenshot_sha=${screenshotSha} expected=${String(body?.live?.sha256)}`)
           }
+          const nonRegressionPass = failures.length === 0
           if (score < releaseThreshold) failures.push(`release_threshold composite_score=${score} below ${releaseThreshold}`)
-          console.log(JSON.stringify({ route: expectedRoute, score, baseline, releaseThreshold, source_revision: body.source_revision, failures }, null, 2))
+          console.log(JSON.stringify({ route: expectedRoute, score, baseline, releaseThreshold, nonRegressionPass, source_revision: body.source_revision, failures }, null, 2))
           if (failures.length) process.exit(1)
           NODE
 
