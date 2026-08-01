@@ -22,11 +22,11 @@ concurrency:
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: b8405a12a4adcb4d59be2cac62f56d884149ba2e
+  BIDFAST_EXPECTED_COMMIT: ec6e61f9554e60cb098e19a6c1bba320e59a2866
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   ROUTE: /projects/demo-riverside
   REQUIRED_THRESHOLD: '0.99'
-  RETAINED_BASELINE: '0.724626'
+  RETAINED_BASELINE: '0.818800'
 
 jobs:
   project-repair-proof:
@@ -107,7 +107,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-project-repair-proof-b8405a12
+          name: bidfast-project-repair-proof-ec6e61f9
           path: evidence/
           if-no-files-found: error
           retention-days: 30
