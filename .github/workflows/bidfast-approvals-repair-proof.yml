@@ -57,7 +57,7 @@ jobs:
           endpoint="https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app/api/build-info"
           for attempt in $(seq 1 36); do
             status="$(curl -sS -o /tmp/build-info.json -w '%{http_code}' --max-time 30 "$endpoint" || true)"
-            commit="$(node -e "try{const j=require('/tmp/build-info.json');process.stdout.write(j.commit_sha||'')}catch{}")"
+            commit="$(node -e "try{const j=require('/tmp/build-info.json');process.stdout.write(j.source_revision?.commit_sha||'')}catch{}")"
             if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" ]]; then
               cat /tmp/build-info.json
               exit 0
