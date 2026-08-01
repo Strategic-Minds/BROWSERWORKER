@@ -1,0 +1,111 @@
+{
+  "receipt_version": "1.0",
+  "created_at": "2026-08-01T10:17:30Z",
+  "phase": "VALIDATION",
+  "step": "approvals-component-geometry-repair",
+  "repositories": {
+    "bidfast": {
+      "repository": "XTREME-SYSTEMS/bidfast",
+      "branch": "auto-builder/bidfast-complete-visual-system",
+      "pull_request": 2,
+      "pre_repair_commit": "9416fc1ac9ece38515b2459e409d622127cc147b",
+      "first_repair_commit": "3fbfc6b61b15fd2b3b46c97b59d61d5b117338c6",
+      "retained_commit": "f582f4d84f8f23f72f369cdb116f9d5ff6856366",
+      "component_level_implementation": true
+    },
+    "browserworker": {
+      "repository": "Strategic-Minds/BROWSERWORKER",
+      "branch": "auto-builder/bidfast-proof-20260728",
+      "pull_request": 9,
+      "first_proof_commit": "35fd5d2f1777809b827c0477ccf0f1c76730210e",
+      "refined_proof_commit": "28270bb2deef42a804975fffb0c58d36b256852c"
+    }
+  },
+  "reference": {
+    "route": "/approvals",
+    "theme": "light",
+    "viewport": { "width": 390, "height": 844 },
+    "drive_file_id": "17f9b8t1VnHRQ8sOl7y1of_4uws3KgoUr",
+    "title": "03_BIDFAST_MOBILE_APPROVAL_QUEUE.png",
+    "sha256": "555db1b73a207833fdce0f08572af263dc11a8105dab50af1c79f83f535fca1c",
+    "crop": { "x": 178, "y": 150, "width": 570, "height": 1387 }
+  },
+  "baseline": {
+    "commit": "9416fc1ac9ece38515b2459e409d622127cc147b",
+    "composite_score": 0.802620,
+    "page_height": 1410
+  },
+  "first_cycle": {
+    "commit": "3fbfc6b61b15fd2b3b46c97b59d61d5b117338c6",
+    "deployment_id": "dpl_8xJkPNQm7eVXuygZpJTiDEUkjL4v",
+    "deployment_url": "bidfast-g76gx6s07-strategic-minds-advisory.vercel.app",
+    "workflow_run": 30695065954,
+    "job": 91356418132,
+    "artifact": 8817005222,
+    "artifact_digest": "sha256:fd0083a0aae687e9a716354d40e01840643bf87a0efd1744bea26e53fe325c80",
+    "live_screenshot_sha256": "4ccff08a2c91da369e2b57afda07a77fb272d9213db83fb21a80471e08715926",
+    "metrics": {
+      "pixel_similarity": 0.938411,
+      "structure_similarity": 0.974752,
+      "edge_similarity": 0.259206,
+      "color_similarity": 0.983575,
+      "composite_score": 0.822064,
+      "page_height": 949
+    },
+    "delta_from_baseline": 0.019444,
+    "decision": "retained"
+  },
+  "refined_cycle": {
+    "commit": "f582f4d84f8f23f72f369cdb116f9d5ff6856366",
+    "deployment_id": "dpl_24d1xc9RXg3LTnE8ux4DpgbPHwv4",
+    "deployment_url": "bidfast-ijaq497oo-strategic-minds-advisory.vercel.app",
+    "workflow_run": 30695256748,
+    "job": 91356917894,
+    "artifact": 8817075325,
+    "artifact_digest": "sha256:ed2e2e3708ef4c345e2f8126e6c3ee0dd1931338d2e740d75db50a52d1c1df5e",
+    "live_screenshot_sha256": "0e14f51e6adab3d3f5d602fc64ba02ccfeff0d479aab8f328ec26dba47310a2b",
+    "metrics": {
+      "pixel_similarity": 0.946854,
+      "structure_similarity": 0.977711,
+      "edge_similarity": 0.313801,
+      "color_similarity": 0.982935,
+      "composite_score": 0.836456,
+      "page_height": 949
+    },
+    "delta_from_original_baseline": 0.033836,
+    "delta_from_first_cycle": 0.014392,
+    "relative_improvement_from_original_baseline_percent": 4.2155,
+    "technical_pass": true,
+    "provenance_pass": true,
+    "integrity_pass": true,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "decision": "retained-below-release-threshold"
+  },
+  "implementation_boundaries": {
+    "approved_full_screen_reference_used_as_background": false,
+    "approved_full_screen_reference_used_as_overlay": false,
+    "approved_full_screen_reference_used_as_hidden_replacement": false,
+    "real_ui_hidden": false,
+    "isolated_approved_assets_only": true,
+    "responsive_real_components": true,
+    "preview_fixtures_restricted_to_preview_hosts": true,
+    "authenticated_reads_tenant_scoped": true
+  },
+  "governance": {
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "database_mutated": false,
+    "production_promoted": false,
+    "production_locked": true
+  },
+  "remaining_blockers": [
+    "Approvals remains below the 0.99 release threshold at 0.836456.",
+    "The exact retained commit requires a complete ten-route non-regression matrix.",
+    "The connected Supabase project has zero public.bidfast_* entities, so Account-to-Audit operational and security validation remains blocked.",
+    "The repository schema uses auth.users as the account identity and has no separate public.bidfast_accounts table.",
+    "Complete approved dark-mode reference pairs are unavailable.",
+    "BIDFAST pull request 2 remains draft and non-mergeable."
+  ]
+}
