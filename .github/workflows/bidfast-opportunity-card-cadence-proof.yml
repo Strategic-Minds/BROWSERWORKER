@@ -1,6 +1,11 @@
 name: BIDFAST Opportunity Card Cadence Proof
 
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/bidfast-opportunity-card-cadence-proof.yml'
   push:
     branches:
       - auto-builder/bidfast-proof-20260728
