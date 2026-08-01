@@ -22,7 +22,7 @@ concurrency:
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: dd22db0d58e5db41651e904c846d585439bfd6a1
+  BIDFAST_EXPECTED_COMMIT: 33814e987b32b971734e952134bb1a85d55e6951
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   RELEASE_THRESHOLD: '0.99'
 
@@ -39,7 +39,7 @@ jobs:
           - route: /dashboard
             baseline: '0.810876'
           - route: /analytics
-            baseline: '0.810237'
+            baseline: '0.813720'
           - route: /approvals
             baseline: '0.836456'
           - route: /opportunities
