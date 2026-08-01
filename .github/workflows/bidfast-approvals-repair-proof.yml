@@ -50,6 +50,16 @@ jobs:
           done
           exit 1
 
+      - name: Preserve raw approvals technical proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=%2Fapprovals&theme=light&viewport=mobile"
+          status="$(curl -sS --retry 2 --retry-all-errors --max-time 180 -o evidence/approvals.proof.json -w '%{http_code}' "$endpoint")"
+          printf '%s\n' "$status" > evidence/approvals.proof.http-status.txt
+          cat evidence/approvals.proof.json
+
       - name: Execute exact approvals parity proof
         shell: bash
         run: |
