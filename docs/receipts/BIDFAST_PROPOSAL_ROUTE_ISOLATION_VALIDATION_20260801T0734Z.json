@@ -1,7 +1,7 @@
 {
   "receipt_type": "BIDFAST_PROPOSAL_ROUTE_ISOLATION_VALIDATION",
-  "recorded_at": "2026-08-01T07:34:00Z",
-  "status": "PARTIAL_VALIDATION_RELEASE_LOCKED",
+  "recorded_at": "2026-08-01T07:40:00Z",
+  "status": "VISUAL_MATRIX_COMPLETE_RELEASE_LOCKED",
   "source_inspection": {
     "bidfast_start_head": "ce7a5e979698ec628f2f797d2f59852c705f3dd7",
     "browserworker_start_head": "0ea6d36e670ae2b2d2f40fc6da8f72f1708330d5",
@@ -40,7 +40,7 @@
     "absolute_change": 0.024417,
     "relative_change_percent": 3.069,
     "pixel_similarity": 0.943717,
-    "structure_similarity": 0.980840,
+    "structure_similarity": 0.98084,
     "edge_similarity": 0.238278,
     "color_similarity": 0.971933,
     "page_height": 954,
@@ -51,10 +51,10 @@
     "provenance_pass": true,
     "integrity_pass": true,
     "release_threshold_pass": false,
-    "workflow_run": 30689839519,
-    "job": 91342512782,
-    "artifact": 8815270159,
-    "artifact_sha256": "2c47f0c4bc3053c2597d4ee60804a0a896f06d05dab5bf2e7d4e5a3682107960",
+    "single_route_workflow_run": 30689839519,
+    "single_route_job": 91342512782,
+    "single_route_artifact": 8815270159,
+    "single_route_artifact_sha256": "2c47f0c4bc3053c2597d4ee60804a0a896f06d05dab5bf2e7d4e5a3682107960",
     "live_sha256": "250f43556dae44a0f48e07bca66ee466ab12efacea1b4efd82c3a1e48f9533a6"
   },
   "project_route_isolation": {
@@ -69,9 +69,148 @@
     "console_errors": 0,
     "application_network_errors": 0,
     "http_errors": 0,
-    "artifact": 8815246708,
-    "artifact_sha256": "cf96402960b76b847c102c849f9fc16dbdc255404bddc83570682177ed6702c8",
-    "note": "The score was captured on visual-equivalent head 8e58313; final head 106579c only adds governance checks. Exact final-head full-matrix provenance remains pending."
+    "artifact": 8815317092,
+    "artifact_sha256": "f9e53ca73066b180ac5c542673064b3a0dcb5505a4482e0268bd2db560dbd154",
+    "prior_encoded_live_sha256": "b3148af83d407c1eb0e7a5beb6c559b7a4d81de3b978fa5f45b6c97c6ceccbe7",
+    "current_encoded_live_sha256": "7d836e5456e9a6e328819bc0c1ceafb8793e5c131ff114a4bbd53d114d0c1281",
+    "decoded_pixel_difference_count": 0,
+    "decoded_pixel_regression": false,
+    "note": "The encoded PNG hashes differ, but decoded 390x949 RGBA pixels are identical. The 0.000009 composite variation is comparator-level nondeterminism rather than a rendered component regression."
+  },
+  "current_head_matrix": {
+    "workflow_run": 30689911092,
+    "browserworker_head": "aae30cce1c8a5a1cadcbd21f480fae810e4b9f48",
+    "bidfast_head": "106579c02ab6da9af87d1747b9645e348509883e",
+    "deployment_id": "dpl_8U1N8jDaUWSJRY2F3qsmrYXHxaVL",
+    "viewport": "390x844",
+    "theme": "light",
+    "routes_measured": 10,
+    "routes_with_provenance_pass": 10,
+    "routes_with_integrity_pass": 10,
+    "routes_with_technical_pass": 10,
+    "routes_with_zero_console_errors": 10,
+    "routes_with_zero_application_network_errors": 10,
+    "routes_with_zero_http_errors": 10,
+    "routes_at_or_above_0_99": 0,
+    "analytics_initial_attempt": {
+      "result": "TRANSIENT_BROWSER_PROOF_HTTP_500",
+      "resolved_by_same_revision_rerun": true,
+      "rerun_job": 91343211711,
+      "rerun_artifact": 8815360685,
+      "rerun_artifact_sha256": "938b8633a07a2ffc28ab07c3a26f78d2dbd7850a4e1522cc09b78c85b84fdcb1"
+    },
+    "routes": [
+      {
+        "route": "/dashboard",
+        "composite": 0.810876,
+        "pixel": 0.93598,
+        "structure": 0.970456,
+        "edge": 0.226313,
+        "color": 0.967731,
+        "job": 91342708227,
+        "artifact": 8815295121,
+        "artifact_sha256": "2d5e0c63f2881444ac4091639cc0c9504eb9d4b292e0ab63ee711065a02d52c4"
+      },
+      {
+        "route": "/analytics",
+        "composite": 0.810237,
+        "pixel": 0.946985,
+        "structure": 0.977759,
+        "edge": 0.186555,
+        "color": 0.97743,
+        "job": 91343211711,
+        "artifact": 8815360685,
+        "artifact_sha256": "938b8633a07a2ffc28ab07c3a26f78d2dbd7850a4e1522cc09b78c85b84fdcb1"
+      },
+      {
+        "route": "/approvals",
+        "composite": 0.80262,
+        "pixel": 0.932877,
+        "structure": 0.949511,
+        "edge": 0.239183,
+        "color": 0.950612,
+        "job": 91342708225,
+        "artifact": 8815301044,
+        "artifact_sha256": "3d7450d9accd36c52aafde18c7de1644ed51fd2ef081735ef9a955b2c8c7d252"
+      },
+      {
+        "route": "/opportunities",
+        "composite": 0.802843,
+        "pixel": 0.930006,
+        "structure": 0.969187,
+        "edge": 0.192847,
+        "color": 0.973711,
+        "job": 91342708214,
+        "artifact": 8815304919,
+        "artifact_sha256": "ee7314dc128c9d77286ac2a70414739cfe37eda51480aa505935792d5fa39714"
+      },
+      {
+        "route": "/estimates/new",
+        "composite": 0.813012,
+        "pixel": 0.933564,
+        "structure": 0.950868,
+        "edge": 0.303646,
+        "color": 0.929397,
+        "job": 91342708226,
+        "artifact": 8815309568,
+        "artifact_sha256": "d8055146f0b280bcd792bbee210abe3790f616b8a638ca3dfb4636336ce4204a"
+      },
+      {
+        "route": "/proposals",
+        "composite": 0.819855,
+        "pixel": 0.943717,
+        "structure": 0.98084,
+        "edge": 0.238278,
+        "color": 0.971933,
+        "job": 91342708237,
+        "artifact": 8815313347,
+        "artifact_sha256": "fcad1571fe1044eaffdbdda9811b71bd04042cacb052da50e21451604851a28f"
+      },
+      {
+        "route": "/projects/demo-riverside",
+        "composite": 0.818791,
+        "pixel": 0.922003,
+        "structure": 0.957211,
+        "edge": 0.307048,
+        "color": 0.971714,
+        "job": 91342708234,
+        "artifact": 8815317092,
+        "artifact_sha256": "f9e53ca73066b180ac5c542673064b3a0dcb5505a4482e0268bd2db560dbd154"
+      },
+      {
+        "route": "/takeoffs/demo-riverside",
+        "composite": 0.818538,
+        "pixel": 0.943534,
+        "structure": 0.980197,
+        "edge": 0.231955,
+        "color": 0.973452,
+        "job": 91342708258,
+        "artifact": 8815320940,
+        "artifact_sha256": "7c1085b7488ecb7ed6d03c678008deea79c37ffdab05d315177df214129e3b31"
+      },
+      {
+        "route": "/settings/company",
+        "composite": 0.825706,
+        "pixel": 0.94924,
+        "structure": 0.978038,
+        "edge": 0.261309,
+        "color": 0.97573,
+        "job": 91342708236,
+        "artifact": 8815324838,
+        "artifact_sha256": "d74a9e2b3a1a8a76a683ca469bb49c9a5379de7a0c76f0a466715907a57e8d33"
+      },
+      {
+        "route": "/assistant",
+        "composite": 0.823121,
+        "pixel": 0.942599,
+        "structure": 0.978979,
+        "edge": 0.263616,
+        "color": 0.966503,
+        "job": 91342708250,
+        "artifact": 8815328415,
+        "artifact_sha256": "9319ad21ea2bfd3f3175f3a04f7be9e21f2b20207d7cea61bee7b0806703fabf"
+      }
+    ]
   },
   "browserworker": {
     "repository": "Strategic-Minds/BROWSERWORKER",
@@ -86,9 +225,8 @@
       "7eeadb0d48b4cbb8c06c6b4ca5289801004b8108",
       "aae30cce1c8a5a1cadcbd21f480fae810e4b9f48"
     ],
-    "final_matrix_run": 30689911092,
-    "final_matrix_status_at_receipt": "QUEUED",
-    "duplicate_push_trigger_removed": true
+    "duplicate_push_trigger_removed": true,
+    "production_merged": false
   },
   "supabase": {
     "connected_project_id": "mhaovpyegtysfgualplu",
@@ -101,8 +239,8 @@
     "blocker": "The connected project has no public.bidfast_* workflow schema, so operational and security validation cannot execute."
   },
   "gates": {
+    "full_current_head_light_mobile_matrix_complete": true,
     "routes_at_or_above_0_99": 0,
-    "full_current_head_matrix_complete": false,
     "operational_pass_rate": null,
     "complete_dark_coverage": false,
     "zero_dead_controls_proven": false,
