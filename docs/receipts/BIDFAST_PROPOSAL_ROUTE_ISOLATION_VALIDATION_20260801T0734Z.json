@@ -1,0 +1,113 @@
+{
+  "receipt_type": "BIDFAST_PROPOSAL_ROUTE_ISOLATION_VALIDATION",
+  "recorded_at": "2026-08-01T07:34:00Z",
+  "status": "PARTIAL_VALIDATION_RELEASE_LOCKED",
+  "source_inspection": {
+    "bidfast_start_head": "ce7a5e979698ec628f2f797d2f59852c705f3dd7",
+    "browserworker_start_head": "0ea6d36e670ae2b2d2f40fc6da8f72f1708330d5",
+    "latest_receipt_inspected": "docs/receipts/BIDFAST_PROPOSAL_ROLLBACK_VALIDATION_20260801T0645Z.json",
+    "current_diff_inspected_before_mutation": true
+  },
+  "bidfast": {
+    "repository": "XTREME-SYSTEMS/bidfast",
+    "branch": "auto-builder/bidfast-complete-visual-system",
+    "pr": 2,
+    "head": "106579c02ab6da9af87d1747b9645e348509883e",
+    "rollback_head": "ce7a5e979698ec628f2f797d2f59852c705f3dd7",
+    "commits": [
+      "4ff5f9d0b982e5f7e338d6378f03e46922ca0cab",
+      "eacfdacfbe6a938ccd4b40d38ac1da76a41e9634",
+      "ff1f2860fc41cc9a6f27eefbf6bbee44baf73038",
+      "20251ccb21bb1543179c50dad8705205771d85b8",
+      "d1271b617479cf518920bbaf121da269dfc3271d",
+      "d05dda2b2a3f9be256ce4fbd87bd79b09b9bd469",
+      "b8fee0098ef8332241e26408cd7afc9c7483cc02",
+      "fda825ce76c7e5a4779a420973f54fd6ba1e1f1e",
+      "8e58313bae3cd9494b13022cd69f7ecd2ac8aff0",
+      "106579c02ab6da9af87d1747b9645e348509883e"
+    ],
+    "deployment_id": "dpl_8U1N8jDaUWSJRY2F3qsmrYXHxaVL",
+    "deployment_hostname": "bidfast-pv1nldnru-strategic-minds-advisory.vercel.app",
+    "deployment_state": "READY",
+    "production_promoted": false
+  },
+  "proposal": {
+    "route": "/proposals",
+    "reference_drive_file_id": "1LkVtoUMfnOK690_4BJHcrdpHax_ta_pj",
+    "reference_sha256": "30cd512acf82876e2213094ceb84332ec048f006b2ab6f0e23adf5802ef16c9a",
+    "baseline_composite": 0.795438,
+    "current_composite": 0.819855,
+    "absolute_change": 0.024417,
+    "relative_change_percent": 3.069,
+    "pixel_similarity": 0.943717,
+    "structure_similarity": 0.980840,
+    "edge_similarity": 0.238278,
+    "color_similarity": 0.971933,
+    "page_height": 954,
+    "technical_pass": true,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "provenance_pass": true,
+    "integrity_pass": true,
+    "release_threshold_pass": false,
+    "workflow_run": 30689839519,
+    "job": 91342512782,
+    "artifact": 8815270159,
+    "artifact_sha256": "2c47f0c4bc3053c2597d4ee60804a0a896f06d05dab5bf2e7d4e5a3682107960",
+    "live_sha256": "250f43556dae44a0f48e07bca66ee466ab12efacea1b4efd82c3a1e48f9533a6"
+  },
+  "project_route_isolation": {
+    "regressed_score_before_isolation": 0.818639,
+    "validated_prior_score": 0.8188,
+    "post_isolation_score": 0.818791,
+    "score_delta_from_prior": -0.000009,
+    "pixel_similarity": 0.922003,
+    "structure_similarity": 0.957211,
+    "edge_similarity": 0.307048,
+    "color_similarity": 0.971714,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "artifact": 8815246708,
+    "artifact_sha256": "cf96402960b76b847c102c849f9fc16dbdc255404bddc83570682177ed6702c8",
+    "note": "The score was captured on visual-equivalent head 8e58313; final head 106579c only adds governance checks. Exact final-head full-matrix provenance remains pending."
+  },
+  "browserworker": {
+    "repository": "Strategic-Minds/BROWSERWORKER",
+    "branch": "auto-builder/bidfast-proof-20260728",
+    "pr": 9,
+    "head": "aae30cce1c8a5a1cadcbd21f480fae810e4b9f48",
+    "commits": [
+      "fad380f6838b8b9589f6b1ebfe4e9fce159e47f8",
+      "6fb4b234e1d340c5e5107179f16966b66e891a4d",
+      "5f5523f227c724a7714c0d97aab6ba583d6833e5",
+      "ada6c6b9079f51ad53f9f175ac574bc3db77974e",
+      "7eeadb0d48b4cbb8c06c6b4ca5289801004b8108",
+      "aae30cce1c8a5a1cadcbd21f480fae810e4b9f48"
+    ],
+    "final_matrix_run": 30689911092,
+    "final_matrix_status_at_receipt": "QUEUED",
+    "duplicate_push_trigger_removed": true
+  },
+  "supabase": {
+    "connected_project_id": "mhaovpyegtysfgualplu",
+    "connected_project_name": "Xtreme AI Systems",
+    "public_table_count": 54,
+    "autobid_table_count": 44,
+    "bidfast_table_count": 0,
+    "expected_bidfast_entities_present": false,
+    "mutation_performed": false,
+    "blocker": "The connected project has no public.bidfast_* workflow schema, so operational and security validation cannot execute."
+  },
+  "gates": {
+    "routes_at_or_above_0_99": 0,
+    "full_current_head_matrix_complete": false,
+    "operational_pass_rate": null,
+    "complete_dark_coverage": false,
+    "zero_dead_controls_proven": false,
+    "zero_tenant_leaks_proven": false,
+    "zero_authorization_bypasses_proven": false,
+    "production_promotion_authorized": false
+  }
+}
