@@ -1,0 +1,125 @@
+name: BIDFAST Opportunity Card Cadence Proof
+
+on:
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-opportunity-card-cadence-proof.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-opportunity-card-cadence-proof
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: 0c4a20af7995ae1a2b4eaa2975e5de20fae15c84
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  ROUTE: /opportunities
+  REQUIRED_THRESHOLD: '0.99'
+  RETAINED_BASELINE: '0.802843'
+
+jobs:
+  opportunity-card-cadence-proof:
+    name: Revision-pinned opportunity card cadence proof
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Wait for BrowserWorker health
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 20); do
+            status="$(curl -sS -o /tmp/health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            if [[ "$status" == "200" ]]; then
+              cat /tmp/health.json
+              exit 0
+            fi
+            sleep 15
+          done
+          exit 1
+
+      - name: Wait for exact BIDFAST preview revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 40); do
+            status="$(curl -sS -o /tmp/build-info.json -w '%{http_code}' --max-time 30 "${BIDFAST_ORIGIN}/api/build-info" || true)"
+            commit="$(node -e "try{const b=require('/tmp/build-info.json');process.stdout.write(String(b?.source_revision?.commit_sha||''))}catch{}")"
+            ref="$(node -e "try{const b=require('/tmp/build-info.json');process.stdout.write(String(b?.source_revision?.commit_ref||''))}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" && "$ref" == "$BIDFAST_EXPECTED_REF" ]]; then
+              cat /tmp/build-info.json
+              exit 0
+            fi
+            sleep 15
+          done
+          cat /tmp/build-info.json || true
+          exit 1
+
+      - name: Execute revision-pinned opportunity parity proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-parity-v3?route=%2Fopportunities&expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          status="$(curl -sS --retry 2 --retry-all-errors --max-time 210 -o evidence/opportunities.json -w '%{http_code}' "$endpoint")"
+          printf '%s\n' "$status" > evidence/opportunities.http-status.txt
+          cat evidence/opportunities.json
+
+      - name: Capture implemented-component screenshot
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=%2Fopportunities&theme=light&viewport=mobile&format=image"
+          status="$(curl -sS --retry 2 --retry-all-errors --max-time 180 -D evidence/opportunities.live.headers.txt -o evidence/opportunities.live.png -w '%{http_code}' "$endpoint" || true)"
+          printf '%s\n' "$status" > evidence/opportunities.live.http-status.txt
+          if [[ -s evidence/opportunities.live.png ]]; then
+            file evidence/opportunities.live.png | tee evidence/opportunities.live.file.txt
+            sha256sum evidence/opportunities.live.png | tee evidence/opportunities.live.sha256.txt
+          fi
+
+      - name: Enforce provenance, non-regression, technical, and release gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const crypto = require('node:crypto')
+          const fs = require('node:fs')
+          const body = JSON.parse(fs.readFileSync('evidence/opportunities.json', 'utf8'))
+          const screenshot = fs.readFileSync('evidence/opportunities.live.png')
+          const screenshotSha = crypto.createHash('sha256').update(screenshot).digest('hex')
+          const score = body?.metrics?.composite_score
+          const failures = []
+          if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
+          if (body.route !== process.env.ROUTE) failures.push(`route=${String(body.route)}`)
+          if (body.provenance_pass !== true) failures.push(`provenance_pass=${String(body.provenance_pass)}`)
+          if (body?.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`commit_sha=${String(body?.source_revision?.commit_sha)}`)
+          if (body?.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`commit_ref=${String(body?.source_revision?.commit_ref)}`)
+          if (body.integrity_pass !== true) failures.push(`integrity_pass=${String(body.integrity_pass)}`)
+          if (body.technical_pass !== true) failures.push(`technical_pass=${String(body.technical_pass)}`)
+          if (!Number.isFinite(score)) failures.push('composite score missing')
+          else if (score < Number(process.env.RETAINED_BASELINE)) failures.push(`REGRESSION composite_score=${score} below retained baseline ${process.env.RETAINED_BASELINE}`)
+          for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
+            if (!Array.isArray(body[name]) || body[name].length !== 0) failures.push(`${name}=${JSON.stringify(body[name])}`)
+          }
+          if (screenshotSha !== body?.live?.sha256) failures.push(`screenshot_sha=${screenshotSha} expected=${String(body?.live?.sha256)}`)
+          if (score < Number(process.env.REQUIRED_THRESHOLD)) failures.push(`release_threshold composite_score=${score} below ${process.env.REQUIRED_THRESHOLD}`)
+          console.log(JSON.stringify({ route: body.route, score, retained_baseline: Number(process.env.RETAINED_BASELINE), release_threshold: Number(process.env.REQUIRED_THRESHOLD), source_revision: body.source_revision, failures }, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable repair evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-opportunity-card-cadence-proof-0c4a20af
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30
