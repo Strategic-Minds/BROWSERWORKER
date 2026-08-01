@@ -7,6 +7,7 @@ on:
     paths:
       - '.github/workflows/bidfast-governed-parity.yml'
       - 'app/api/bidfast-*/**'
+      - 'app/api/validation/bidfast-parity-v3/**'
       - 'config/bidfast-approved-references.json'
       - 'lib/browser.ts'
   push:
@@ -15,6 +16,7 @@ on:
     paths:
       - '.github/workflows/bidfast-governed-parity.yml'
       - 'app/api/bidfast-*/**'
+      - 'app/api/validation/bidfast-parity-v3/**'
       - 'config/bidfast-approved-references.json'
       - 'lib/browser.ts'
   workflow_dispatch:
@@ -28,6 +30,8 @@ concurrency:
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: d61dc79e605d1a23582f3c4d2494c80f5dd40fab
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   VISUAL_THRESHOLD: '0.99'
 
 jobs:
@@ -72,14 +76,14 @@ jobs:
           echo 'BrowserWorker health endpoint did not become reachable.' >&2
           exit 1
 
-      - name: Execute measured parity proof
+      - name: Execute revision-pinned measured parity proof
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p evidence
           route_slug="$(printf '%s' '${{ matrix.route }}' | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
           encoded_route="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "${{ matrix.route }}")"
-          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-parity-v2?route=${encoded_route}"
+          endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-parity-v3?route=${encoded_route}&expected_commit=${BIDFAST_EXPECTED_COMMIT}"
           http_status="$(curl -sS --retry 2 --retry-all-errors --max-time 210 -o "evidence/${route_slug}.json" -w '%{http_code}' "$endpoint")"
           printf '%s\n' "$http_status" > "evidence/${route_slug}.http-status.txt"
           echo "HTTP status: $http_status"
@@ -103,19 +107,23 @@ jobs:
             printf '%s\n' 'Screenshot response was empty.' > "evidence/${route_slug}.live.file.txt"
           fi
 
-      - name: Enforce technical, integrity, and visual gates
+      - name: Enforce provenance, technical, integrity, screenshot, and visual gates
         shell: bash
         run: |
           set -euo pipefail
           route_slug="$(printf '%s' '${{ matrix.route }}' | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
-          node - "evidence/${route_slug}.json" '${{ matrix.route }}' "$VISUAL_THRESHOLD" <<'NODE'
+          node - "evidence/${route_slug}.json" "evidence/${route_slug}.live.png" '${{ matrix.route }}' "$VISUAL_THRESHOLD" "$BIDFAST_EXPECTED_COMMIT" "$BIDFAST_EXPECTED_REF" <<'NODE'
+          const crypto = require('node:crypto')
           const fs = require('node:fs')
-          const [file, expectedRoute, thresholdText] = process.argv.slice(2)
+          const [file, screenshotFile, expectedRoute, thresholdText, expectedCommit, expectedRef] = process.argv.slice(2)
           const threshold = Number(thresholdText)
           const body = JSON.parse(fs.readFileSync(file, 'utf8'))
           const failures = []
           if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
           if (body.route !== expectedRoute) failures.push(`route=${String(body.route)}`)
+          if (body.provenance_pass !== true) failures.push(`provenance_pass=${String(body.provenance_pass)}`)
+          if (body?.source_revision?.commit_sha !== expectedCommit) failures.push(`commit_sha=${String(body?.source_revision?.commit_sha)}`)
+          if (body?.source_revision?.commit_ref !== expectedRef) failures.push(`commit_ref=${String(body?.source_revision?.commit_ref)}`)
           if (body.integrity_pass !== true) failures.push(`integrity_pass=${String(body.integrity_pass)}`)
           if (body.technical_pass !== true) failures.push(`technical_pass=${String(body.technical_pass)}`)
           const score = body?.metrics?.composite_score
@@ -129,9 +137,14 @@ jobs:
             if (!Array.isArray(value)) failures.push(`${name} missing`)
             else if (value.length !== 0) failures.push(`${name}=${JSON.stringify(value)}`)
           }
+          if (!fs.existsSync(screenshotFile)) failures.push('implemented-component screenshot missing')
+          else {
+            const screenshotSha = crypto.createHash('sha256').update(fs.readFileSync(screenshotFile)).digest('hex')
+            if (screenshotSha !== body?.live?.sha256) failures.push(`screenshot_sha=${screenshotSha} expected=${String(body?.live?.sha256)}`)
+          }
           if (body.visual_pass !== true) failures.push(`visual_pass=${String(body.visual_pass)}`)
           if (body.evidence_pass !== true) failures.push(`evidence_pass=${String(body.evidence_pass)}`)
-          console.log(JSON.stringify({ route: expectedRoute, score: score ?? null, threshold, failures }, null, 2))
+          console.log(JSON.stringify({ route: expectedRoute, score: score ?? null, threshold, source_revision: body.source_revision ?? null, failures }, null, 2))
           if (failures.length) process.exit(1)
           NODE
 
