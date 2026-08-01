@@ -23,11 +23,11 @@ concurrency:
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
   BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: 9559f07c2a67aad1bb6e009e82704b629971e4de
+  BIDFAST_EXPECTED_COMMIT: ec6e61f9554e60cb098e19a6c1bba320e59a2866
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   ROUTE: /opportunities
   REQUIRED_THRESHOLD: '0.99'
-  RETAINED_BASELINE: '0.799685'
+  RETAINED_BASELINE: '0.802843'
 
 jobs:
   opportunity-repair-proof:
@@ -125,7 +125,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-opportunity-repair-proof-9559f07c
+          name: bidfast-opportunity-repair-proof-ec6e61f9
           path: evidence/
           if-no-files-found: error
           retention-days: 30
