@@ -10,15 +10,6 @@ on:
       - 'app/api/validation/bidfast-parity-v3/**'
       - 'config/bidfast-approved-references.json'
       - 'lib/browser.ts'
-  push:
-    branches:
-      - auto-builder/bidfast-proof-20260728
-    paths:
-      - '.github/workflows/bidfast-governed-parity.yml'
-      - 'app/api/bidfast-*/**'
-      - 'app/api/validation/bidfast-parity-v3/**'
-      - 'config/bidfast-approved-references.json'
-      - 'lib/browser.ts'
   workflow_dispatch:
 
 permissions:
