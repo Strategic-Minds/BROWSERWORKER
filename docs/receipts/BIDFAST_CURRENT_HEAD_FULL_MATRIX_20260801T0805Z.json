@@ -1,0 +1,211 @@
+{
+  "receipt_type": "BIDFAST_CURRENT_HEAD_FULL_MATRIX",
+  "captured_at_utc": "2026-08-01T08:05:13Z",
+  "status": "TECHNICAL_PASS_VISUAL_RELEASE_BLOCKED",
+  "inspection_before_mutation": {
+    "bidfast_pr": 2,
+    "bidfast_head": "106579c02ab6da9af87d1747b9645e348509883e",
+    "bidfast_changed_files": 114,
+    "browserworker_pr": 9,
+    "browserworker_prior_head": "aae30cce1c8a5a1cadcbd21f480fae810e4b9f48",
+    "browserworker_changed_files": 33,
+    "latest_receipt_inspected": "docs/receipts/BIDFAST_PROPOSAL_REPAIR_VALIDATION_20260801T0731Z.json",
+    "current_branch_diff_inspected": true
+  },
+  "bidfast": {
+    "repository": "XTREME-SYSTEMS/bidfast",
+    "branch": "auto-builder/bidfast-complete-visual-system",
+    "pull_request": 2,
+    "commit": "106579c02ab6da9af87d1747b9645e348509883e",
+    "deployment_id": "dpl_8U1N8jDaUWSJRY2F3qsmrYXHxaVL",
+    "deployment_url": "bidfast-pv1nldnru-strategic-minds-advisory.vercel.app"
+  },
+  "browserworker": {
+    "repository": "Strategic-Minds/BROWSERWORKER",
+    "branch": "auto-builder/bidfast-proof-20260728",
+    "pull_request": 9,
+    "workflow_run": 30689911092,
+    "workflow_source_commit": "aae30cce1c8a5a1cadcbd21f480fae810e4b9f48",
+    "viewport": {
+      "name": "mobile",
+      "width": 390,
+      "height": 844
+    },
+    "theme": "light",
+    "threshold": 0.99
+  },
+  "matrix": [
+    {
+      "route": "/dashboard",
+      "composite_score": 0.810876,
+      "pixel_similarity": 0.93598,
+      "structure_similarity": 0.970456,
+      "edge_similarity": 0.226313,
+      "color_similarity": 0.967731,
+      "page_height": 948,
+      "artifact_id": 8815295121,
+      "artifact_sha256": "2d5e0c63f2881444ac4091639cc0c9504eb9d4b292e0ab63ee711065a02d52c4",
+      "live_sha256": "d32cf8745580ecb4d53189ff5b0f808feab9e56d61c1f4051cd83b6c69b160e5",
+      "reference_sha256": "f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb"
+    },
+    {
+      "route": "/analytics",
+      "composite_score": 0.810237,
+      "pixel_similarity": 0.946985,
+      "structure_similarity": 0.977759,
+      "edge_similarity": 0.186555,
+      "color_similarity": 0.97743,
+      "page_height": 961,
+      "artifact_id": 8815360685,
+      "artifact_sha256": "938b8633a07a2ffc28ab07c3a26f78d2dbd7850a4e1522cc09b78c85b84fdcb1",
+      "live_sha256": "6c68a9e9b6d3cfc04a01ebe670f1f83b73fc904c50f068ebdaedb9fe0e9d825d",
+      "reference_sha256": "5f8cba804e775ff9e774acdc8a9c92c2532dacd587fe3590c80fd8c24a42aef8"
+    },
+    {
+      "route": "/approvals",
+      "composite_score": 0.80262,
+      "pixel_similarity": 0.932877,
+      "structure_similarity": 0.949511,
+      "edge_similarity": 0.239183,
+      "color_similarity": 0.950612,
+      "page_height": 1410,
+      "artifact_id": 8815301044,
+      "artifact_sha256": "3d7450d9accd36c52aafde18c7de1644ed51fd2ef081735ef9a955b2c8c7d252",
+      "live_sha256": "c4478237e170fd3ef445cbd64fe65ae88b05085ccc925e4c81822e6a87ad647c",
+      "reference_sha256": "555db1b73a207833fdce0f08572af263dc11a8105dab50af1c79f83f535fca1c"
+    },
+    {
+      "route": "/opportunities",
+      "composite_score": 0.802843,
+      "pixel_similarity": 0.930006,
+      "structure_similarity": 0.969187,
+      "edge_similarity": 0.192847,
+      "color_similarity": 0.973711,
+      "page_height": 949,
+      "artifact_id": 8815304919,
+      "artifact_sha256": "ee7314dc128c9d77286ac2a70414739cfe37eda51480aa505935792d5fa39714",
+      "live_sha256": "6010772f2314ba23f9b6f1af32da26ad42712106777733645d059b6cf782fa08",
+      "reference_sha256": "c3cd0b2ed394491128784384e19561457bfe800f4b0182a391b78b888db389ef"
+    },
+    {
+      "route": "/estimates/new",
+      "composite_score": 0.813012,
+      "pixel_similarity": 0.933564,
+      "structure_similarity": 0.950868,
+      "edge_similarity": 0.303646,
+      "color_similarity": 0.929397,
+      "page_height": 1360,
+      "artifact_id": 8815309568,
+      "artifact_sha256": "d8055146f0b280bcd792bbee210abe3790f616b8a638ca3dfb4636336ce4204a",
+      "live_sha256": "e9fa9a8bc06eac289888a1368cf3bd31e41a1824690e7a6f58878aa1087135df",
+      "reference_sha256": "3b50c10978f4e4ba111eba5cdd5dc15bf76c73a653920955cca894ee07e5854b"
+    },
+    {
+      "route": "/proposals",
+      "composite_score": 0.819855,
+      "pixel_similarity": 0.943717,
+      "structure_similarity": 0.98084,
+      "edge_similarity": 0.238278,
+      "color_similarity": 0.971933,
+      "page_height": 954,
+      "artifact_id": 8815313347,
+      "artifact_sha256": "fcad1571fe1044eaffdbdda9811b71bd04042cacb052da50e21451604851a28f",
+      "live_sha256": "250f43556dae44a0f48e07bca66ee466ab12efacea1b4efd82c3a1e48f9533a6",
+      "reference_sha256": "30cd512acf82876e2213094ceb84332ec048f006b2ab6f0e23adf5802ef16c9a"
+    },
+    {
+      "route": "/projects/demo-riverside",
+      "composite_score": 0.818791,
+      "pixel_similarity": 0.922003,
+      "structure_similarity": 0.957211,
+      "edge_similarity": 0.307048,
+      "color_similarity": 0.971714,
+      "page_height": 949,
+      "artifact_id": 8815317092,
+      "artifact_sha256": "f9e53ca73066b180ac5c542673064b3a0dcb5505a4482e0268bd2db560dbd154",
+      "live_sha256": "7d836e5456e9a6e328819bc0c1ceafb8793e5c131ff114a4bbd53d114d0c1281",
+      "reference_sha256": "422d62c3cff09b25aa8cbeba7b83ec75e06b5e694badcc2c9d9f176bb7a445d9"
+    },
+    {
+      "route": "/takeoffs/demo-riverside",
+      "composite_score": 0.818538,
+      "pixel_similarity": 0.943534,
+      "structure_similarity": 0.980197,
+      "edge_similarity": 0.231955,
+      "color_similarity": 0.973452,
+      "page_height": 949,
+      "artifact_id": 8815320940,
+      "artifact_sha256": "7c1085b7488ecb7ed6d03c678008deea79c37ffdab05d315177df214129e3b31",
+      "live_sha256": "d5ee5be5fd3ae6f41169f71b32723314d5bea923d5aec4a9ee8debfebe0bfacc",
+      "reference_sha256": "669b2b1c7c6ce7b30fca878fb95fdddc4d1ec06c71b23d906144b278df3929bf"
+    },
+    {
+      "route": "/settings/company",
+      "composite_score": 0.825706,
+      "pixel_similarity": 0.94924,
+      "structure_similarity": 0.978038,
+      "edge_similarity": 0.261309,
+      "color_similarity": 0.97573,
+      "page_height": 949,
+      "artifact_id": 8815324838,
+      "artifact_sha256": "d74a9e2b3a1a8a76a683ca469bb49c9a5379de7a0c76f0a466715907a57e8d33",
+      "live_sha256": "1558e965af86f5e7ac9a7519d1945bd392906e75190517fa5c0e1fddd81f541c",
+      "reference_sha256": "9c970f77a58082c5859b0d08e1042c7d025aa27e6be196e8bf024772f10f5e25"
+    },
+    {
+      "route": "/assistant",
+      "composite_score": 0.823121,
+      "pixel_similarity": 0.942599,
+      "structure_similarity": 0.978979,
+      "edge_similarity": 0.263616,
+      "color_similarity": 0.966503,
+      "page_height": 949,
+      "artifact_id": 8815328415,
+      "artifact_sha256": "9319ad21ea2bfd3f3175f3a04f7be9e21f2b20207d7cea61bee7b0806703fabf",
+      "live_sha256": "8e13da8c6690d931f7e98d505fc478913b828686209a7d00120536fdc1ee13ae",
+      "reference_sha256": "37ac9f0007621b57163b05200e4516657831a7640c0478fc36b1d4cd1e8ffd74"
+    }
+  ],
+  "aggregate": {
+    "routes_measured": 10,
+    "routes_at_or_above_0_99": 0,
+    "lowest_route": "/approvals",
+    "lowest_score": 0.80262,
+    "highest_route": "/settings/company",
+    "highest_score": 0.825706,
+    "exact_route_identity": "10/10",
+    "commit_branch_deployment_provenance": "10/10",
+    "drive_reference_integrity": "10/10",
+    "screenshot_integrity": "10/10",
+    "technical_pass": "10/10",
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0
+  },
+  "supabase": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "project_name": "Xtreme AI Systems",
+    "project_status": "ACTIVE_HEALTHY",
+    "read_access": true,
+    "public_bidfast_table_count": 0,
+    "public_autobid_tables_present": true,
+    "workflow_validation_status": "BLOCKED_NO_BIDFAST_ENTITIES",
+    "mutation_performed": false
+  },
+  "gates": {
+    "visual_parity_0_99_all_routes": false,
+    "operational_pass_rate_1_00": false,
+    "complete_light_dark_coverage": false,
+    "zero_dead_controls": false,
+    "zero_tenant_leaks": false,
+    "zero_authorization_bypasses": false,
+    "production_promotion": "LOCKED"
+  },
+  "safety": {
+    "full_screen_reference_substitution": false,
+    "hidden_real_ui": false,
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "production_mutated": false
+  }
+}
