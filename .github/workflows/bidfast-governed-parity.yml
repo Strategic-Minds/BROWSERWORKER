@@ -85,6 +85,24 @@ jobs:
           echo "HTTP status: $http_status"
           cat "evidence/${route_slug}.json"
 
+      - name: Capture implemented-component screenshot
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          route_slug="$(printf '%s' '${{ matrix.route }}' | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
+          encoded_route="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "${{ matrix.route }}")"
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=${encoded_route}&theme=light&viewport=mobile&format=image"
+          screenshot_status="$(curl -sS --retry 2 --retry-all-errors --max-time 180 -D "evidence/${route_slug}.live.headers.txt" -o "evidence/${route_slug}.live.png" -w '%{http_code}' "$endpoint" || true)"
+          printf '%s\n' "$screenshot_status" > "evidence/${route_slug}.live.http-status.txt"
+          if [[ -s "evidence/${route_slug}.live.png" ]]; then
+            file "evidence/${route_slug}.live.png" | tee "evidence/${route_slug}.live.file.txt"
+            sha256sum "evidence/${route_slug}.live.png" | tee "evidence/${route_slug}.live.sha256.txt"
+          else
+            printf '%s\n' 'Screenshot response was empty.' > "evidence/${route_slug}.live.file.txt"
+          fi
+
       - name: Enforce technical, integrity, and visual gates
         shell: bash
         run: |
