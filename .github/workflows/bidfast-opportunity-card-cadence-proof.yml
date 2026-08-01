@@ -1,4 +1,4 @@
-name: BIDFAST Opportunity Card Cadence Proof
+name: BIDFAST Opportunity Logo Alignment Proof
 
 on:
   pull_request:
@@ -23,15 +23,15 @@ concurrency:
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
   BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: 0c4a20af7995ae1a2b4eaa2975e5de20fae15c84
+  BIDFAST_EXPECTED_COMMIT: 2c8bfd2b628b296c9f4c44c8791a8dc3237506eb
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   ROUTE: /opportunities
   REQUIRED_THRESHOLD: '0.99'
-  RETAINED_BASELINE: '0.802843'
+  RETAINED_BASELINE: '0.852709'
 
 jobs:
   opportunity-card-cadence-proof:
-    name: Revision-pinned opportunity card cadence proof
+    name: Revision-pinned opportunity logo alignment proof
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -124,7 +124,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-opportunity-card-cadence-proof-0c4a20af
+          name: bidfast-opportunity-logo-alignment-proof-2c8bfd2b
           path: evidence/
           if-no-files-found: error
           retention-days: 30
