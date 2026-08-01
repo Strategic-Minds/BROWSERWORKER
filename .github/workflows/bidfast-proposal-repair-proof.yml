@@ -23,7 +23,7 @@ concurrency:
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
   BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: 350bb4f606368d1bf338702b73f4e2e4313bb83a
+  BIDFAST_EXPECTED_COMMIT: ce7a5e979698ec628f2f797d2f59852c705f3dd7
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   ROUTE: /proposals
   REQUIRED_THRESHOLD: '0.99'
@@ -31,7 +31,7 @@ env:
 
 jobs:
   proposal-repair-proof:
-    name: Revision-pinned proposal repair proof
+    name: Revision-pinned proposal rollback proof
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -90,7 +90,7 @@ jobs:
             sha256sum evidence/proposal.live.png | tee evidence/proposal.live.sha256.txt
           fi
 
-      - name: Enforce provenance, non-regression, technical, and release gates
+      - name: Enforce provenance, rollback restoration, technical, and release gates
         shell: bash
         run: |
           set -euo pipefail
@@ -110,7 +110,7 @@ jobs:
           if (body.integrity_pass !== true) failures.push(`integrity_pass=${String(body.integrity_pass)}`)
           if (body.technical_pass !== true) failures.push(`technical_pass=${String(body.technical_pass)}`)
           if (!Number.isFinite(score)) failures.push('composite score missing')
-          else if (score < Number(process.env.RETAINED_BASELINE)) failures.push(`REGRESSION composite_score=${score} below retained baseline ${process.env.RETAINED_BASELINE}`)
+          else if (score + 1e-9 < Number(process.env.RETAINED_BASELINE)) failures.push(`ROLLBACK_NOT_RESTORED composite_score=${score} below retained baseline ${process.env.RETAINED_BASELINE}`)
           for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
             if (!Array.isArray(body[name]) || body[name].length !== 0) failures.push(`${name}=${JSON.stringify(body[name])}`)
           }
@@ -120,11 +120,11 @@ jobs:
           if (failures.length) process.exit(1)
           NODE
 
-      - name: Upload immutable repair evidence
+      - name: Upload immutable rollback evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-proposal-repair-proof-350bb4f6
+          name: bidfast-proposal-rollback-proof-ce7a5e97
           path: evidence/
           if-no-files-found: error
           retention-days: 30
