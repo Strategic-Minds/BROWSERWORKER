@@ -1,0 +1,108 @@
+name: BIDFAST Project Repair Proof
+
+on:
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-project-repair-proof.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-project-repair-proof
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: b8405a12a4adcb4d59be2cac62f56d884149ba2e
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  ROUTE: /projects/demo-riverside
+  REQUIRED_THRESHOLD: '0.99'
+  RETAINED_BASELINE: '0.724626'
+
+jobs:
+  project-repair-proof:
+    name: Revision-pinned Riverside project repair proof
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Wait for BrowserWorker health
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 20); do
+            status="$(curl -sS -o /tmp/health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            if [[ "$status" == "200" ]]; then
+              cat /tmp/health.json
+              exit 0
+            fi
+            sleep 15
+          done
+          exit 1
+
+      - name: Execute revision-pinned project parity proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          encoded_route="$(python3 -c 'import urllib.parse; print(urllib.parse.quote("/projects/demo-riverside", safe=""))')"
+          endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-parity-v3?route=${encoded_route}&expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          status="$(curl -sS --retry 2 --retry-all-errors --max-time 210 -o evidence/project.json -w '%{http_code}' "$endpoint")"
+          printf '%s\n' "$status" > evidence/project.http-status.txt
+          cat evidence/project.json
+
+      - name: Capture implemented-component screenshot
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=%2Fprojects%2Fdemo-riverside&theme=light&viewport=mobile&format=image"
+          status="$(curl -sS --retry 2 --retry-all-errors --max-time 180 -D evidence/project.live.headers.txt -o evidence/project.live.png -w '%{http_code}' "$endpoint" || true)"
+          printf '%s\n' "$status" > evidence/project.live.http-status.txt
+          if [[ -s evidence/project.live.png ]]; then
+            file evidence/project.live.png | tee evidence/project.live.file.txt
+            sha256sum evidence/project.live.png | tee evidence/project.live.sha256.txt
+          fi
+
+      - name: Enforce provenance, non-regression, technical, and release gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const crypto = require('node:crypto')
+          const fs = require('node:fs')
+          const body = JSON.parse(fs.readFileSync('evidence/project.json', 'utf8'))
+          const screenshot = fs.readFileSync('evidence/project.live.png')
+          const screenshotSha = crypto.createHash('sha256').update(screenshot).digest('hex')
+          const score = body?.metrics?.composite_score
+          const failures = []
+          if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
+          if (body.route !== process.env.ROUTE) failures.push(`route=${String(body.route)}`)
+          if (body.provenance_pass !== true) failures.push(`provenance_pass=${String(body.provenance_pass)}`)
+          if (body?.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`commit_sha=${String(body?.source_revision?.commit_sha)}`)
+          if (body?.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`commit_ref=${String(body?.source_revision?.commit_ref)}`)
+          if (body.integrity_pass !== true) failures.push(`integrity_pass=${String(body.integrity_pass)}`)
+          if (body.technical_pass !== true) failures.push(`technical_pass=${String(body.technical_pass)}`)
+          if (!Number.isFinite(score)) failures.push('composite score missing')
+          else if (score < Number(process.env.RETAINED_BASELINE)) failures.push(`REGRESSION composite_score=${score} below retained baseline ${process.env.RETAINED_BASELINE}`)
+          for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
+            if (!Array.isArray(body[name]) || body[name].length !== 0) failures.push(`${name}=${JSON.stringify(body[name])}`)
+          }
+          if (screenshotSha !== body?.live?.sha256) failures.push(`screenshot_sha=${screenshotSha} expected=${String(body?.live?.sha256)}`)
+          if (score < Number(process.env.REQUIRED_THRESHOLD)) failures.push(`release_threshold composite_score=${score} below ${process.env.REQUIRED_THRESHOLD}`)
+          console.log(JSON.stringify({ route: body.route, score, retained_baseline: Number(process.env.RETAINED_BASELINE), release_threshold: Number(process.env.REQUIRED_THRESHOLD), source_revision: body.source_revision, failures }, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable repair evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-project-repair-proof-b8405a12
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30
