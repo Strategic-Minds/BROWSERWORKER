@@ -30,7 +30,7 @@ concurrency:
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: 8e58313bae3cd9494b13022cd69f7ecd2ac8aff0
+  BIDFAST_EXPECTED_COMMIT: 106579c02ab6da9af87d1747b9645e348509883e
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   VISUAL_THRESHOLD: '0.99'
 
