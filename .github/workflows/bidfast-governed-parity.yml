@@ -26,7 +26,7 @@ permissions:
 
 concurrency:
   group: bidfast-governed-parity-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
