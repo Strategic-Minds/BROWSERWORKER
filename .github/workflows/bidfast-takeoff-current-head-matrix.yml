@@ -1,0 +1,140 @@
+name: BIDFAST Takeoff Current-Head Matrix
+
+on:
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-takeoff-current-head-matrix.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-takeoff-current-head-matrix
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: 42b8601a6dee4e7455b867f55cebe7c872f0ef7b
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  RELEASE_THRESHOLD: '0.99'
+
+jobs:
+  parity:
+    name: Current-head non-regression ${{ matrix.route }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        include:
+          - route: /dashboard
+            baseline: '0.810876'
+          - route: /analytics
+            baseline: '0.810237'
+          - route: /approvals
+            baseline: '0.802620'
+          - route: /opportunities
+            baseline: '0.802843'
+          - route: /estimates/new
+            baseline: '0.813012'
+          - route: /proposals
+            baseline: '0.795438'
+          - route: /projects/demo-riverside
+            baseline: '0.818800'
+          - route: /takeoffs/demo-riverside
+            baseline: '0.818538'
+          - route: /settings/company
+            baseline: '0.825706'
+          - route: /assistant
+            baseline: '0.823121'
+    steps:
+      - name: Wait for BrowserWorker health
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 20); do
+            status="$(curl -sS -o /tmp/health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            if [[ "$status" == "200" ]]; then
+              cat /tmp/health.json
+              exit 0
+            fi
+            sleep 15
+          done
+          exit 1
+
+      - name: Execute revision-pinned measured parity proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          route_slug="$(printf '%s' '${{ matrix.route }}' | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
+          encoded_route="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' '${{ matrix.route }}')"
+          endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-parity-v3?route=${encoded_route}&expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          status="$(curl -sS --retry 2 --retry-all-errors --max-time 210 -o "evidence/${route_slug}.json" -w '%{http_code}' "$endpoint")"
+          printf '%s\n' "$status" > "evidence/${route_slug}.http-status.txt"
+          cat "evidence/${route_slug}.json"
+
+      - name: Capture implemented-component screenshot
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          route_slug="$(printf '%s' '${{ matrix.route }}' | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
+          encoded_route="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' '${{ matrix.route }}')"
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=${encoded_route}&theme=light&viewport=mobile&format=image"
+          status="$(curl -sS --retry 2 --retry-all-errors --max-time 180 -D "evidence/${route_slug}.live.headers.txt" -o "evidence/${route_slug}.live.png" -w '%{http_code}' "$endpoint" || true)"
+          printf '%s\n' "$status" > "evidence/${route_slug}.live.http-status.txt"
+          if [[ -s "evidence/${route_slug}.live.png" ]]; then
+            file "evidence/${route_slug}.live.png" | tee "evidence/${route_slug}.live.file.txt"
+            sha256sum "evidence/${route_slug}.live.png" | tee "evidence/${route_slug}.live.sha256.txt"
+          fi
+
+      - name: Enforce provenance, non-regression, technical, and release gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          route_slug="$(printf '%s' '${{ matrix.route }}' | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
+          node - "evidence/${route_slug}.json" "evidence/${route_slug}.live.png" '${{ matrix.route }}' '${{ matrix.baseline }}' <<'NODE'
+          const crypto = require('node:crypto')
+          const fs = require('node:fs')
+          const [file, screenshotFile, expectedRoute, baselineText] = process.argv.slice(2)
+          const body = JSON.parse(fs.readFileSync(file, 'utf8'))
+          const score = body?.metrics?.composite_score
+          const baseline = Number(baselineText)
+          const releaseThreshold = Number(process.env.RELEASE_THRESHOLD)
+          const failures = []
+          if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
+          if (body.route !== expectedRoute) failures.push(`route=${String(body.route)}`)
+          if (body.provenance_pass !== true) failures.push(`provenance_pass=${String(body.provenance_pass)}`)
+          if (body?.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`commit_sha=${String(body?.source_revision?.commit_sha)}`)
+          if (body?.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`commit_ref=${String(body?.source_revision?.commit_ref)}`)
+          if (body.integrity_pass !== true) failures.push(`integrity_pass=${String(body.integrity_pass)}`)
+          if (body.technical_pass !== true) failures.push(`technical_pass=${String(body.technical_pass)}`)
+          if (!Number.isFinite(score)) failures.push('composite score missing')
+          else if (score + 1e-9 < baseline) failures.push(`REGRESSION composite_score=${score} below baseline=${baseline}`)
+          for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
+            if (!Array.isArray(body[name]) || body[name].length !== 0) failures.push(`${name}=${JSON.stringify(body[name])}`)
+          }
+          if (!fs.existsSync(screenshotFile)) failures.push('implemented-component screenshot missing')
+          else {
+            const screenshotSha = crypto.createHash('sha256').update(fs.readFileSync(screenshotFile)).digest('hex')
+            if (screenshotSha !== body?.live?.sha256) failures.push(`screenshot_sha=${screenshotSha} expected=${String(body?.live?.sha256)}`)
+          }
+          if (score < releaseThreshold) failures.push(`release_threshold composite_score=${score} below ${releaseThreshold}`)
+          console.log(JSON.stringify({ route: expectedRoute, score, baseline, releaseThreshold, source_revision: body.source_revision, failures }, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable route evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-current-head-${{ strategy.job-index }}
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30
