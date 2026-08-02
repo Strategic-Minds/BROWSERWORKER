@@ -1,11 +1,18 @@
 name: BIDFAST Opportunities Single-Capture Validator Proof
 
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/bidfast-opportunities-single-capture-proof.yml'
+      - 'app/api/bidfast-opportunities-single-capture/route.ts'
   push:
     branches:
       - auto-builder/bidfast-proof-20260728
     paths:
       - '.github/workflows/bidfast-opportunities-single-capture-proof.yml'
+      - 'app/api/bidfast-opportunities-single-capture/route.ts'
   workflow_dispatch:
 
 permissions:
