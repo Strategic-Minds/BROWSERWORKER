@@ -1,4 +1,5 @@
 name: BIDFAST Analytics Cadence Candidate Full Matrix
+# Current governed candidate: a262d1aa6c5abcd9aff98fe6de259a87a7d4c1fd
 
 on:
   push:
@@ -12,7 +13,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: bidfast-candidate-b8b510-full-matrix-v2
+  group: bidfast-analytics-cadence-a262d1aa-full-matrix
   cancel-in-progress: true
 
 env:
