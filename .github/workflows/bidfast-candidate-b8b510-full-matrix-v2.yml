@@ -1,4 +1,4 @@
-name: BIDFAST Candidate b8b510 Full Matrix v2
+name: BIDFAST Analytics Cadence Candidate Full Matrix
 
 on:
   push:
@@ -18,13 +18,13 @@ concurrency:
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
   BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: b8b510e4721ca8f538b60c51eb5034a1210bcb60
+  BIDFAST_EXPECTED_COMMIT: a262d1aa6c5abcd9aff98fe6de259a87a7d4c1fd
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   RELEASE_THRESHOLD: '0.99'
 
 jobs:
   parity:
-    name: Candidate v2 non-regression ${{ matrix.route }}
+    name: Analytics cadence non-regression ${{ matrix.route }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
@@ -35,7 +35,7 @@ jobs:
           - route: /dashboard
             baseline: '0.810876'
           - route: /analytics
-            baseline: '0.813720'
+            baseline: '0.830446'
           - route: /approvals
             baseline: '0.836456'
           - route: /opportunities
@@ -186,7 +186,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-candidate-b8b510-v2-${{ strategy.job-index }}
+          name: bidfast-analytics-cadence-${{ strategy.job-index }}
           path: evidence/
           if-no-files-found: error
           retention-days: 30
