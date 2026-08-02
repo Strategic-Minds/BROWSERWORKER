@@ -1,0 +1,100 @@
+{
+  "receipt_type": "BIDFAST_ANALYTICS_VERTICAL_RHYTHM_ROLLBACK",
+  "captured_at_utc": "2026-08-02T03:17:27Z",
+  "status": "CANDIDATE_REJECTED_ROLLBACK_BASELINE_RESTORED_RELEASE_BLOCKED",
+  "bidfast": {
+    "repository": "XTREME-SYSTEMS/bidfast",
+    "pull_request": 2,
+    "branch": "auto-builder/bidfast-complete-visual-system",
+    "retained_pre_candidate_commit": "b8b510e4721ca8f538b60c51eb5034a1210bcb60",
+    "rejected_candidate_commit": "83410c59469cef514bd5213edb26bd35a5e2850e",
+    "rollback_commit": "edb516f93f4548e98575140ff9306dd69a74cd60",
+    "candidate_scope": {
+      "file": "app/analytics-parity-adjustments.css",
+      "classification": "MOBILE_ANALYTICS_VERTICAL_RHYTHM"
+    }
+  },
+  "candidate_validation": {
+    "browserworker_commit": "dd923666e7f1d5cfe3a132304d696a501d65e9d2",
+    "workflow_run": 30730276418,
+    "deployment_id": "dpl_2k6i7BwYAcFPn7AA4tZstDUm2e27",
+    "deployment_url": "bidfast-m0kr7o0po-strategic-minds-advisory.vercel.app",
+    "route": "/analytics",
+    "theme": "light",
+    "viewport": {
+      "name": "mobile",
+      "width": 390,
+      "height": 844
+    },
+    "retained_baseline": 0.814762,
+    "candidate_score": 0.810807,
+    "delta": -0.003955,
+    "pixel_similarity": 0.946249,
+    "structure_similarity": 0.980414,
+    "edge_similarity": 0.185034,
+    "color_similarity": 0.978539,
+    "page_height": 991,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "provenance_pass": true,
+    "integrity_pass": true,
+    "technical_pass": true,
+    "artifact_id": 8827728337,
+    "artifact_digest": "sha256:c3045e2c987bb35051e976c33f44b8cbd4bdd0bc9bc1bbf65a9e20fc146d2464",
+    "retention_decision": "REJECT_AND_REVERT"
+  },
+  "rollback_validation": {
+    "browserworker_commit": "c52b9926ef4b77edbdad89c33887d7bc35113433",
+    "workflow_run": 30730311343,
+    "workflow_attempt": 2,
+    "deployment_id": "dpl_GSHXZgFfZq2D8LhZE4a2Zs5BL82a",
+    "deployment_url": "bidfast-1on7ic7t9-strategic-minds-advisory.vercel.app",
+    "route": "/analytics",
+    "composite_score": 0.814762,
+    "pixel_similarity": 0.9482,
+    "structure_similarity": 0.980682,
+    "edge_similarity": 0.20112,
+    "color_similarity": 0.978926,
+    "page_height": 974,
+    "live_sha256": "752d54e11329247a5cb35247267ab37976722f0ea86b6bb401a65f98142b33f8",
+    "reference_sha256": "5f8cba804e775ff9e774acdc8a9c92c2532dacd587fe3590c80fd8c24a42aef8",
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "provenance_pass": true,
+    "integrity_pass": true,
+    "technical_pass": true,
+    "non_regression_pass": true,
+    "release_threshold_pass": false,
+    "artifact_id": 8827757373,
+    "artifact_digest": "sha256:074bdb94ab89c26bfc2cf1f342e9831e2c81ce46f7f125fce220d09eee839a94"
+  },
+  "source_truth": {
+    "drive_file_id": "1MWcZn7eUYBHpy99t3Mtwwcg85xtOS5j0",
+    "title": "02_BIDFAST_MOBILE_ANALYTICS_KPI.png",
+    "release_threshold": 0.99,
+    "full_screen_reference_substitution": false,
+    "hidden_real_ui": false
+  },
+  "database": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "public_bidfast_table_count": 0,
+    "mutation_performed": false
+  },
+  "safety": {
+    "candidate_reverted_after_regression": true,
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "production_mutated": false,
+    "database_mutated": false
+  },
+  "remaining_blockers": [
+    "Analytics remains below 0.99 visual parity at 0.814762",
+    "The approved reference registry does not contain complete light/dark multi-viewport pairs",
+    "public.bidfast_* table count is 0, blocking Account-to-Audit operational, RLS, tenant-isolation and authorization validation",
+    "BIDFAST PR #2 remains draft and non-mergeable",
+    "Native BIDFAST current-head GitHub Actions evidence is absent"
+  ],
+  "production_status": "LOCKED"
+}
