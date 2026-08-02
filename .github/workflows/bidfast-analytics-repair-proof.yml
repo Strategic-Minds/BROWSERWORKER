@@ -1,4 +1,4 @@
-name: BIDFAST Analytics Section Cadence Proof
+name: BIDFAST Analytics Logo Microgeometry Proof
 
 on:
   pull_request:
@@ -23,15 +23,15 @@ concurrency:
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
   BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: a262d1aa6c5abcd9aff98fe6de259a87a7d4c1fd
+  BIDFAST_EXPECTED_COMMIT: b3afc49ef30a5fd693c0817ea39639d3bc270dbe
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   ROUTE: /analytics
   REQUIRED_THRESHOLD: '0.99'
-  RETAINED_BASELINE: '0.814762'
+  RETAINED_BASELINE: '0.830446'
 
 jobs:
   analytics-repair-proof:
-    name: Revision-pinned analytics section cadence proof
+    name: Revision-pinned analytics logo microgeometry proof
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -124,7 +124,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-analytics-section-cadence-proof-a262d1aa
+          name: bidfast-analytics-logo-microgeometry-proof-b3afc49
           path: evidence/
           if-no-files-found: error
           retention-days: 30
