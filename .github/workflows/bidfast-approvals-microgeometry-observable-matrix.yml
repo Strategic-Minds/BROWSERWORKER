@@ -1,0 +1,194 @@
+name: BIDFAST Approvals Candidate Observable Matrix
+# Governed candidate: 8db9cb761944b0bddd713c43564721916e39d1c5
+# Purpose: provide a pull-request-observable run without changing validation gates.
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/bidfast-approvals-microgeometry-observable-matrix.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-approvals-observable-8db9cb76-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: 8db9cb761944b0bddd713c43564721916e39d1c5
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  RELEASE_THRESHOLD: '0.99'
+
+jobs:
+  parity:
+    name: Observable approvals non-regression ${{ matrix.route }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        include:
+          - route: /dashboard
+            baseline: '0.810876'
+          - route: /analytics
+            baseline: '0.830446'
+          - route: /approvals
+            baseline: '0.859067'
+          - route: /opportunities
+            baseline: '0.858978'
+          - route: /estimates/new
+            baseline: '0.813012'
+          - route: /proposals
+            baseline: '0.819855'
+          - route: /projects/demo-riverside
+            baseline: '0.818791'
+          - route: /takeoffs/demo-riverside
+            baseline: '0.818538'
+          - route: /settings/company
+            baseline: '0.825706'
+          - route: /assistant
+            baseline: '0.823121'
+
+    steps:
+      - name: Wait for BrowserWorker health
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 24); do
+            status="$(curl -sS -o /tmp/browserworker-health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            if [[ "$status" == "200" ]]; then
+              cat /tmp/browserworker-health.json
+              exit 0
+            fi
+            echo "BrowserWorker health attempt ${attempt}: ${status:-no-status}"
+            sleep 15
+          done
+          exit 1
+
+      - name: Verify exact BIDFAST preview provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 40); do
+            status="$(curl -sS -o /tmp/bidfast-build-info.json -w '%{http_code}' --max-time 30 "${BIDFAST_ORIGIN}/api/build-info" || true)"
+            commit="$(node -e "try{const j=require('/tmp/bidfast-build-info.json');process.stdout.write(String(j?.source_revision?.commit_sha||''))}catch{}")"
+            ref="$(node -e "try{const j=require('/tmp/bidfast-build-info.json');process.stdout.write(String(j?.source_revision?.commit_ref||''))}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" && "$ref" == "$BIDFAST_EXPECTED_REF" ]]; then
+              cat /tmp/bidfast-build-info.json
+              exit 0
+            fi
+            echo "BIDFAST provenance attempt ${attempt}: status=${status:-no-status} commit=${commit:-unknown} ref=${ref:-unknown}"
+            sleep 15
+          done
+          cat /tmp/bidfast-build-info.json || true
+          exit 1
+
+      - name: Execute measured parity proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          route_slug="$(printf '%s' '${{ matrix.route }}' | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
+          encoded_route="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' '${{ matrix.route }}')"
+          endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-parity-v3?route=${encoded_route}&expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          for attempt in $(seq 1 6); do
+            status="$(curl -sS --max-time 210 -o "evidence/${route_slug}.json" -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > "evidence/${route_slug}.http-status.txt"
+            if [[ "$status" == "200" ]] && node -e "const j=require('./evidence/${route_slug}.json');process.exit(j.ok===true?0:1)"; then
+              cat "evidence/${route_slug}.json"
+              exit 0
+            fi
+            echo "Parity attempt ${attempt}: ${status:-no-status}"
+            cat "evidence/${route_slug}.json" || true
+            if [[ "$attempt" != "6" ]]; then sleep 70; fi
+          done
+          exit 1
+
+      - name: Separate browser sessions
+        if: always()
+        shell: bash
+        run: sleep 70
+
+      - name: Capture implemented-component screenshot
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          route_slug="$(printf '%s' '${{ matrix.route }}' | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
+          encoded_route="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' '${{ matrix.route }}')"
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=${encoded_route}&theme=light&viewport=mobile&format=image"
+          for attempt in $(seq 1 6); do
+            status="$(curl -sS --max-time 180 -D "evidence/${route_slug}.live.headers.txt" -o "evidence/${route_slug}.live.png" -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > "evidence/${route_slug}.live.http-status.txt"
+            content_type="$(awk 'BEGIN{IGNORECASE=1} /^content-type:/{print $2}' "evidence/${route_slug}.live.headers.txt" | tail -1 | tr -d '\r')"
+            if [[ "$status" == "200" && "$content_type" == image/png* ]]; then
+              file "evidence/${route_slug}.live.png" | tee "evidence/${route_slug}.live.file.txt"
+              sha256sum "evidence/${route_slug}.live.png" | tee "evidence/${route_slug}.live.sha256.txt"
+              exit 0
+            fi
+            echo "Screenshot attempt ${attempt}: status=${status:-no-status} content-type=${content_type:-unknown}"
+            if [[ "$attempt" != "6" ]]; then sleep 70; fi
+          done
+          exit 1
+
+      - name: Evaluate provenance, integrity, technical, non-regression, and release gates
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          route_slug="$(printf '%s' '${{ matrix.route }}' | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
+          node - "evidence/${route_slug}.json" "evidence/${route_slug}.live.png" '${{ matrix.route }}' '${{ matrix.baseline }}' <<'NODE'
+          const crypto = require('node:crypto')
+          const fs = require('node:fs')
+          const [file, screenshotFile, expectedRoute, baselineText] = process.argv.slice(2)
+          const failures = []
+          if (!fs.existsSync(file)) {
+            failures.push('parity evidence missing')
+            fs.writeFileSync('evidence/gate.json', JSON.stringify({ expectedRoute, failures }, null, 2))
+            process.exit(1)
+          }
+          const body = JSON.parse(fs.readFileSync(file, 'utf8'))
+          const score = body?.metrics?.composite_score
+          const baseline = Number(baselineText)
+          const releaseThreshold = Number(process.env.RELEASE_THRESHOLD)
+          if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
+          if (body.route !== expectedRoute) failures.push(`route=${String(body.route)}`)
+          if (body.provenance_pass !== true) failures.push(`provenance_pass=${String(body.provenance_pass)}`)
+          if (body?.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`commit_sha=${String(body?.source_revision?.commit_sha)}`)
+          if (body?.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`commit_ref=${String(body?.source_revision?.commit_ref)}`)
+          if (body.integrity_pass !== true) failures.push(`integrity_pass=${String(body.integrity_pass)}`)
+          if (body.technical_pass !== true) failures.push(`technical_pass=${String(body.technical_pass)}`)
+          if (!Number.isFinite(score)) failures.push('composite score missing')
+          else if (score + 1e-9 < baseline) failures.push(`REGRESSION composite_score=${score} below baseline=${baseline}`)
+          for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
+            if (!Array.isArray(body[name]) || body[name].length !== 0) failures.push(`${name}=${JSON.stringify(body[name])}`)
+          }
+          let screenshotSha = null
+          if (!fs.existsSync(screenshotFile)) failures.push('implemented-component screenshot missing')
+          else {
+            screenshotSha = crypto.createHash('sha256').update(fs.readFileSync(screenshotFile)).digest('hex')
+            if (screenshotSha !== body?.live?.sha256) failures.push(`screenshot_sha=${screenshotSha} expected=${String(body?.live?.sha256)}`)
+          }
+          const releaseThresholdPass = Number.isFinite(score) && score >= releaseThreshold
+          if (!releaseThresholdPass) failures.push(`release_threshold composite_score=${score} below ${releaseThreshold}`)
+          const result = { route: expectedRoute, score, baseline, releaseThreshold, releaseThresholdPass, screenshotSha, sourceRevision: body.source_revision, technicalPass: body.technical_pass, integrityPass: body.integrity_pass, provenancePass: body.provenance_pass, failures }
+          fs.writeFileSync('evidence/gate.json', JSON.stringify(result, null, 2))
+          console.log(JSON.stringify(result, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable candidate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-approvals-observable-${{ strategy.job-index }}
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30
