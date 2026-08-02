@@ -15,8 +15,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: bidfast-browserbase-proof-${{ github.repository }}
-  cancel-in-progress: false
+  group: bidfast-approvals-geometry-8db9cb7
+  cancel-in-progress: true
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
