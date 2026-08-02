@@ -1,4 +1,4 @@
-name: BIDFAST Current-Head Full Matrix
+name: BIDFAST Candidate b8b510 Full Matrix
 
 on:
   pull_request:
@@ -17,18 +17,18 @@ permissions:
   contents: read
 
 concurrency:
-  group: bidfast-current-head-full-matrix
+  group: bidfast-candidate-b8b510-full-matrix
   cancel-in-progress: true
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: 33814e987b32b971734e952134bb1a85d55e6951
+  BIDFAST_EXPECTED_COMMIT: b8b510e4721ca8f538b60c51eb5034a1210bcb60
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   RELEASE_THRESHOLD: '0.99'
 
 jobs:
   parity:
-    name: Current-head non-regression ${{ matrix.route }}
+    name: Candidate non-regression ${{ matrix.route }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
@@ -56,40 +56,42 @@ jobs:
             baseline: '0.825706'
           - route: /assistant
             baseline: '0.823121'
+
     steps:
       - name: Wait for BrowserWorker health
         shell: bash
         run: |
           set -euo pipefail
-          for attempt in $(seq 1 20); do
-            status="$(curl -sS -o /tmp/health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+          for attempt in $(seq 1 24); do
+            status="$(curl -sS -o /tmp/browserworker-health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
             if [[ "$status" == "200" ]]; then
-              cat /tmp/health.json
+              cat /tmp/browserworker-health.json
               exit 0
             fi
+            echo "BrowserWorker health attempt ${attempt}: ${status:-no-status}"
             sleep 15
           done
           exit 1
 
-      - name: Wait for exact BIDFAST current head
+      - name: Verify exact BIDFAST preview provenance
         shell: bash
         run: |
           set -euo pipefail
-          endpoint="https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app/api/build-info"
-          for attempt in $(seq 1 36); do
-            status="$(curl -sS -o /tmp/build-info.json -w '%{http_code}' --max-time 30 "$endpoint" || true)"
-            commit="$(node -e "try{const j=require('/tmp/build-info.json');process.stdout.write(j.source_revision?.commit_sha||'')}catch{}")"
-            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" ]]; then
-              cat /tmp/build-info.json
+          for attempt in $(seq 1 40); do
+            status="$(curl -sS -o /tmp/bidfast-build-info.json -w '%{http_code}' --max-time 30 "${BIDFAST_ORIGIN}/api/build-info" || true)"
+            commit="$(node -e "try{const j=require('/tmp/bidfast-build-info.json');process.stdout.write(String(j?.source_revision?.commit_sha||''))}catch{}")"
+            ref="$(node -e "try{const j=require('/tmp/bidfast-build-info.json');process.stdout.write(String(j?.source_revision?.commit_ref||''))}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" && "$ref" == "$BIDFAST_EXPECTED_REF" ]]; then
+              cat /tmp/bidfast-build-info.json
               exit 0
             fi
-            echo "Attempt $attempt returned status=${status:-no-status} commit=${commit:-unknown}; waiting."
+            echo "BIDFAST provenance attempt ${attempt}: status=${status:-no-status} commit=${commit:-unknown} ref=${ref:-unknown}"
             sleep 15
           done
-          cat /tmp/build-info.json || true
+          cat /tmp/bidfast-build-info.json || true
           exit 1
 
-      - name: Execute revision-pinned measured parity proof
+      - name: Execute measured parity proof
         shell: bash
         run: |
           set -euo pipefail
@@ -104,13 +106,14 @@ jobs:
               cat "evidence/${route_slug}.json"
               exit 0
             fi
-            echo "Parity attempt $attempt returned ${status:-no-status}; waiting for a clean browser window."
+            echo "Parity attempt ${attempt}: ${status:-no-status}"
             cat "evidence/${route_slug}.json" || true
             if [[ "$attempt" != "6" ]]; then sleep 70; fi
           done
           exit 1
 
-      - name: Separate parity and screenshot sessions
+      - name: Separate browser sessions
+        if: always()
         shell: bash
         run: sleep 70
 
@@ -132,12 +135,13 @@ jobs:
               sha256sum "evidence/${route_slug}.live.png" | tee "evidence/${route_slug}.live.sha256.txt"
               exit 0
             fi
-            echo "Screenshot attempt $attempt returned status=${status:-no-status} content-type=${content_type:-unknown}."
+            echo "Screenshot attempt ${attempt}: status=${status:-no-status} content-type=${content_type:-unknown}"
             if [[ "$attempt" != "6" ]]; then sleep 70; fi
           done
           exit 1
 
-      - name: Enforce provenance, non-regression, technical, and release gates
+      - name: Evaluate provenance, integrity, technical, non-regression, and release gates
+        if: always()
         shell: bash
         run: |
           set -euo pipefail
@@ -146,11 +150,16 @@ jobs:
           const crypto = require('node:crypto')
           const fs = require('node:fs')
           const [file, screenshotFile, expectedRoute, baselineText] = process.argv.slice(2)
+          const failures = []
+          if (!fs.existsSync(file)) {
+            failures.push('parity evidence missing')
+            fs.writeFileSync('evidence/gate.json', JSON.stringify({ expectedRoute, failures }, null, 2))
+            process.exit(1)
+          }
           const body = JSON.parse(fs.readFileSync(file, 'utf8'))
           const score = body?.metrics?.composite_score
           const baseline = Number(baselineText)
           const releaseThreshold = Number(process.env.RELEASE_THRESHOLD)
-          const failures = []
           if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
           if (body.route !== expectedRoute) failures.push(`route=${String(body.route)}`)
           if (body.provenance_pass !== true) failures.push(`provenance_pass=${String(body.provenance_pass)}`)
@@ -163,22 +172,37 @@ jobs:
           for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
             if (!Array.isArray(body[name]) || body[name].length !== 0) failures.push(`${name}=${JSON.stringify(body[name])}`)
           }
+          let screenshotSha = null
           if (!fs.existsSync(screenshotFile)) failures.push('implemented-component screenshot missing')
           else {
-            const screenshotSha = crypto.createHash('sha256').update(fs.readFileSync(screenshotFile)).digest('hex')
+            screenshotSha = crypto.createHash('sha256').update(fs.readFileSync(screenshotFile)).digest('hex')
             if (screenshotSha !== body?.live?.sha256) failures.push(`screenshot_sha=${screenshotSha} expected=${String(body?.live?.sha256)}`)
           }
-          const nonRegressionPass = failures.length === 0
-          if (score < releaseThreshold) failures.push(`release_threshold composite_score=${score} below ${releaseThreshold}`)
-          console.log(JSON.stringify({ route: expectedRoute, score, baseline, releaseThreshold, nonRegressionPass, source_revision: body.source_revision, failures }, null, 2))
+          const releaseThresholdPass = Number.isFinite(score) && score >= releaseThreshold
+          if (!releaseThresholdPass) failures.push(`release_threshold composite_score=${score} below ${releaseThreshold}`)
+          const result = {
+            route: expectedRoute,
+            score,
+            baseline,
+            releaseThreshold,
+            releaseThresholdPass,
+            screenshotSha,
+            sourceRevision: body.source_revision,
+            technicalPass: body.technical_pass,
+            integrityPass: body.integrity_pass,
+            provenancePass: body.provenance_pass,
+            failures
+          }
+          fs.writeFileSync('evidence/gate.json', JSON.stringify(result, null, 2))
+          console.log(JSON.stringify(result, null, 2))
           if (failures.length) process.exit(1)
           NODE
 
-      - name: Upload immutable route evidence
+      - name: Upload immutable candidate evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-current-head-${{ strategy.job-index }}
+          name: bidfast-candidate-b8b510-${{ strategy.job-index }}
           path: evidence/
           if-no-files-found: error
           retention-days: 30
