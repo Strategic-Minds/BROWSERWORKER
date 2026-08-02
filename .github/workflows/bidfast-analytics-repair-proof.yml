@@ -1,4 +1,4 @@
-name: BIDFAST Analytics Viewport Cadence Proof
+name: BIDFAST Analytics Trend Geometry Proof
 
 on:
   pull_request:
@@ -23,15 +23,15 @@ concurrency:
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
   BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: dd22db0d58e5db41651e904c846d585439bfd6a1
+  BIDFAST_EXPECTED_COMMIT: b8b510e4721ca8f538b60c51eb5034a1210bcb60
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   ROUTE: /analytics
   REQUIRED_THRESHOLD: '0.99'
-  RETAINED_BASELINE: '0.810237'
+  RETAINED_BASELINE: '0.813720'
 
 jobs:
   analytics-repair-proof:
-    name: Revision-pinned analytics viewport cadence proof
+    name: Revision-pinned analytics trend geometry proof
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -124,7 +124,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-analytics-viewport-cadence-proof-dd22db0d
+          name: bidfast-analytics-trend-geometry-proof-b8b510e4
           path: evidence/
           if-no-files-found: error
           retention-days: 30
