@@ -1,0 +1,172 @@
+name: BIDFAST Opportunity Kebab Candidate Proof
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/bidfast-opportunity-kebab-candidate-proof.yml'
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-opportunity-kebab-candidate-proof.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-opportunity-kebab-candidate-1c9f2db7
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: 1c9f2db79e7cf27373068296733c9e392d3744c0
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  ROUTE: /opportunities
+  RETAINED_BASELINE: '0.858978'
+  REQUIRED_THRESHOLD: '0.99'
+  REFERENCE_SHA256: c3cd0b2ed394491128784384e19561457bfe800f4b0182a391b78b888db389ef
+
+jobs:
+  proof:
+    name: Revision-pinned opportunity kebab candidate proof
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Wait for BrowserWorker health
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 30); do
+            status="$(curl -sS -o /tmp/health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            if [[ "$status" == "200" ]]; then
+              cat /tmp/health.json
+              exit 0
+            fi
+            echo "BrowserWorker health attempt ${attempt}: ${status:-no-status}"
+            sleep 15
+          done
+          exit 1
+
+      - name: Wait for exact BIDFAST preview revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 50); do
+            status="$(curl -sS -o /tmp/build-info.json -w '%{http_code}' --max-time 30 "${BIDFAST_ORIGIN}/api/build-info" || true)"
+            commit="$(node -e "try{const b=require('/tmp/build-info.json');process.stdout.write(String(b?.source_revision?.commit_sha||''))}catch{}")"
+            ref="$(node -e "try{const b=require('/tmp/build-info.json');process.stdout.write(String(b?.source_revision?.commit_ref||''))}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" && "$ref" == "$BIDFAST_EXPECTED_REF" ]]; then
+              cat /tmp/build-info.json
+              exit 0
+            fi
+            echo "BIDFAST provenance attempt ${attempt}: status=${status:-no-status} commit=${commit:-unknown} ref=${ref:-unknown}"
+            sleep 15
+          done
+          cat /tmp/build-info.json || true
+          exit 1
+
+      - name: Execute official measured parity proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-parity-v3?route=%2Fopportunities&expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          for attempt in $(seq 1 6); do
+            status="$(curl -sS --max-time 210 -o evidence/opportunities.json -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/opportunities.http-status.txt
+            if [[ "$status" == "200" ]] && node -e "const j=require('./evidence/opportunities.json');process.exit(j.ok===true?0:1)"; then
+              cat evidence/opportunities.json
+              exit 0
+            fi
+            echo "Parity attempt ${attempt}: ${status:-no-status}"
+            cat evidence/opportunities.json || true
+            if [[ "$attempt" != "6" ]]; then sleep 70; fi
+          done
+          exit 1
+
+      - name: Execute regional diagnostic
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-opportunities-regions?expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          status="$(curl -sS --retry 2 --retry-all-errors --max-time 210 -o evidence/opportunities-regions.json -w '%{http_code}' "$endpoint" || true)"
+          printf '%s\n' "$status" > evidence/opportunities-regions.http-status.txt
+          cat evidence/opportunities-regions.json || true
+
+      - name: Capture implemented-component screenshot
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=%2Fopportunities&theme=light&viewport=mobile&format=image"
+          status="$(curl -sS --retry 2 --retry-all-errors --max-time 180 -D evidence/opportunities.live.headers.txt -o evidence/opportunities.live.png -w '%{http_code}' "$endpoint" || true)"
+          printf '%s\n' "$status" > evidence/opportunities.live.http-status.txt
+          if [[ -s evidence/opportunities.live.png ]]; then
+            file evidence/opportunities.live.png | tee evidence/opportunities.live.file.txt
+            sha256sum evidence/opportunities.live.png | tee evidence/opportunities.live.sha256.txt
+          fi
+
+      - name: Enforce provenance, integrity, non-regression, technical, and release gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const crypto = require('node:crypto')
+          const fs = require('node:fs')
+          const body = JSON.parse(fs.readFileSync('evidence/opportunities.json', 'utf8'))
+          const regions = JSON.parse(fs.readFileSync('evidence/opportunities-regions.json', 'utf8'))
+          const screenshot = fs.readFileSync('evidence/opportunities.live.png')
+          const screenshotSha = crypto.createHash('sha256').update(screenshot).digest('hex')
+          const score = body?.metrics?.composite_score
+          const opportunity3 = regions?.analysis?.regions?.find?.(region => region.name === 'opportunity_3')
+          const failures = []
+          if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
+          if (body.route !== process.env.ROUTE) failures.push(`route=${String(body.route)}`)
+          if (body.provenance_pass !== true) failures.push(`provenance_pass=${String(body.provenance_pass)}`)
+          if (body.integrity_pass !== true) failures.push(`integrity_pass=${String(body.integrity_pass)}`)
+          if (body.technical_pass !== true) failures.push(`technical_pass=${String(body.technical_pass)}`)
+          if (body?.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`commit_sha=${String(body?.source_revision?.commit_sha)}`)
+          if (body?.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`commit_ref=${String(body?.source_revision?.commit_ref)}`)
+          if (body?.reference?.sha256 !== process.env.REFERENCE_SHA256) failures.push(`reference_sha256=${String(body?.reference?.sha256)}`)
+          if (!Number.isFinite(score)) failures.push('composite score missing')
+          else if (score < Number(process.env.RETAINED_BASELINE)) failures.push(`REGRESSION composite_score=${score} below retained baseline ${process.env.RETAINED_BASELINE}`)
+          if (regions.ok !== true || regions.technical_pass !== true || regions.provenance_pass !== true) failures.push('regional diagnostic failed')
+          for (const source of [body, regions]) {
+            for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
+              if (!Array.isArray(source[name]) || source[name].length !== 0) failures.push(`${name}=${JSON.stringify(source[name])}`)
+            }
+          }
+          if (screenshotSha !== body?.live?.sha256) failures.push(`screenshot_sha=${screenshotSha} expected=${String(body?.live?.sha256)}`)
+          if (score < Number(process.env.REQUIRED_THRESHOLD)) failures.push(`release_threshold composite_score=${score} below ${process.env.REQUIRED_THRESHOLD}`)
+          const summary = {
+            route: body.route,
+            score,
+            retained_baseline: Number(process.env.RETAINED_BASELINE),
+            release_threshold: Number(process.env.REQUIRED_THRESHOLD),
+            source_revision: body.source_revision,
+            metrics: body.metrics,
+            opportunity_3: opportunity3 || null,
+            regional_overall: regions?.analysis?.overall || null,
+            screenshot_sha256: screenshotSha,
+            failures,
+          }
+          fs.writeFileSync('evidence/gate.json', JSON.stringify(summary, null, 2))
+          console.log(JSON.stringify(summary, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable candidate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-opportunity-kebab-candidate-1c9f2db7
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30
