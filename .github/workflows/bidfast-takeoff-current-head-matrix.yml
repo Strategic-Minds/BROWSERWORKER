@@ -22,6 +22,7 @@ concurrency:
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
   BIDFAST_EXPECTED_COMMIT: b8b510e4721ca8f538b60c51eb5034a1210bcb60
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   RELEASE_THRESHOLD: '0.99'
@@ -180,19 +181,7 @@ jobs:
           }
           const releaseThresholdPass = Number.isFinite(score) && score >= releaseThreshold
           if (!releaseThresholdPass) failures.push(`release_threshold composite_score=${score} below ${releaseThreshold}`)
-          const result = {
-            route: expectedRoute,
-            score,
-            baseline,
-            releaseThreshold,
-            releaseThresholdPass,
-            screenshotSha,
-            sourceRevision: body.source_revision,
-            technicalPass: body.technical_pass,
-            integrityPass: body.integrity_pass,
-            provenancePass: body.provenance_pass,
-            failures
-          }
+          const result = { route: expectedRoute, score, baseline, releaseThreshold, releaseThresholdPass, screenshotSha, sourceRevision: body.source_revision, technicalPass: body.technical_pass, integrityPass: body.integrity_pass, provenancePass: body.provenance_pass, failures }
           fs.writeFileSync('evidence/gate.json', JSON.stringify(result, null, 2))
           console.log(JSON.stringify(result, null, 2))
           if (failures.length) process.exit(1)
