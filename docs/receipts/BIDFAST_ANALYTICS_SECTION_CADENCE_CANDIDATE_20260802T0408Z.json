@@ -1,0 +1,90 @@
+{
+  "receipt_type": "BIDFAST_ANALYTICS_SECTION_CADENCE_CANDIDATE",
+  "captured_at_utc": "2026-08-02T04:08:02Z",
+  "status": "CANDIDATE_IMPROVED_FULL_MATRIX_PENDING_RELEASE_BLOCKED",
+  "bidfast": {
+    "repository": "XTREME-SYSTEMS/bidfast",
+    "pull_request": 2,
+    "branch": "auto-builder/bidfast-complete-visual-system",
+    "previous_commit": "edb516f93f4548e98575140ff9306dd69a74cd60",
+    "candidate_commit": "a262d1aa6c5abcd9aff98fe6de259a87a7d4c1fd",
+    "candidate_scope": {
+      "file": "app/analytics-parity-adjustments.css",
+      "classification": "MOBILE_ANALYTICS_SECTION_CADENCE",
+      "component_level_only": true,
+      "full_screen_reference_substitution": false,
+      "hidden_real_ui": false
+    }
+  },
+  "validation": {
+    "browserworker_workflow_commit": "8bbd8e40d1c4dc59e66eae9aba8cbb44dd86ef33",
+    "workflow_run": 30731810443,
+    "deployment_id": "dpl_J9iMdn72pj2BVXUtKjqATT8fwEo3",
+    "deployment_url": "bidfast-6xgtsfq47-strategic-minds-advisory.vercel.app",
+    "route": "/analytics",
+    "theme": "light",
+    "viewport": {
+      "name": "mobile",
+      "width": 390,
+      "height": 844
+    },
+    "page_height": 973,
+    "retained_baseline": 0.814762,
+    "candidate_score": 0.830446,
+    "delta": 0.015684,
+    "pixel_similarity": 0.949692,
+    "structure_similarity": 0.982749,
+    "edge_similarity": 0.272893,
+    "color_similarity": 0.979986,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "provenance_pass": true,
+    "integrity_pass": true,
+    "technical_pass": true,
+    "non_regression_against_route_baseline": true,
+    "release_threshold_pass": false,
+    "artifact_id": 8828206957,
+    "artifact_digest": "sha256:188aa53553e23a69c187ff9cabac6d269a1b9b66ac9e4d66eb4fa092234f072e",
+    "live_sha256": "9e568b80e048e42884a89420cde379383415da7baa80afd32e179e7e4fb504d5"
+  },
+  "full_matrix": {
+    "workflow_update_commit": "d8d55b2c1e5ee0489fe947ea6fe3607c2d1e6836",
+    "expected_bidfast_commit": "a262d1aa6c5abcd9aff98fe6de259a87a7d4c1fd",
+    "analytics_baseline": 0.830446,
+    "release_threshold": 0.99,
+    "status": "PENDING_EXECUTION_EVIDENCE",
+    "candidate_retention": "PROVISIONAL_ONLY_UNTIL_ALL_TEN_ROUTES_PRESERVE_BASELINES"
+  },
+  "source_truth": {
+    "drive_file_id": "1MWcZn7eUYBHpy99t3Mtwwcg85xtOS5j0",
+    "title": "02_BIDFAST_MOBILE_ANALYTICS_KPI.png",
+    "reference_sha256": "5f8cba804e775ff9e774acdc8a9c92c2532dacd587fe3590c80fd8c24a42aef8",
+    "release_threshold": 0.99
+  },
+  "database": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "public_bidfast_table_count": 0,
+    "mutation_performed": false
+  },
+  "ci": {
+    "native_bidfast_workflow_runs_for_candidate": 0,
+    "vercel_status": "success"
+  },
+  "safety": {
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "production_mutated": false,
+    "database_mutated": false,
+    "candidate_is_feature_branch_only": true
+  },
+  "remaining_blockers": [
+    "Full ten-route non-regression evidence has not completed for candidate a262d1aa",
+    "Analytics remains below 0.99 visual parity at 0.830446",
+    "The approved reference registry does not contain complete light/dark multi-viewport pairs",
+    "public.bidfast_* table count is 0, blocking Account-to-Audit operational, RLS, tenant-isolation and authorization validation",
+    "Native BIDFAST current-head GitHub Actions evidence is absent",
+    "BIDFAST PR #2 remains draft and non-mergeable"
+  ],
+  "production_status": "LOCKED"
+}
