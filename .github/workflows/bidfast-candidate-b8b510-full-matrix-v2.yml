@@ -1,5 +1,6 @@
 name: BIDFAST Analytics Cadence Candidate Full Matrix
 # Current governed candidate: a262d1aa6c5abcd9aff98fe6de259a87a7d4c1fd
+# Validation retrigger: 2026-08-02T06:07Z
 
 on:
   push:
