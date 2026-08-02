@@ -1,4 +1,4 @@
-name: BIDFAST Current Head 33814e Full Matrix
+name: BIDFAST Candidate b8b510 Full Matrix
 
 on:
   push:
@@ -12,19 +12,19 @@ permissions:
   contents: read
 
 concurrency:
-  group: bidfast-current-head-33814e-full-matrix
+  group: bidfast-candidate-b8b510-full-matrix
   cancel-in-progress: true
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
   BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: 33814e987b32b971734e952134bb1a85d55e6951
+  BIDFAST_EXPECTED_COMMIT: b8b510e4721ca8f538b60c51eb5034a1210bcb60
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   RELEASE_THRESHOLD: '0.99'
 
 jobs:
   parity:
-    name: Current-head validation ${{ matrix.route }}
+    name: Candidate validation ${{ matrix.route }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
@@ -194,11 +194,11 @@ jobs:
           if (failures.length) process.exit(1)
           NODE
 
-      - name: Upload immutable current-head evidence
+      - name: Upload immutable candidate evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-current-head-33814e-${{ strategy.job-index }}
+          name: bidfast-candidate-b8b510-${{ strategy.job-index }}
           path: evidence/
           if-no-files-found: error
           retention-days: 30
