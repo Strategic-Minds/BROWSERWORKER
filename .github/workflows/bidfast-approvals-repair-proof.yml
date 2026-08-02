@@ -20,9 +20,9 @@ concurrency:
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: f582f4d84f8f23f72f369cdb116f9d5ff6856366
+  BIDFAST_EXPECTED_COMMIT: 8db9cb761944b0bddd713c43564721916e39d1c5
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
-  RETAINED_BASELINE: '0.822064'
+  RETAINED_BASELINE: '0.836456'
   VISUAL_THRESHOLD: '0.99'
 
 jobs:
@@ -145,7 +145,8 @@ jobs:
             const screenshotSha = crypto.createHash('sha256').update(fs.readFileSync(screenshotFile)).digest('hex')
             if (screenshotSha !== body?.live?.sha256) failures.push(`screenshot_sha=${screenshotSha} expected=${String(body?.live?.sha256)}`)
           }
-          console.log(JSON.stringify({ route: '/approvals', baseline, score: score ?? null, threshold: Number(process.env.VISUAL_THRESHOLD), strict_improvement: failures.length === 0, source_revision: body.source_revision ?? null, failures }, null, 2))
+          if (score < Number(process.env.VISUAL_THRESHOLD)) failures.push(`release_threshold composite_score=${score} below ${process.env.VISUAL_THRESHOLD}`)
+          console.log(JSON.stringify({ route: '/approvals', baseline, score: score ?? null, threshold: Number(process.env.VISUAL_THRESHOLD), strict_improvement: failures.filter(item => !item.startsWith('release_threshold')).length === 0, source_revision: body.source_revision ?? null, failures }, null, 2))
           if (failures.length) process.exit(1)
           NODE
 
@@ -153,7 +154,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-approvals-geometry-proof
+          name: bidfast-approvals-geometry-proof-8db9cb7
           path: evidence/
           if-no-files-found: error
           retention-days: 30
