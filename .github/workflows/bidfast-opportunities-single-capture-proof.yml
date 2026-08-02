@@ -1,0 +1,96 @@
+name: BIDFAST Opportunities Single-Capture Validator Proof
+
+on:
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-opportunities-single-capture-proof.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-opportunities-single-capture-validator
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: 65bd7345221c96915fba1f4c7704977c7d072e07
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  RETAINED_COMPOSITE: '0.858978'
+  RETAINED_REGIONAL: '0.791098'
+  RELEASE_THRESHOLD: '0.99'
+
+jobs:
+  validate:
+    name: Prove one immutable screenshot feeds all opportunity metrics
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Wait for single-capture validator deployment
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-opportunities-single-capture?expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          for attempt in $(seq 1 40); do
+            status="$(curl -sS --max-time 210 -o evidence/opportunities-single-capture.json -w '%{http_code}' "$endpoint" || true)"
+            version="$(node -e "try{const j=require('./evidence/opportunities-single-capture.json');process.stdout.write(String(j.validator_version||''))}catch{}")"
+            if [[ "$status" == "200" && "$version" == "opportunities-single-capture-v1" ]]; then
+              cat evidence/opportunities-single-capture.json
+              exit 0
+            fi
+            echo "validator attempt ${attempt}: status=${status:-none} version=${version:-unknown}"
+            cat evidence/opportunities-single-capture.json || true
+            sleep 20
+          done
+          exit 1
+
+      - name: Enforce provenance, coherence, retained baselines, and release lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const body = JSON.parse(fs.readFileSync('evidence/opportunities-single-capture.json', 'utf8'))
+          const failures = []
+          const official = body?.official_metrics || {}
+          const regional = body?.regional?.overall || {}
+          if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
+          if (body.validator_version !== 'opportunities-single-capture-v1') failures.push(`validator_version=${String(body.validator_version)}`)
+          if (body.route !== '/opportunities') failures.push(`route=${String(body.route)}`)
+          if (body.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`commit_sha=${String(body.source_revision?.commit_sha)}`)
+          if (body.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`commit_ref=${String(body.source_revision?.commit_ref)}`)
+          if (body.provenance_pass !== true) failures.push(`provenance_pass=${String(body.provenance_pass)}`)
+          if (body.integrity_pass !== true) failures.push(`integrity_pass=${String(body.integrity_pass)}`)
+          if (body.technical_pass !== true) failures.push(`technical_pass=${String(body.technical_pass)}`)
+          if (body.screenshot_coherence_pass !== true) failures.push(`screenshot_coherence_pass=${String(body.screenshot_coherence_pass)}`)
+          if (!body.live?.sha256 || !/^[0-9a-f]{64}$/.test(body.live.sha256)) failures.push(`live_sha256=${String(body.live?.sha256)}`)
+          if (!Number.isFinite(official.composite_score) || official.composite_score < Number(process.env.RETAINED_COMPOSITE)) failures.push(`official_composite=${String(official.composite_score)}`)
+          if (!Number.isFinite(regional.diagnostic_score) || regional.diagnostic_score < Number(process.env.RETAINED_REGIONAL)) failures.push(`regional_score=${String(regional.diagnostic_score)}`)
+          if (!Array.isArray(body.console_errors) || body.console_errors.length !== 0) failures.push(`console_errors=${JSON.stringify(body.console_errors)}`)
+          if (!Array.isArray(body.app_network_errors) || body.app_network_errors.length !== 0) failures.push(`app_network_errors=${JSON.stringify(body.app_network_errors)}`)
+          if (!Array.isArray(body.http_errors) || body.http_errors.length !== 0) failures.push(`http_errors=${JSON.stringify(body.http_errors)}`)
+          if (official.composite_score >= Number(process.env.RELEASE_THRESHOLD)) failures.push('unexpected_release_threshold_pass')
+          if (body.release_authorized !== false) failures.push(`release_authorized=${String(body.release_authorized)}`)
+          console.log(JSON.stringify({
+            source_revision: body.source_revision,
+            live_sha256: body.live?.sha256,
+            official_metrics: official,
+            regional_overall: regional,
+            release_threshold: Number(process.env.RELEASE_THRESHOLD),
+            failures,
+          }, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable validator evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-opportunities-single-capture-65bd7345
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30
