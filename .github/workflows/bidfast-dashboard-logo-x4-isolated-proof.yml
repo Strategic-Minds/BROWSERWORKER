@@ -1,0 +1,150 @@
+name: BIDFAST Dashboard Logo X4 Isolated Proof
+
+on:
+  push:
+    branches:
+      - auto-builder/bidfast-logo-x4-proof-20260803
+    paths:
+      - '.github/workflows/bidfast-dashboard-logo-x4-isolated-proof.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-dashboard-logo-x4-isolated-2da86e3
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: 2da86e312259db0a9df6a6ed96578a3e55e046f8
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  ROUTE: /dashboard
+  RETAINED_BASELINE: '0.836926'
+  RELEASE_THRESHOLD: '0.99'
+
+jobs:
+  isolated-logo-x4-proof:
+    name: Isolated revision-pinned logo x4 proof
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Wait for exact application and BrowserWorker previews
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          accepted=false
+          for attempt in $(seq 1 32); do
+            health_status="$(curl -sS -o evidence/health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            bounds_status="$(curl -sS -o evidence/logo-bounds.json -w '%{http_code}' --max-time 180 "${BROWSERWORKER_PREVIEW}/api/validation/bidfast-dashboard-logo-content-bounds?expected_commit=${BIDFAST_EXPECTED_COMMIT}" || true)"
+            diagnostic_status="$(curl -sS -o evidence/header-edge-diagnostic.json -w '%{http_code}' --max-time 210 "${BROWSERWORKER_PREVIEW}/api/validation/bidfast-dashboard-header-edge-diagnostic?expected_commit=${BIDFAST_EXPECTED_COMMIT}" || true)"
+            printf '%s\n' "$health_status" > evidence/health.http-status.txt
+            printf '%s\n' "$bounds_status" > evidence/logo-bounds.http-status.txt
+            printf '%s\n' "$diagnostic_status" > evidence/header-edge-diagnostic.http-status.txt
+            bounds_commit="$(node -e "try{const j=require('./evidence/logo-bounds.json');process.stdout.write(String(j.source_revision?.commit_sha||''))}catch{}")"
+            diagnostic_commit="$(node -e "try{const j=require('./evidence/header-edge-diagnostic.json');process.stdout.write(String(j.source_revision?.commit_sha||''))}catch{}")"
+            if [[ "$health_status" == "200" && "$bounds_status" == "200" && "$diagnostic_status" == "200" && "$bounds_commit" == "$BIDFAST_EXPECTED_COMMIT" && "$diagnostic_commit" == "$BIDFAST_EXPECTED_COMMIT" ]]; then
+              accepted=true
+              break
+            fi
+            echo "attempt=${attempt} health=${health_status:-none} bounds=${bounds_status:-none} diagnostic=${diagnostic_status:-none} bounds_commit=${bounds_commit:-unknown} diagnostic_commit=${diagnostic_commit:-unknown}"
+            if [[ "$attempt" != "32" ]]; then sleep 20; fi
+          done
+          test "$accepted" = true
+
+      - name: Execute exact dashboard parity proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-parity-v3?route=%2Fdashboard&expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          accepted=false
+          for attempt in $(seq 1 12); do
+            status="$(curl -sS --max-time 210 -o evidence/dashboard-parity.json -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/dashboard-parity.http-status.txt
+            commit="$(node -e "try{const j=require('./evidence/dashboard-parity.json');process.stdout.write(String(j.source_revision?.commit_sha||''))}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" ]]; then
+              accepted=true
+              break
+            fi
+            echo "attempt=${attempt} status=${status:-none} commit=${commit:-unknown}"
+            if [[ "$attempt" != "12" ]]; then sleep 25; fi
+          done
+          test "$accepted" = true
+
+      - name: Enforce provenance, geometry, reference, non-regression, and technical gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const bounds = JSON.parse(fs.readFileSync('evidence/logo-bounds.json', 'utf8'))
+          const diagnostic = JSON.parse(fs.readFileSync('evidence/header-edge-diagnostic.json', 'utf8'))
+          const parity = JSON.parse(fs.readFileSync('evidence/dashboard-parity.json', 'utf8'))
+          const failures = []
+          const expectedCommit = process.env.BIDFAST_EXPECTED_COMMIT
+          const expectedRef = process.env.BIDFAST_EXPECTED_REF
+          const score = Number(parity?.metrics?.composite_score)
+          const logo = bounds?.analysis?.logo
+
+          for (const [name, body] of [['bounds', bounds], ['diagnostic', diagnostic], ['parity', parity]]) {
+            if (body.ok !== true) failures.push(`${name}_ok=${String(body.ok)}`)
+            if (body.provenance_pass !== true) failures.push(`${name}_provenance_pass=${String(body.provenance_pass)}`)
+            if (body.source_revision?.commit_sha !== expectedCommit) failures.push(`${name}_commit=${String(body.source_revision?.commit_sha)}`)
+            if (body.source_revision?.commit_ref !== expectedRef) failures.push(`${name}_ref=${String(body.source_revision?.commit_ref)}`)
+          }
+
+          if (diagnostic.integrity_pass !== true) failures.push(`diagnostic_integrity_pass=${String(diagnostic.integrity_pass)}`)
+          if (diagnostic.technical_pass !== true) failures.push(`diagnostic_technical_pass=${String(diagnostic.technical_pass)}`)
+          if (parity.integrity_pass !== true) failures.push(`parity_integrity_pass=${String(parity.integrity_pass)}`)
+          if (parity.technical_pass !== true) failures.push(`parity_technical_pass=${String(parity.technical_pass)}`)
+          if (diagnostic.reference?.sha256 !== diagnostic.reference?.expected_sha256) failures.push('reference_hash_mismatch')
+
+          if (!logo) failures.push('logo_geometry_missing')
+          if (Number(logo?.x) !== 6 || Number(logo?.y) !== 21.5 || Number(logo?.width) !== 172 || Number(logo?.height) !== 39) failures.push(`logo_geometry=${String(logo?.x)},${String(logo?.y)},${String(logo?.width)}x${String(logo?.height)}`)
+          if (logo?.complete !== true || logo?.display === 'none' || logo?.visibility === 'hidden' || Number(logo?.opacity) <= 0) failures.push('logo_not_visible')
+
+          for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
+            if (!Array.isArray(diagnostic[name]) || diagnostic[name].length !== 0) failures.push(`diagnostic_${name}=${JSON.stringify(diagnostic[name])}`)
+            if (!Array.isArray(parity[name]) || parity[name].length !== 0) failures.push(`parity_${name}=${JSON.stringify(parity[name])}`)
+          }
+
+          if (!Number.isFinite(score) || score < Number(process.env.RETAINED_BASELINE)) failures.push(`composite_score=${String(score)} baseline=${process.env.RETAINED_BASELINE}`)
+
+          const summary = {
+            candidate_commit: expectedCommit,
+            rollback_commit: 'e9cbd64bddf3a71e4a852aa29cd5b6041d16af5d',
+            route: process.env.ROUTE,
+            change: 'mobile BIDFAST logo translateX(4px) only',
+            retained_baseline: Number(process.env.RETAINED_BASELINE),
+            score,
+            score_delta: Number.isFinite(score) ? Number((score - Number(process.env.RETAINED_BASELINE)).toFixed(6)) : null,
+            non_regression_pass: Number.isFinite(score) && score >= Number(process.env.RETAINED_BASELINE),
+            release_threshold: Number(process.env.RELEASE_THRESHOLD),
+            release_threshold_pass: Number.isFinite(score) && score >= Number(process.env.RELEASE_THRESHOLD),
+            parity_metrics: parity.metrics,
+            logo_geometry: logo,
+            reference: diagnostic.reference,
+            regional_analysis: diagnostic.analysis?.regions,
+            source_revision: parity.source_revision,
+            console_error_count: parity.console_errors?.length,
+            application_network_error_count: parity.app_network_errors?.length,
+            http_error_count: parity.http_errors?.length,
+            failures,
+            candidate_retained: failures.length === 0,
+            release_authorized: false,
+          }
+          fs.writeFileSync('evidence/dashboard-logo-x4-candidate-summary.json', JSON.stringify(summary, null, 2) + '\n')
+          console.log(JSON.stringify(summary, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable candidate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-dashboard-logo-x4-isolated-2da86e3
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30
