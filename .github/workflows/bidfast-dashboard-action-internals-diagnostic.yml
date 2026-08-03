@@ -57,6 +57,21 @@ jobs:
             parseError = error instanceof Error ? error.message : 'response was not valid JSON'
           }
           const count = value => Array.isArray(value) ? value.length : null
+          const sanitizeEntry = value => {
+            if (typeof value !== 'string') return null
+            const sanitized = value.replace(/https?:\/\/[^\s]+/g, rawUrl => {
+              try {
+                const parsed = new URL(rawUrl)
+                return `${parsed.origin}${parsed.pathname}`
+              } catch {
+                return rawUrl.split(/[?#]/, 1)[0]
+              }
+            })
+            return sanitized.slice(0, 300)
+          }
+          const sample = value => Array.isArray(value)
+            ? value.slice(0, 10).map(sanitizeEntry).filter(Boolean)
+            : null
           const safeResponse = body && typeof body === 'object' ? {
             ok: body.ok ?? null,
             diagnostic_pass: body.diagnostic_pass ?? null,
@@ -69,8 +84,11 @@ jobs:
             main_document_status: body.main_document_status ?? null,
             release_authorized: body.release_authorized ?? null,
             console_error_count: count(body.console_errors),
+            console_error_sample: sample(body.console_errors),
             app_network_error_count: count(body.app_network_errors),
+            app_network_error_sample: sample(body.app_network_errors),
             http_error_count: count(body.http_errors),
+            http_error_sample: sample(body.http_errors),
           } : null
           const summary = {
             attempt: Number(process.env.ATTEMPT),
