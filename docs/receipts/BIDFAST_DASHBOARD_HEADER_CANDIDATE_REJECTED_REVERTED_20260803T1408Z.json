@@ -74,7 +74,9 @@
       "files_changed": 0,
       "ahead_by_commits": 2
     },
-    "vercel_status_at_receipt": "pending",
+    "vercel_status": "success",
+    "vercel_status_reference": "3yL59d2gN4zRuSxjVSopNqHxKLTs",
+    "exact_dpl_id_retrievable_from_connected_scope": false,
     "merge_performed": false,
     "production_promoted": false
   },
