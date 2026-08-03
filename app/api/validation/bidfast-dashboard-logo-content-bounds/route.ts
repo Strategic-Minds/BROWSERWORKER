@@ -81,7 +81,7 @@ export async function GET(request: Request) {
       return Boolean(image?.complete && image.naturalWidth > 0 && image.naturalHeight > 0)
     }, undefined, { timeout: 60_000 })
 
-    const analysis = await page.evaluate(() => {
+    const analysis: any = await page.evaluate(() => {
       type PixelBounds = {
         left: number
         top: number
@@ -232,17 +232,17 @@ export async function GET(request: Request) {
       if (beforeRevision.deployment_url && afterRevision.deployment_url && beforeRevision.deployment_url !== afterRevision.deployment_url) failures.push('deployment_url_changed_during_capture')
     }
 
-    if ('error' in analysis) failures.push(`analysis=${String(analysis.error)}`)
-    if (!('logo' in analysis) || !analysis.logo) failures.push('logo_geometry_missing')
-    if ('logo' in analysis && analysis.logo) {
+    if (analysis.error) failures.push(`analysis=${String(analysis.error)}`)
+    if (!analysis.logo) failures.push('logo_geometry_missing')
+    if (analysis.logo) {
       if (!analysis.logo.complete || analysis.logo.natural_width <= 0 || analysis.logo.natural_height <= 0) failures.push('logo_asset_not_loaded')
       if (analysis.logo.width <= 0 || analysis.logo.height <= 0) failures.push('logo_non_positive_geometry')
       if (analysis.logo.display === 'none' || analysis.logo.visibility === 'hidden' || Number(analysis.logo.opacity) <= 0) failures.push('logo_not_visible')
     }
-    if (!('natural_bounds' in analysis) || !analysis.natural_bounds?.alpha_visible) failures.push('alpha_visible_bounds_missing')
-    if (!('natural_bounds' in analysis) || !analysis.natural_bounds?.non_white) failures.push('non_white_bounds_missing')
-    if (!('pixels' in analysis) || analysis.pixels.alpha_visible_count <= 0) failures.push('alpha_visible_pixels_missing')
-    if (!('pixels' in analysis) || analysis.pixels.non_white_count <= 0) failures.push('non_white_pixels_missing')
+    if (!analysis.natural_bounds?.alpha_visible) failures.push('alpha_visible_bounds_missing')
+    if (!analysis.natural_bounds?.non_white) failures.push('non_white_bounds_missing')
+    if (Number(analysis.pixels?.alpha_visible_count) <= 0) failures.push('alpha_visible_pixels_missing')
+    if (Number(analysis.pixels?.non_white_count) <= 0) failures.push('non_white_pixels_missing')
 
     const provenancePass = failures.filter(failure => failure.includes('commit') || failure.includes('ref') || failure.includes('deployment') || failure.includes('build_info')).length === 0
 
