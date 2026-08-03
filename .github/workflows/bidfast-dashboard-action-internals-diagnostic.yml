@@ -37,15 +37,61 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          mkdir -p out
           endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-dashboard-action-internals?expected_commit=${BIDFAST_EXPECTED_COMMIT}"
           for attempt in $(seq 1 40); do
+            rm -f /tmp/diagnostic.json
             status="$(curl -sS --max-time 180 -o /tmp/diagnostic.json -w '%{http_code}' "$endpoint" || true)"
+            [[ -f /tmp/diagnostic.json ]] || : > /tmp/diagnostic.json
+            body_sha="$(sha256sum /tmp/diagnostic.json | awk '{print $1}')"
+            body_bytes="$(wc -c < /tmp/diagnostic.json | tr -d ' ')"
+
+            STATUS="$status" ATTEMPT="$attempt" BODY_SHA="$body_sha" BODY_BYTES="$body_bytes" ENDPOINT="$endpoint" node - <<'NODE'
+          const fs = require('node:fs')
+          const raw = fs.readFileSync('/tmp/diagnostic.json', 'utf8')
+          let body = null
+          let parseError = null
+          try {
+            body = raw ? JSON.parse(raw) : null
+          } catch (error) {
+            parseError = error instanceof Error ? error.message : 'response was not valid JSON'
+          }
+          const count = value => Array.isArray(value) ? value.length : null
+          const safeResponse = body && typeof body === 'object' ? {
+            ok: body.ok ?? null,
+            diagnostic_pass: body.diagnostic_pass ?? null,
+            error: typeof body.error === 'string' ? body.error.slice(0, 500) : null,
+            expected_commit: body.expected_commit ?? null,
+            expected_ref: body.expected_ref ?? null,
+            source_revision: body.source_revision ?? null,
+            provenance_pass: body.provenance_pass ?? null,
+            technical_pass: body.technical_pass ?? null,
+            main_document_status: body.main_document_status ?? null,
+            release_authorized: body.release_authorized ?? null,
+            console_error_count: count(body.console_errors),
+            app_network_error_count: count(body.app_network_errors),
+            http_error_count: count(body.http_errors),
+          } : null
+          const summary = {
+            attempt: Number(process.env.ATTEMPT),
+            endpoint_origin: new URL(process.env.ENDPOINT).origin,
+            http_status: process.env.STATUS || null,
+            body_sha256: process.env.BODY_SHA,
+            body_bytes: Number(process.env.BODY_BYTES || 0),
+            json_parseable: parseError === null,
+            parse_error: parseError,
+            response: safeResponse,
+            captured_at: new Date().toISOString(),
+          }
+          fs.writeFileSync('out/failure-summary.json', JSON.stringify(summary, null, 2) + '\n')
+          NODE
+
             if [[ "$status" == "200" ]] && node -e "const j=require('/tmp/diagnostic.json'); process.exit(j.ok===true ? 0 : 1)"; then
               cp /tmp/diagnostic.json diagnostic.json
+              cp /tmp/diagnostic.json out/diagnostic.json
               exit 0
             fi
-            echo "Diagnostic attempt ${attempt}: ${status:-no-status}"
-            cat /tmp/diagnostic.json || true
+            echo "Diagnostic attempt ${attempt}: status=${status:-no-status} bytes=${body_bytes} sha256=${body_sha}"
             sleep 20
           done
           exit 1
@@ -124,6 +170,7 @@ jobs:
         with:
           name: bidfast-dashboard-action-internals-e61d2b28
           path: |
+            out/
             diagnostic.json
             dashboard-action-internals.json
             dashboard-action-internals-summary.json
