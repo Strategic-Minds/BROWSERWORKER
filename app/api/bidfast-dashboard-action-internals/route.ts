@@ -34,6 +34,25 @@ function sha256(value: Uint8Array) {
   return createHash('sha256').update(value).digest('hex')
 }
 
+function isInfrastructureUrl(url: string): boolean {
+  return url.includes('/.well-known/vercel/jwe') ||
+    url.includes('vercel.live/_next-live/') ||
+    url.includes('/_next-live/')
+}
+
+function classifyFailedRequest(
+  method: string,
+  url: string,
+  failure: string,
+  target: string,
+): 'ignored' | 'app' {
+  if (isInfrastructureUrl(url)) return 'ignored'
+  if (method === 'OPTIONS' && url.replace(/\/$/, '') === BIDFAST_ORIGIN) return 'ignored'
+  if (method === 'HEAD' && url.split('?')[0] === target.split('?')[0]) return 'ignored'
+  if (failure.includes('ERR_ABORTED') && url.includes('_rsc=')) return 'ignored'
+  return 'app'
+}
+
 async function readBuildInfo(): Promise<{ status: number; source_revision: SourceRevision | null }> {
   const response = await fetch(`${BIDFAST_ORIGIN}/api/build-info`, {
     cache: 'no-store',
@@ -64,6 +83,8 @@ export async function GET(request: Request) {
   const consoleErrors: string[] = []
   const appNetworkErrors: string[] = []
   const httpErrors: string[] = []
+  const ignoredNetworkEvents: string[] = []
+  const dashboardTarget = `${BIDFAST_ORIGIN}/dashboard`
 
   try {
     const before = await readBuildInfo()
@@ -71,24 +92,30 @@ export async function GET(request: Request) {
     browser = launched.browser
     const context = await browser.newContext({ viewport: { width: 390, height: 844 } })
     const page = await context.newPage()
+    await page.setExtraHTTPHeaders({ 'x-vercel-skip-toolbar': '1' })
 
     page.on('console', message => {
       if (message.type() === 'error') consoleErrors.push(message.text())
     })
     page.on('requestfailed', requestEvent => {
       const target = requestEvent.url()
-      if (target.startsWith(BIDFAST_ORIGIN)) {
-        appNetworkErrors.push(`${requestEvent.method()} ${target} ${requestEvent.failure()?.errorText || 'request failed'}`)
+      if (!target.startsWith(BIDFAST_ORIGIN)) return
+      const failure = requestEvent.failure()?.errorText || 'request failed'
+      const event = `${requestEvent.method()} ${target} ${failure}`.slice(0, 1500)
+      if (classifyFailedRequest(requestEvent.method(), target, failure, dashboardTarget) === 'ignored') {
+        ignoredNetworkEvents.push(event)
+      } else {
+        appNetworkErrors.push(event)
       }
     })
     page.on('response', response => {
-      if (response.url().startsWith(BIDFAST_ORIGIN) && response.status() >= 400) {
+      if (response.url().startsWith(BIDFAST_ORIGIN) && response.status() >= 400 && !isInfrastructureUrl(response.url())) {
         httpErrors.push(`${response.status()} ${response.request().method()} ${response.url()}`)
       }
     })
 
     await page.addInitScript(() => localStorage.setItem('bidfast-theme', 'light'))
-    const mainResponse = await page.goto(`${BIDFAST_ORIGIN}/dashboard`, {
+    const mainResponse = await page.goto(dashboardTarget, {
       waitUntil: 'networkidle',
       timeout: 90000,
     })
@@ -204,7 +231,7 @@ export async function GET(request: Request) {
       ok: provenancePass && technicalPass,
       diagnostic_pass: provenancePass && technicalPass,
       route: '/dashboard',
-      target: `${BIDFAST_ORIGIN}/dashboard`,
+      target: dashboardTarget,
       expected_commit: expectedCommit,
       expected_ref: EXPECTED_REF,
       source_revision: sourceRevision,
@@ -216,6 +243,7 @@ export async function GET(request: Request) {
       console_errors: consoleErrors,
       app_network_errors: appNetworkErrors,
       http_errors: httpErrors,
+      ignored_network_events: ignoredNetworkEvents,
       reference: DASHBOARD_REFERENCE,
       geometry,
       screenshot: {
@@ -236,6 +264,7 @@ export async function GET(request: Request) {
       console_errors: consoleErrors,
       app_network_errors: appNetworkErrors,
       http_errors: httpErrors,
+      ignored_network_events: ignoredNetworkEvents,
       release_authorized: false,
     }, { status: 500, headers: { 'Cache-Control': 'no-store' } })
   } finally {
