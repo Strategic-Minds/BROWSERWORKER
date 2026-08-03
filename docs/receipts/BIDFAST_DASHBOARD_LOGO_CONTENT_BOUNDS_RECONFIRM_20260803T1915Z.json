@@ -1,0 +1,132 @@
+{
+  "receipt_type": "BIDFAST_VALIDATION_BASELINE_RECONFIRMATION",
+  "created_at": "2026-08-03T19:15:00Z",
+  "phase": "VALIDATION",
+  "step": "dashboard retained baseline reconfirmation with logo visible-content bounds",
+  "inspection_before_mutation": {
+    "bidfast_repository": "XTREME-SYSTEMS/bidfast",
+    "bidfast_branch": "auto-builder/bidfast-complete-visual-system",
+    "bidfast_pull_request": 2,
+    "bidfast_head_commit": "e9cbd64bddf3a71e4a852aa29cd5b6041d16af5d",
+    "retained_tree_commit": "b58a4e293e3d5b8fad5a6c0fd2d521ce96489d31",
+    "files_differing_from_retained_tree": 0,
+    "retained_dashboard_baseline": 0.836926,
+    "browserworker_repository": "Strategic-Minds/BROWSERWORKER",
+    "browserworker_branch": "auto-builder/bidfast-proof-20260728",
+    "browserworker_pull_request": 9,
+    "prior_receipt": "docs/receipts/BIDFAST_DASHBOARD_LOGO_WIDTH_190_REJECTED_REVERTED_20260803T1813Z.json"
+  },
+  "validator_changes": {
+    "initial_endpoint_commit": "ff82173e05713bd27a97cf85aaac9f56875f3173",
+    "workflow_commit": "9ad9018bcdfe299ee64a5e24ba262e8ac1b71173",
+    "initial_vercel_result": "failure",
+    "repair_commit": "4e45c36e70fa3ac13c6015e8eaf45170b6cf8cb3",
+    "repair_scope": "narrow page-evaluate response handling without changing acceptance thresholds",
+    "repair_vercel_reference": "H29JdAttL2eyMHammP85uXMXCxVx",
+    "repair_vercel_check": "success",
+    "component_level_only": true,
+    "test_thresholds_weakened": false,
+    "approved_screenshot_used_as_background": false,
+    "approved_screenshot_used_as_overlay": false,
+    "approved_screenshot_used_as_hidden_replacement": false,
+    "real_components_hidden_for_parity": false,
+    "secrets_exposed": false
+  },
+  "validation": {
+    "workflow_name": "BIDFAST Dashboard Logo Content Bounds Reconfirm",
+    "workflow_run_id": 30844844993,
+    "workflow_job_id": 91790572521,
+    "conclusion": "success",
+    "artifact_id": 8868275802,
+    "artifact_sha256": "bc9007e209309d6d1393b4e6964d0ca212d6368a8d6cf2f0bf53d2d0805cdc8e",
+    "application_commit": "e9cbd64bddf3a71e4a852aa29cd5b6041d16af5d",
+    "application_ref": "auto-builder/bidfast-complete-visual-system",
+    "application_deployment_id": "dpl_HGtmnguMCR5RsgmWJ5vg49KjfQ7p",
+    "application_deployment_url": "bidfast-jgf8crwbl-strategic-minds-advisory.vercel.app",
+    "route": "/dashboard",
+    "theme": "light",
+    "viewport": "mobile",
+    "retained_baseline": 0.836926,
+    "score": 0.836926,
+    "baseline_reconfirmed": true,
+    "release_threshold": 0.99,
+    "release_threshold_pass": false,
+    "metrics": {
+      "pixel_similarity": 0.948106,
+      "structure_similarity": 0.975931,
+      "edge_similarity": 0.328753,
+      "color_similarity": 0.967785,
+      "composite_score": 0.836926
+    },
+    "logo_geometry": {
+      "x": 2,
+      "y": 21.5,
+      "right": 174,
+      "bottom": 60.5,
+      "width": 172,
+      "height": 39,
+      "natural_width": 366,
+      "natural_height": 83,
+      "object_fit": "contain",
+      "object_position": "0% 50%",
+      "asset_path": "/api/assets/bidfast-logo",
+      "complete": true
+    },
+    "logo_pixel_analysis": {
+      "total_pixels": 30378,
+      "alpha_visible_count": 7796,
+      "non_white_count": 7796,
+      "alpha_visible_ratio": 0.256633,
+      "non_white_ratio": 0.256633,
+      "natural_alpha_bounds": {"left": 0, "top": 0, "right": 366, "bottom": 83, "width": 366, "height": 83},
+      "natural_non_white_bounds": {"left": 0, "top": 0, "right": 366, "bottom": 83, "width": 366, "height": 83},
+      "rendered_non_white_bounds": {"x": 2, "y": 21.5, "right": 174, "bottom": 60.5, "width": 172, "height": 39}
+    },
+    "console_error_count": 0,
+    "application_network_error_count": 0,
+    "http_error_count": 0,
+    "provenance_pass": true,
+    "reference_integrity_pass": true,
+    "technical_pass": true,
+    "failures": []
+  },
+  "approved_reference": {
+    "drive_file_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+    "title": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+    "sha256": "f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb",
+    "bytes": 1087711
+  },
+  "supabase": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "public_bidfast_entity_count": 0,
+    "database_mutation_performed": false,
+    "operational_workflow_tested": false,
+    "tenant_isolation_tested": false,
+    "authorization_bypass_tested": false
+  },
+  "decision": {
+    "bidfast_application_changed": false,
+    "dashboard_baseline_remains": 0.836926,
+    "new_logo_width_candidate_authorized": false,
+    "release_authorized": false,
+    "production_promotion_authorized": false
+  },
+  "remaining_gates": {
+    "visual_parity_0_99_every_route_and_viewport": false,
+    "operational_pass_rate_1_00": false,
+    "complete_light_dark_coverage": false,
+    "zero_dead_controls_application_wide": false,
+    "zero_tenant_leaks": false,
+    "zero_authorization_bypasses": false,
+    "production_smoke_receipt": false,
+    "production_rollback_receipt": false
+  },
+  "blockers": [
+    "The logo asset has full-canvas non-transparent and non-white bounds even though only 25.6633 percent of pixels are visible, so edge disagreement cannot be safely attributed to transparent internal padding.",
+    "The connected Supabase project contains zero public.bidfast_* entities.",
+    "No approved route currently reaches the 0.99 release threshold.",
+    "Complete approved dark-mode and wider-viewport reference pairs remain unavailable.",
+    "BrowserWorker PR synchronization triggers obsolete historical workflows and causes queue congestion.",
+    "The connected Vercel scope cannot directly retrieve the BrowserWorker dpl_* deployment identifier."
+  ]
+}
