@@ -1,4 +1,4 @@
-name: BIDFAST Stage Tabs Candidate Full Matrix
+name: BIDFAST Quick Actions Candidate Full Matrix
 
 on:
   pull_request:
@@ -17,12 +17,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: bidfast-stage-tabs-584767bb-full-matrix
+  group: bidfast-quick-actions-1bc566b8-full-matrix
   cancel-in-progress: true
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: 584767bbd75aad1c7b9459bbc710cd225e51ec53
+  BIDFAST_EXPECTED_COMMIT: 1bc566b89a16af6ca180bc0a2069070e6630192b
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   RELEASE_THRESHOLD: '0.99'
 
@@ -75,12 +75,10 @@ jobs:
             status="$(curl -sS --max-time 210 -o "evidence/${route_slug}.json" -w '%{http_code}' "$endpoint" || true)"
             commit="$(node -e "try{const j=require('./evidence/${route_slug}.json');process.stdout.write(String(j.source_revision?.commit_sha||''))}catch{}")"
             if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" ]]; then
-              cat "evidence/${route_slug}.json"
               exit 0
             fi
             echo "route=${route} attempt=${attempt} status=${status:-none} commit=${commit:-unknown}"
-            cat "evidence/${route_slug}.json" || true
-            sleep 20
+            if [[ "$attempt" != "8" ]]; then sleep 20; fi
           done
           exit 1
 
@@ -91,11 +89,11 @@ jobs:
           BASELINE: ${{ matrix.baseline }}
         run: |
           set -euo pipefail
-          route_slug="$(printf '%s' "$ROUTE" | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
           node - <<'NODE'
           const fs = require('node:fs')
           const route = process.env.ROUTE
-          const body = JSON.parse(fs.readFileSync(`evidence/${route.replace(/^\//, '').replace(/[^A-Za-z0-9._-]/g, '_')}.json`, 'utf8'))
+          const slug = route.replace(/^\//, '').replace(/[^A-Za-z0-9._-]/g, '_')
+          const body = JSON.parse(fs.readFileSync(`evidence/${slug}.json`, 'utf8'))
           const metrics = route === '/opportunities' ? body?.official_metrics : body?.metrics
           const failures = []
           if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
@@ -113,7 +111,7 @@ jobs:
             if (!Array.isArray(body[name]) || body[name].length !== 0) failures.push(`${name}=${JSON.stringify(body[name])}`)
           }
           if (body.release_authorized === true) failures.push('unexpected_release_authorization')
-          console.log(JSON.stringify({
+          const summary = {
             route,
             score: metrics?.composite_score,
             baseline: Number(process.env.BASELINE),
@@ -121,7 +119,9 @@ jobs:
             reference_sha256: body.reference?.sha256,
             live_sha256: body.live?.sha256,
             failures,
-          }, null, 2))
+          }
+          fs.writeFileSync(`evidence/${slug}-summary.json`, JSON.stringify(summary, null, 2) + '\n')
+          console.log(JSON.stringify(summary, null, 2))
           if (failures.length) process.exit(1)
           NODE
 
@@ -129,7 +129,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-stage-tabs-${{ strategy.job-index }}-${{ matrix.baseline }}
+          name: bidfast-quick-actions-${{ strategy.job-index }}-${{ matrix.baseline }}
           path: evidence/
           if-no-files-found: error
           retention-days: 30
@@ -151,7 +151,7 @@ jobs:
       - name: Upload matrix summary
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-stage-tabs-full-matrix-584767bb
+          name: bidfast-quick-actions-full-matrix-1bc566b8
           path: matrix-summary.json
           if-no-files-found: error
           retention-days: 30
