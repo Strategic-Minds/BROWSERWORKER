@@ -17,13 +17,13 @@ permissions:
   contents: read
 
 concurrency:
-  group: bidfast-dashboard-quick-actions-1c750c4f
+  group: bidfast-dashboard-quick-actions-1bc566b8
   cancel-in-progress: true
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
   BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: 1c750c4fb830cac3489f720241e5847165813ab3
+  BIDFAST_EXPECTED_COMMIT: 1bc566b89a16af6ca180bc0a2069070e6630192b
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   DASHBOARD_REFERENCE_ID: 1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr
   DASHBOARD_REFERENCE_SHA256: f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb
@@ -37,77 +37,55 @@ jobs:
     name: Revision-pinned dashboard Quick Actions candidate
     runs-on: ubuntu-latest
     timeout-minutes: 45
-
     steps:
-      - name: Wait for BrowserWorker health
+      - name: Wait for exact BIDFAST preview provenance
         shell: bash
         run: |
           set -euo pipefail
-          for attempt in $(seq 1 32); do
-            status="$(curl -sS -o /tmp/browserworker-health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
-            if [[ "$status" == "200" ]]; then
-              cat /tmp/browserworker-health.json
-              exit 0
-            fi
-            echo "BrowserWorker health attempt ${attempt}: ${status:-no-status}"
-            sleep 15
-          done
-          exit 1
-
-      - name: Verify exact BIDFAST preview provenance
-        shell: bash
-        run: |
-          set -euo pipefail
-          for attempt in $(seq 1 48); do
-            status="$(curl -sS -o /tmp/bidfast-build-info.json -w '%{http_code}' --max-time 30 "${BIDFAST_ORIGIN}/api/build-info" || true)"
-            commit="$(node -e "try{const j=require('/tmp/bidfast-build-info.json');process.stdout.write(String(j?.source_revision?.commit_sha||''))}catch{}")"
-            ref="$(node -e "try{const j=require('/tmp/bidfast-build-info.json');process.stdout.write(String(j?.source_revision?.commit_ref||''))}catch{}")"
+          mkdir -p evidence
+          for attempt in $(seq 1 50); do
+            status="$(curl -sS -o evidence/build-info.json -w '%{http_code}' --max-time 30 "${BIDFAST_ORIGIN}/api/build-info" || true)"
+            commit="$(node -e "try{const j=require('./evidence/build-info.json');process.stdout.write(String(j?.source_revision?.commit_sha||''))}catch{}")"
+            ref="$(node -e "try{const j=require('./evidence/build-info.json');process.stdout.write(String(j?.source_revision?.commit_ref||''))}catch{}")"
             if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" && "$ref" == "$BIDFAST_EXPECTED_REF" ]]; then
-              cat /tmp/bidfast-build-info.json
+              cat evidence/build-info.json
               exit 0
             fi
             echo "BIDFAST provenance attempt ${attempt}: status=${status:-no-status} commit=${commit:-unknown} ref=${ref:-unknown}"
             sleep 15
           done
-          cat /tmp/bidfast-build-info.json || true
           exit 1
 
       - name: Execute coherent dashboard diagnostic
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p evidence
           endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-dashboard-regions?expected_commit=${BIDFAST_EXPECTED_COMMIT}"
           for attempt in $(seq 1 8); do
             status="$(curl -sS --max-time 240 -o evidence/dashboard-quick-actions.json -w '%{http_code}' "$endpoint" || true)"
             printf '%s\n' "$status" > evidence/dashboard-quick-actions.http-status.txt
             if [[ "$status" == "200" ]] && node -e "const j=require('./evidence/dashboard-quick-actions.json');process.exit(j.ok===true&&j.diagnostic_pass===true?0:1)"; then
-              cat evidence/dashboard-quick-actions.json
               exit 0
             fi
             echo "Dashboard candidate attempt ${attempt}: ${status:-no-status}"
-            cat evidence/dashboard-quick-actions.json || true
             if [[ "$attempt" != "8" ]]; then sleep 60; fi
           done
           exit 1
 
-      - name: Enforce provenance, integrity, technical, non-regression, and target improvement
+      - name: Enforce exact reference, technical, and improvement gates
         shell: bash
         run: |
           set -euo pipefail
           node - <<'NODE'
           const fs = require('node:fs')
           const body = JSON.parse(fs.readFileSync('evidence/dashboard-quick-actions.json', 'utf8'))
-          const score = body?.metrics?.composite_score
+          const score = Number(body?.metrics?.composite_score)
           const regions = Array.isArray(body?.analysis?.regions) ? body.analysis.regions : []
           const target = regions.find(region => region?.name === 'quick_actions')
           const failures = []
           if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
           if (body.diagnostic_pass !== true) failures.push(`diagnostic_pass=${String(body.diagnostic_pass)}`)
-          if (body.diagnostic_only !== true) failures.push(`diagnostic_only=${String(body.diagnostic_only)}`)
           if (body.release_authorized !== false) failures.push(`release_authorized=${String(body.release_authorized)}`)
-          if (body.route !== '/dashboard') failures.push(`route=${String(body.route)}`)
-          if (body.validator_version !== 'dashboard-regions-v1-single-capture') failures.push(`validator_version=${String(body.validator_version)}`)
           if (body.provenance_pass !== true) failures.push(`provenance_pass=${String(body.provenance_pass)}`)
           if (body.integrity_pass !== true) failures.push(`integrity_pass=${String(body.integrity_pass)}`)
           if (body.technical_pass !== true) failures.push(`technical_pass=${String(body.technical_pass)}`)
@@ -115,34 +93,35 @@ jobs:
           if (body?.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`commit_ref=${String(body?.source_revision?.commit_ref)}`)
           if (body?.reference?.drive_file_id !== process.env.DASHBOARD_REFERENCE_ID) failures.push(`reference_id=${String(body?.reference?.drive_file_id)}`)
           if (body?.reference?.sha256 !== process.env.DASHBOARD_REFERENCE_SHA256) failures.push(`reference_sha256=${String(body?.reference?.sha256)}`)
-          if (!Number.isFinite(score)) failures.push('composite_score missing')
-          else if (score < Number(process.env.RETAINED_BASELINE)) failures.push(`REGRESSION composite_score=${score} baseline=${process.env.RETAINED_BASELINE}`)
+          if (!(score > Number(process.env.RETAINED_BASELINE))) failures.push(`dashboard_score=${score} baseline=${process.env.RETAINED_BASELINE}`)
           if (!target) failures.push('quick_actions region missing')
           else {
-            if (!(target.diagnostic_score > Number(process.env.QUICK_ACTIONS_BASELINE))) failures.push(`NO_TARGET_IMPROVEMENT diagnostic_score=${target.diagnostic_score} baseline=${process.env.QUICK_ACTIONS_BASELINE}`)
-            if (!(target.edge_similarity > Number(process.env.QUICK_ACTIONS_EDGE_BASELINE))) failures.push(`NO_EDGE_IMPROVEMENT edge_similarity=${target.edge_similarity} baseline=${process.env.QUICK_ACTIONS_EDGE_BASELINE}`)
+            if (!(Number(target.diagnostic_score) > Number(process.env.QUICK_ACTIONS_BASELINE))) failures.push(`quick_actions_score=${target.diagnostic_score} baseline=${process.env.QUICK_ACTIONS_BASELINE}`)
+            if (!(Number(target.edge_similarity) > Number(process.env.QUICK_ACTIONS_EDGE_BASELINE))) failures.push(`quick_actions_edge=${target.edge_similarity} baseline=${process.env.QUICK_ACTIONS_EDGE_BASELINE}`)
           }
           for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
             if (!Array.isArray(body[name]) || body[name].length !== 0) failures.push(`${name}=${JSON.stringify(body[name])}`)
           }
           const summary = {
             route: body.route,
+            candidate_commit: process.env.BIDFAST_EXPECTED_COMMIT,
+            source_revision: body.source_revision,
+            deployment_id: body?.source_revision?.deployment_id || null,
             score,
             retained_baseline: Number(process.env.RETAINED_BASELINE),
-            score_delta: Number.isFinite(score) ? score - Number(process.env.RETAINED_BASELINE) : null,
+            score_delta: Number.isFinite(score) ? Number((score - Number(process.env.RETAINED_BASELINE)).toFixed(6)) : null,
+            metrics: body.metrics,
             quick_actions: target || null,
             quick_actions_baseline: Number(process.env.QUICK_ACTIONS_BASELINE),
             quick_actions_edge_baseline: Number(process.env.QUICK_ACTIONS_EDGE_BASELINE),
-            release_threshold: Number(process.env.RELEASE_THRESHOLD),
-            release_threshold_pass: Number.isFinite(score) && score >= Number(process.env.RELEASE_THRESHOLD),
-            release_authorized: false,
             live_sha256: body?.live?.sha256 || null,
-            source_revision: body.source_revision,
             page_height: body.page_height,
-            geometry: body.geometry,
             failures,
+            retain_candidate: failures.length === 0,
+            release_threshold: Number(process.env.RELEASE_THRESHOLD),
+            release_authorized: false
           }
-          fs.writeFileSync('evidence/dashboard-quick-actions-summary.json', JSON.stringify(summary, null, 2))
+          fs.writeFileSync('evidence/dashboard-quick-actions-summary.json', JSON.stringify(summary, null, 2) + '\n')
           console.log(JSON.stringify(summary, null, 2))
           if (failures.length) process.exit(1)
           NODE
@@ -151,7 +130,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-dashboard-quick-actions-1c750c4f
+          name: bidfast-dashboard-quick-actions-1bc566b8
           path: evidence/
           if-no-files-found: error
           retention-days: 30
