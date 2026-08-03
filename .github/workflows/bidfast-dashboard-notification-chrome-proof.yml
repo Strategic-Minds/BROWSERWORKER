@@ -1,6 +1,11 @@
 name: BIDFAST Dashboard Notification Chrome Proof
 
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/bidfast-dashboard-notification-chrome-proof.yml'
   push:
     branches:
       - auto-builder/bidfast-proof-20260728
