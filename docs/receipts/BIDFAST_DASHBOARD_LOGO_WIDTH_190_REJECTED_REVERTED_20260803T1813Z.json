@@ -79,7 +79,7 @@
     "restored_retained_commit_tree": "b58a4e293e3d5b8fad5a6c0fd2d521ce96489d31",
     "files_differing_from_retained_tree": 0,
     "revert_preview_reference": "HGtmnguMCR5RsgmWJ5vg49KjfQ7p",
-    "revert_preview_status_at_receipt": "pending",
+    "revert_preview_vercel_check": "success",
     "production_rollback_required": false
   },
   "supabase": {
