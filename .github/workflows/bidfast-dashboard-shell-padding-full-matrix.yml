@@ -1,0 +1,161 @@
+name: BIDFAST Dashboard Shell Padding Full Matrix
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/bidfast-dashboard-shell-padding-full-matrix.yml'
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-dashboard-shell-padding-full-matrix.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-dashboard-shell-padding-62a6f47-full-matrix
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: 62a6f47e6b2090a007e50916f723e31d2333c6ae
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  RELEASE_THRESHOLD: '0.99'
+
+jobs:
+  parity:
+    name: Candidate non-regression ${{ matrix.route }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        include:
+          - route: /dashboard
+            baseline: '0.822699'
+          - route: /analytics
+            baseline: '0.830446'
+          - route: /approvals
+            baseline: '0.859067'
+          - route: /opportunities
+            baseline: '0.859699'
+          - route: /estimates/new
+            baseline: '0.813012'
+          - route: /proposals
+            baseline: '0.819855'
+          - route: /projects/demo-riverside
+            baseline: '0.818791'
+          - route: /takeoffs/demo-riverside
+            baseline: '0.818538'
+          - route: /settings/company
+            baseline: '0.825706'
+          - route: /assistant
+            baseline: '0.823121'
+
+    steps:
+      - name: Execute one-capture revision-pinned parity proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          route='${{ matrix.route }}'
+          route_slug="$(printf '%s' "$route" | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
+          encoded_route="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "$route")"
+          if [[ "$route" == "/opportunities" ]]; then
+            endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-opportunities-single-capture?expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          else
+            endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-parity-v3?route=${encoded_route}&expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          fi
+          for attempt in $(seq 1 8); do
+            status="$(curl -sS --max-time 210 -o "evidence/${route_slug}.json" -w '%{http_code}' "$endpoint" || true)"
+            commit="$(node -e "try{const j=require('./evidence/${route_slug}.json');process.stdout.write(String(j.source_revision?.commit_sha||''))}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" ]]; then
+              exit 0
+            fi
+            echo "route=${route} attempt=${attempt} status=${status:-none} commit=${commit:-unknown}"
+            if [[ "$attempt" != "8" ]]; then sleep 20; fi
+          done
+          exit 1
+
+      - name: Enforce exact provenance, integrity, technical, and non-regression gates
+        shell: bash
+        env:
+          ROUTE: ${{ matrix.route }}
+          BASELINE: ${{ matrix.baseline }}
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const route = process.env.ROUTE
+          const slug = route.replace(/^\//, '').replace(/[^A-Za-z0-9._-]/g, '_')
+          const body = JSON.parse(fs.readFileSync(`evidence/${slug}.json`, 'utf8'))
+          const metrics = route === '/opportunities' ? body?.official_metrics : body?.metrics
+          const failures = []
+          if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
+          if (body.route !== route) failures.push(`route=${String(body.route)}`)
+          if (body.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`commit_sha=${String(body.source_revision?.commit_sha)}`)
+          if (body.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`commit_ref=${String(body.source_revision?.commit_ref)}`)
+          if (body.provenance_pass !== true) failures.push(`provenance_pass=${String(body.provenance_pass)}`)
+          if (body.integrity_pass !== true) failures.push(`integrity_pass=${String(body.integrity_pass)}`)
+          if (body.technical_pass !== true) failures.push(`technical_pass=${String(body.technical_pass)}`)
+          if (route === '/opportunities' && body.screenshot_coherence_pass !== true) failures.push(`screenshot_coherence_pass=${String(body.screenshot_coherence_pass)}`)
+          if (!body.live?.sha256 || !/^[0-9a-f]{64}$/.test(body.live.sha256)) failures.push(`live_sha256=${String(body.live?.sha256)}`)
+          if (!body.reference?.sha256 || !/^[0-9a-f]{64}$/.test(body.reference.sha256)) failures.push(`reference_sha256=${String(body.reference?.sha256)}`)
+          if (!Number.isFinite(metrics?.composite_score) || metrics.composite_score < Number(process.env.BASELINE)) failures.push(`composite_score=${String(metrics?.composite_score)} baseline=${process.env.BASELINE}`)
+          for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
+            if (!Array.isArray(body[name]) || body[name].length !== 0) failures.push(`${name}=${JSON.stringify(body[name])}`)
+          }
+          if (body.release_authorized === true) failures.push('unexpected_release_authorization')
+          const summary = {
+            route,
+            score: metrics?.composite_score,
+            baseline: Number(process.env.BASELINE),
+            delta: Number.isFinite(metrics?.composite_score) ? Number((metrics.composite_score - Number(process.env.BASELINE)).toFixed(6)) : null,
+            metrics,
+            source_revision: body.source_revision,
+            reference: body.reference,
+            live_sha256: body.live?.sha256,
+            failures,
+          }
+          fs.writeFileSync(`evidence/${slug}-summary.json`, JSON.stringify(summary, null, 2) + '\n')
+          console.log(JSON.stringify(summary, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable route evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-dashboard-shell-${{ strategy.job-index }}-${{ matrix.baseline }}
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30
+
+  summary:
+    name: Full-matrix retention decision
+    if: always()
+    needs: parity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require all ten route jobs to pass
+        shell: bash
+        env:
+          MATRIX_RESULT: ${{ needs.parity.result }}
+        run: |
+          set -euo pipefail
+          test "$MATRIX_RESULT" = "success"
+          printf '{"candidate":"%s","matrix_result":"%s","release_threshold":%s,"release_authorized":false}\n' "$BIDFAST_EXPECTED_COMMIT" "$MATRIX_RESULT" "$RELEASE_THRESHOLD" > matrix-summary.json
+
+      - name: Upload matrix summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-dashboard-shell-full-matrix-62a6f47
+          path: matrix-summary.json
+          if-no-files-found: error
+          retention-days: 30
