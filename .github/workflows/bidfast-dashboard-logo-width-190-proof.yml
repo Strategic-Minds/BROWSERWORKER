@@ -1,6 +1,11 @@
 name: BIDFAST Dashboard Logo Width 190 Proof
 
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/bidfast-dashboard-logo-width-190-proof.yml'
   push:
     branches:
       - auto-builder/bidfast-proof-20260728
