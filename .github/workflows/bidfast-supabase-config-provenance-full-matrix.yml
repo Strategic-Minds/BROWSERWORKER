@@ -1,0 +1,211 @@
+name: BIDFAST Supabase Config Provenance Full Matrix
+
+on:
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-supabase-config-provenance-full-matrix.yml'
+      - 'app/api/validation/bidfast-config-provenance/route.ts'
+      - 'docs/validation-triggers/bidfast-supabase-config-provenance.txt'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-supabase-config-provenance-ee80793
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: ee807932694606d50b10c7f544afe6b8c9617ed5
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  BIDFAST_EXPECTED_SUPABASE_PROJECT_REF: mhaovpyegtysfgualplu
+  RELEASE_THRESHOLD: '0.99'
+
+jobs:
+  governed-proof:
+    name: Config provenance and ten-route non-regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+
+    steps:
+      - name: Verify exact Supabase configuration provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/config evidence/routes
+          endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-config-provenance?expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          accepted=false
+          for attempt in $(seq 1 15); do
+            status="$(curl -sS --max-time 120 -o evidence/config/provenance.json -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/config/provenance.http-status.txt
+            commit="$(node -e "try{const j=require('./evidence/config/provenance.json');process.stdout.write(String(j.source_revision?.commit_sha||''))}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" ]]; then
+              accepted=true
+              break
+            fi
+            echo "config attempt=${attempt} status=${status:-none} commit=${commit:-unknown}"
+            if [[ "$attempt" != "15" ]]; then sleep 20; fi
+          done
+          test "$accepted" = true
+
+      - name: Execute approved-route matrix sequentially
+        shell: bash
+        run: |
+          set -euo pipefail
+          routes=(
+            '/dashboard'
+            '/analytics'
+            '/approvals'
+            '/opportunities'
+            '/estimates/new'
+            '/proposals'
+            '/projects/demo-riverside'
+            '/takeoffs/demo-riverside'
+            '/settings/company'
+            '/assistant'
+          )
+
+          for route in "${routes[@]}"; do
+            slug="$(printf '%s' "$route" | sed 's#^/##; s#[^A-Za-z0-9]#-#g')"
+            endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-parity-v3?route=$(node -p "encodeURIComponent(process.argv[1])" "$route")&expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+            accepted=false
+            for attempt in $(seq 1 12); do
+              status="$(curl -sS --max-time 210 -o "evidence/routes/${slug}.json" -w '%{http_code}' "$endpoint" || true)"
+              printf '%s\n' "$status" > "evidence/routes/${slug}.http-status.txt"
+              commit="$(node -e "try{const j=require('./evidence/routes/${slug}.json');process.stdout.write(String(j.source_revision?.commit_sha||''))}catch{}")"
+              if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" ]]; then
+                accepted=true
+                break
+              fi
+              echo "route=${route} attempt=${attempt} status=${status:-none} commit=${commit:-unknown}"
+              if [[ "$attempt" != "12" ]]; then sleep 20; fi
+            done
+            test "$accepted" = true
+          done
+
+      - name: Enforce provenance, visual, and technical gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const path = require('node:path')
+
+          const expectedCommit = process.env.BIDFAST_EXPECTED_COMMIT
+          const expectedRef = process.env.BIDFAST_EXPECTED_REF
+          const expectedProjectRef = process.env.BIDFAST_EXPECTED_SUPABASE_PROJECT_REF
+          const threshold = Number(process.env.RELEASE_THRESHOLD)
+          const baselines = {
+            '/dashboard': 0.837024,
+            '/analytics': 0.830446,
+            '/approvals': 0.859067,
+            '/opportunities': 0.859699,
+            '/estimates/new': 0.813012,
+            '/proposals': 0.819855,
+            '/projects/demo-riverside': 0.818791,
+            '/takeoffs/demo-riverside': 0.818538,
+            '/settings/company': 0.825706,
+            '/assistant': 0.823121,
+          }
+          const failures = []
+          const config = JSON.parse(fs.readFileSync('evidence/config/provenance.json', 'utf8'))
+
+          if (config.ok !== true) failures.push(`config:ok=${String(config.ok)}`)
+          if (config.provenance_pass !== true) failures.push(`config:provenance_pass=${String(config.provenance_pass)}`)
+          if (config.configuration_pass !== true) failures.push(`config:configuration_pass=${String(config.configuration_pass)}`)
+          if (config.source_revision?.commit_sha !== expectedCommit) failures.push(`config:commit=${String(config.source_revision?.commit_sha)}`)
+          if (config.source_revision?.commit_ref !== expectedRef) failures.push(`config:ref=${String(config.source_revision?.commit_ref)}`)
+          if (config.health?.configuration?.project_ref !== expectedProjectRef) failures.push(`config:project_ref=${String(config.health?.configuration?.project_ref)}`)
+          if (config.health?.configuration?.expected_project_ref !== expectedProjectRef) failures.push(`config:expected_project_ref=${String(config.health?.configuration?.expected_project_ref)}`)
+          if (config.health?.source?.supabase_url !== 'environment') failures.push(`config:url_source=${String(config.health?.source?.supabase_url)}`)
+          if (config.health?.source?.supabase_publishable_key !== 'environment') failures.push(`config:key_source=${String(config.health?.source?.supabase_publishable_key)}`)
+          if (Array.isArray(config.failures) && config.failures.length !== 0) failures.push(`config:failures=${JSON.stringify(config.failures)}`)
+
+          const slug = route => route.replace(/^\//, '').replace(/[^A-Za-z0-9]/g, '-')
+          const results = {}
+          let consoleErrorCount = 0
+          let networkErrorCount = 0
+          let httpErrorCount = 0
+          let thresholdPassCount = 0
+
+          for (const [route, baseline] of Object.entries(baselines)) {
+            const body = JSON.parse(fs.readFileSync(path.join('evidence', 'routes', `${slug(route)}.json`), 'utf8'))
+            const score = Number(body?.metrics?.composite_score)
+            const consoleErrors = Array.isArray(body.console_errors) ? body.console_errors : ['missing']
+            const networkErrors = Array.isArray(body.app_network_errors) ? body.app_network_errors : ['missing']
+            const httpErrors = Array.isArray(body.http_errors) ? body.http_errors : ['missing']
+
+            if (body.ok !== true) failures.push(`${route}:ok=${String(body.ok)}`)
+            if (body.provenance_pass !== true) failures.push(`${route}:provenance_pass=${String(body.provenance_pass)}`)
+            if (body.integrity_pass !== true) failures.push(`${route}:integrity_pass=${String(body.integrity_pass)}`)
+            if (body.technical_pass !== true) failures.push(`${route}:technical_pass=${String(body.technical_pass)}`)
+            if (body.source_revision?.commit_sha !== expectedCommit) failures.push(`${route}:commit=${String(body.source_revision?.commit_sha)}`)
+            if (body.source_revision?.commit_ref !== expectedRef) failures.push(`${route}:ref=${String(body.source_revision?.commit_ref)}`)
+            if (!Number.isFinite(score) || score < baseline) failures.push(`${route}:score=${String(score)} baseline=${baseline}`)
+            if (consoleErrors.length !== 0) failures.push(`${route}:console_errors=${JSON.stringify(consoleErrors)}`)
+            if (networkErrors.length !== 0) failures.push(`${route}:app_network_errors=${JSON.stringify(networkErrors)}`)
+            if (httpErrors.length !== 0) failures.push(`${route}:http_errors=${JSON.stringify(httpErrors)}`)
+
+            consoleErrorCount += consoleErrors.length
+            networkErrorCount += networkErrors.length
+            httpErrorCount += httpErrors.length
+            if (Number.isFinite(score) && score >= threshold) thresholdPassCount += 1
+
+            results[route] = {
+              baseline,
+              score,
+              non_regression_pass: Number.isFinite(score) && score >= baseline,
+              release_threshold_pass: Number.isFinite(score) && score >= threshold,
+              metrics: body.metrics,
+              source_revision: body.source_revision,
+              reference: body.reference,
+              console_error_count: consoleErrors.length,
+              application_network_error_count: networkErrors.length,
+              http_error_count: httpErrors.length,
+            }
+          }
+
+          const routeCount = Object.keys(baselines).length
+          const routesPassed = Object.values(results).filter(result => result.non_regression_pass && result.console_error_count === 0 && result.application_network_error_count === 0 && result.http_error_count === 0).length
+          const summary = {
+            application_commit: expectedCommit,
+            application_ref: expectedRef,
+            rollback_commit: '2da86e312259db0a9df6a6ed96578a3e55e046f8',
+            candidate_change: 'fail-closed Supabase environment configuration and exact project-ref provenance enforcement',
+            supabase_configuration: {
+              expected_project_ref: expectedProjectRef,
+              actual_project_ref: config.health?.configuration?.project_ref || null,
+              url_source: config.health?.source?.supabase_url || null,
+              publishable_key_source: config.health?.source?.supabase_publishable_key || null,
+              pass: config.configuration_pass === true,
+            },
+            route_count: routeCount,
+            routes_passed: routesPassed,
+            matrix_pass_rate: Number((routesPassed / routeCount).toFixed(6)),
+            release_threshold: threshold,
+            routes_reaching_release_threshold: thresholdPassCount,
+            console_error_count: consoleErrorCount,
+            application_network_error_count: networkErrorCount,
+            http_error_count: httpErrorCount,
+            results,
+            failures,
+            candidate_retained: failures.length === 0,
+            release_authorized: false,
+            production_promotion_authorized: false,
+          }
+          fs.writeFileSync('evidence/bidfast-supabase-config-provenance-full-matrix-summary.json', JSON.stringify(summary, null, 2) + '\n')
+          console.log(JSON.stringify(summary, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-supabase-config-provenance-ee80793
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30
