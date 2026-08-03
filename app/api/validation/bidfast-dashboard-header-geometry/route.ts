@@ -104,6 +104,7 @@ export async function GET(request: Request) {
       }
 
       const logoElement = document.querySelector<HTMLImageElement>('.bfm-logo')
+      const logoRect = readRect('.bfm-logo')
       return {
         viewport: {
           inner_width: window.innerWidth,
@@ -116,8 +117,8 @@ export async function GET(request: Request) {
         },
         dashboard: readRect('.bf-mobile-dashboard'),
         header: readRect('.bfm-header'),
-        logo: logoElement ? {
-          ...readRect('.bfm-logo'),
+        logo: logoElement && logoRect ? {
+          ...logoRect,
           natural_width: logoElement.naturalWidth,
           natural_height: logoElement.naturalHeight,
           complete: logoElement.complete,
