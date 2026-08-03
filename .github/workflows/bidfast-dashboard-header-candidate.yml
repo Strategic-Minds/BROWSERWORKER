@@ -1,0 +1,139 @@
+name: BIDFAST Dashboard Header Candidate Proof
+
+on:
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-dashboard-header-candidate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-dashboard-header-2d1c56cf
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: 2d1c56cfdc9c09bdb0348613a2c722425caf9378
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  ROUTE: /dashboard
+  RETAINED_BASELINE: '0.836091'
+  RELEASE_THRESHOLD: '0.99'
+
+jobs:
+  header-candidate-proof:
+    name: Revision-pinned header candidate proof
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - name: Wait for BrowserWorker health
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 24); do
+            status="$(curl -sS -o /tmp/health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            if [[ "$status" == "200" ]]; then
+              cat /tmp/health.json
+              exit 0
+            fi
+            sleep 15
+          done
+          exit 1
+
+      - name: Execute exact dashboard parity proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-parity-v3?route=%2Fdashboard&expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          accepted=false
+          for attempt in $(seq 1 12); do
+            status="$(curl -sS --max-time 210 -o evidence/dashboard-header-candidate.json -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/dashboard-header-candidate.http-status.txt
+            commit="$(node -e "try{const j=require('./evidence/dashboard-header-candidate.json');process.stdout.write(String(j.source_revision?.commit_sha||''))}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" ]]; then
+              accepted=true
+              break
+            fi
+            echo "attempt=${attempt} status=${status:-none} commit=${commit:-unknown}"
+            cat evidence/dashboard-header-candidate.json || true
+            if [[ "$attempt" != "12" ]]; then sleep 25; fi
+          done
+          test "$accepted" = true
+
+      - name: Capture implemented-component screenshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=%2Fdashboard&theme=light&viewport=mobile&format=image"
+          status="$(curl -sS --max-time 180 -D evidence/dashboard-header-live.headers.txt -o evidence/dashboard-header-live.png -w '%{http_code}' "$endpoint")"
+          printf '%s\n' "$status" > evidence/dashboard-header-live.http-status.txt
+          test "$status" = "200"
+          file evidence/dashboard-header-live.png | tee evidence/dashboard-header-live.file.txt
+          sha256sum evidence/dashboard-header-live.png | tee evidence/dashboard-header-live.sha256.txt
+
+      - name: Enforce provenance, improvement, geometry, and technical gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const crypto = require('node:crypto')
+          const fs = require('node:fs')
+          const body = JSON.parse(fs.readFileSync('evidence/dashboard-header-candidate.json', 'utf8'))
+          const screenshot = fs.readFileSync('evidence/dashboard-header-live.png')
+          const screenshotSha = crypto.createHash('sha256').update(screenshot).digest('hex')
+          const score = body?.metrics?.composite_score
+          const logo = body?.geometry?.logo
+          const failures = []
+          if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
+          if (body.route !== process.env.ROUTE) failures.push(`route=${String(body.route)}`)
+          if (body.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`commit_sha=${String(body.source_revision?.commit_sha)}`)
+          if (body.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`commit_ref=${String(body.source_revision?.commit_ref)}`)
+          if (body.provenance_pass !== true) failures.push(`provenance_pass=${String(body.provenance_pass)}`)
+          if (body.integrity_pass !== true) failures.push(`integrity_pass=${String(body.integrity_pass)}`)
+          if (body.technical_pass !== true) failures.push(`technical_pass=${String(body.technical_pass)}`)
+          if (!Number.isFinite(score) || score < Number(process.env.RETAINED_BASELINE)) failures.push(`composite_score=${String(score)} baseline=${process.env.RETAINED_BASELINE}`)
+          if (!logo || Number(logo.width) < 220 || Number(logo.width) > 236) failures.push(`logo_width=${String(logo?.width)}`)
+          if (!logo || Number(logo.y) > 16) failures.push(`logo_y=${String(logo?.y)}`)
+          for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
+            if (!Array.isArray(body[name]) || body[name].length !== 0) failures.push(`${name}=${JSON.stringify(body[name])}`)
+          }
+          if (screenshotSha !== body.live?.sha256) failures.push(`screenshot_sha=${screenshotSha} expected=${String(body.live?.sha256)}`)
+          const summary = {
+            candidate_commit: process.env.BIDFAST_EXPECTED_COMMIT,
+            route: body.route,
+            score,
+            baseline: Number(process.env.RETAINED_BASELINE),
+            delta: Number.isFinite(score) ? Number((score - Number(process.env.RETAINED_BASELINE)).toFixed(6)) : null,
+            release_threshold: Number(process.env.RELEASE_THRESHOLD),
+            release_threshold_pass: Number.isFinite(score) && score >= Number(process.env.RELEASE_THRESHOLD),
+            metrics: body.metrics,
+            geometry: body.geometry,
+            source_revision: body.source_revision,
+            reference: body.reference,
+            live_sha256: body.live?.sha256,
+            screenshot_sha256: screenshotSha,
+            console_error_count: body.console_errors?.length,
+            application_network_error_count: body.app_network_errors?.length,
+            http_error_count: body.http_errors?.length,
+            failures,
+            retain_candidate_pending_full_matrix: failures.length === 0,
+            release_authorized: false,
+          }
+          fs.writeFileSync('evidence/dashboard-header-candidate-summary.json', JSON.stringify(summary, null, 2) + '\n')
+          console.log(JSON.stringify(summary, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable candidate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-dashboard-header-candidate-2d1c56cf
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30
