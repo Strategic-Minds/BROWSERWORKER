@@ -1,0 +1,168 @@
+name: BIDFAST Dashboard Notification Chrome Proof
+
+on:
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-dashboard-notification-chrome-proof.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-dashboard-notification-chrome-b58a4e29
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: b58a4e293e3d5b8fad5a6c0fd2d521ce96489d31
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  ROUTE: /dashboard
+  RETAINED_BASELINE: '0.836091'
+  RELEASE_THRESHOLD: '0.99'
+
+jobs:
+  notification-chrome-proof:
+    name: Revision-pinned notification chrome proof
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Wait for BrowserWorker and exact BIDFAST revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          accepted=false
+          for attempt in $(seq 1 36); do
+            health_status="$(curl -sS -o evidence/health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            geometry_status="$(curl -sS -o evidence/dashboard-notification-geometry.json -w '%{http_code}' --max-time 180 "${BROWSERWORKER_PREVIEW}/api/validation/bidfast-dashboard-header-geometry?expected_commit=${BIDFAST_EXPECTED_COMMIT}" || true)"
+            printf '%s\n' "$health_status" > evidence/health.http-status.txt
+            printf '%s\n' "$geometry_status" > evidence/dashboard-notification-geometry.http-status.txt
+            commit="$(node -e "try{const j=require('./evidence/dashboard-notification-geometry.json');process.stdout.write(String(j.source_revision?.commit_sha||''))}catch{}")"
+            if [[ "$health_status" == "200" && "$geometry_status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" ]]; then
+              accepted=true
+              break
+            fi
+            echo "attempt=${attempt} health=${health_status:-none} geometry=${geometry_status:-none} commit=${commit:-unknown}"
+            if [[ "$attempt" != "36" ]]; then sleep 20; fi
+          done
+          test "$accepted" = true
+
+      - name: Execute exact dashboard parity proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-parity-v3?route=%2Fdashboard&expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          accepted=false
+          for attempt in $(seq 1 12); do
+            status="$(curl -sS --max-time 210 -o evidence/dashboard-notification-parity.json -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/dashboard-notification-parity.http-status.txt
+            commit="$(node -e "try{const j=require('./evidence/dashboard-notification-parity.json');process.stdout.write(String(j.source_revision?.commit_sha||''))}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" ]]; then
+              accepted=true
+              break
+            fi
+            echo "attempt=${attempt} status=${status:-none} commit=${commit:-unknown}"
+            if [[ "$attempt" != "12" ]]; then sleep 25; fi
+          done
+          test "$accepted" = true
+
+      - name: Capture implemented component screenshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          status="$(curl -sS --max-time 180 -D evidence/dashboard-notification.live.headers.txt -o evidence/dashboard-notification.live.png -w '%{http_code}' "${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=%2Fdashboard&theme=light&viewport=mobile&format=image")"
+          printf '%s\n' "$status" > evidence/dashboard-notification.live.http-status.txt
+          test "$status" = "200"
+          test -s evidence/dashboard-notification.live.png
+          sha256sum evidence/dashboard-notification.live.png > evidence/dashboard-notification.live.sha256.txt
+
+      - name: Enforce provenance, frozen logo geometry, non-regression, and technical gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const crypto = require('node:crypto')
+          const fs = require('node:fs')
+          const geometryBody = JSON.parse(fs.readFileSync('evidence/dashboard-notification-geometry.json', 'utf8'))
+          const parityBody = JSON.parse(fs.readFileSync('evidence/dashboard-notification-parity.json', 'utf8'))
+          const screenshot = fs.readFileSync('evidence/dashboard-notification.live.png')
+          const screenshotSha = crypto.createHash('sha256').update(screenshot).digest('hex')
+          const failures = []
+          const score = parityBody?.metrics?.composite_score
+          const expectedCommit = process.env.BIDFAST_EXPECTED_COMMIT
+          const expectedRef = process.env.BIDFAST_EXPECTED_REF
+
+          if (geometryBody.ok !== true) failures.push(`geometry_ok=${String(geometryBody.ok)}`)
+          if (geometryBody.provenance_pass !== true) failures.push(`geometry_provenance_pass=${String(geometryBody.provenance_pass)}`)
+          if (geometryBody.source_revision?.commit_sha !== expectedCommit) failures.push(`geometry_commit=${String(geometryBody.source_revision?.commit_sha)}`)
+          if (geometryBody.source_revision?.commit_ref !== expectedRef) failures.push(`geometry_ref=${String(geometryBody.source_revision?.commit_ref)}`)
+          if (geometryBody.main_document_status !== 200) failures.push(`geometry_main_document_status=${String(geometryBody.main_document_status)}`)
+
+          const logo = geometryBody?.geometry?.logo
+          const notification = geometryBody?.geometry?.notification_button
+          const avatar = geometryBody?.geometry?.avatar
+          const search = geometryBody?.geometry?.search
+          const near = (actual, expected, tolerance = 0.05) => Number.isFinite(Number(actual)) && Math.abs(Number(actual) - expected) <= tolerance
+          if (!logo) failures.push('logo_geometry_missing')
+          else {
+            if (!near(logo.x, 2)) failures.push(`logo.x=${String(logo.x)}`)
+            if (!near(logo.y, 21.5)) failures.push(`logo.y=${String(logo.y)}`)
+            if (!near(logo.width, 172)) failures.push(`logo.width=${String(logo.width)}`)
+            if (!near(logo.height, 39)) failures.push(`logo.height=${String(logo.height)}`)
+            if (logo.complete !== true || Number(logo.natural_width) !== 366 || Number(logo.natural_height) !== 83) failures.push('logo_asset_changed_or_unloaded')
+          }
+          if (!notification || !near(notification.x, 306) || !near(notification.y, 23) || !near(notification.width, 36) || !near(notification.height, 36)) failures.push(`notification_geometry=${JSON.stringify(notification)}`)
+          if (!avatar || !near(avatar.x, 352) || !near(avatar.y, 23) || !near(avatar.width, 36) || !near(avatar.height, 36)) failures.push(`avatar_geometry=${JSON.stringify(avatar)}`)
+          if (!search || !near(search.x, 2) || !near(search.y, 74) || !near(search.width, 386) || !near(search.height, 41)) failures.push(`search_geometry=${JSON.stringify(search)}`)
+
+          if (parityBody.ok !== true) failures.push(`parity_ok=${String(parityBody.ok)}`)
+          if (parityBody.route !== process.env.ROUTE) failures.push(`parity_route=${String(parityBody.route)}`)
+          if (parityBody.source_revision?.commit_sha !== expectedCommit) failures.push(`parity_commit=${String(parityBody.source_revision?.commit_sha)}`)
+          if (parityBody.source_revision?.commit_ref !== expectedRef) failures.push(`parity_ref=${String(parityBody.source_revision?.commit_ref)}`)
+          if (parityBody.provenance_pass !== true) failures.push(`parity_provenance_pass=${String(parityBody.provenance_pass)}`)
+          if (parityBody.integrity_pass !== true) failures.push(`integrity_pass=${String(parityBody.integrity_pass)}`)
+          if (parityBody.technical_pass !== true) failures.push(`technical_pass=${String(parityBody.technical_pass)}`)
+          if (!Number.isFinite(score) || score < Number(process.env.RETAINED_BASELINE)) failures.push(`REGRESSION composite_score=${String(score)} baseline=${process.env.RETAINED_BASELINE}`)
+          for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
+            if (!Array.isArray(parityBody[name]) || parityBody[name].length !== 0) failures.push(`${name}=${JSON.stringify(parityBody[name])}`)
+          }
+          if (screenshotSha !== parityBody?.live?.sha256) failures.push(`screenshot_sha=${screenshotSha} expected=${String(parityBody?.live?.sha256)}`)
+
+          const summary = {
+            application_commit: expectedCommit,
+            application_ref: expectedRef,
+            route: process.env.ROUTE,
+            candidate_scope: 'notification button border and background only',
+            retained_baseline: Number(process.env.RETAINED_BASELINE),
+            score,
+            delta: Number.isFinite(score) ? Number((score - Number(process.env.RETAINED_BASELINE)).toFixed(6)) : null,
+            metrics: parityBody.metrics,
+            geometry: geometryBody.geometry,
+            source_revision: parityBody.source_revision,
+            reference: parityBody.reference,
+            screenshot_sha256: screenshotSha,
+            console_error_count: parityBody.console_errors?.length,
+            application_network_error_count: parityBody.app_network_errors?.length,
+            http_error_count: parityBody.http_errors?.length,
+            release_threshold: Number(process.env.RELEASE_THRESHOLD),
+            release_threshold_pass: Number.isFinite(score) && score >= Number(process.env.RELEASE_THRESHOLD),
+            failures,
+            release_authorized: false
+          }
+          fs.writeFileSync('evidence/dashboard-notification-summary.json', JSON.stringify(summary, null, 2) + '\n')
+          console.log(JSON.stringify(summary, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable candidate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-dashboard-notification-chrome-b58a4e29
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30
