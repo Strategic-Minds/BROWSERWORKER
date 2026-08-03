@@ -3,8 +3,15 @@ name: BIDFAST Dashboard Logo X4 Full Matrix
 on:
   pull_request:
     branches:
+      - main
+    paths:
+      - '.github/workflows/bidfast-dashboard-logo-x4-full-matrix.yml'
+      - 'docs/validation-triggers/bidfast-logo-x4-full-matrix.txt'
+  push:
+    branches:
       - auto-builder/bidfast-proof-20260728
     paths:
+      - '.github/workflows/bidfast-dashboard-logo-x4-full-matrix.yml'
       - 'docs/validation-triggers/bidfast-logo-x4-full-matrix.txt'
   workflow_dispatch:
 
