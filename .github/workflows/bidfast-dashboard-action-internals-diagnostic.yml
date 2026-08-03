@@ -109,6 +109,13 @@ jobs:
               cp /tmp/diagnostic.json out/diagnostic.json
               exit 0
             fi
+
+            if [[ "$status" == "409" ]] && node -e "const j=require('/tmp/diagnostic.json'); process.exit(j.provenance_pass===true && j.source_revision?.commit_sha===process.env.BIDFAST_EXPECTED_COMMIT && j.source_revision?.commit_ref===process.env.BIDFAST_EXPECTED_REF ? 0 : 1)"; then
+              cp /tmp/diagnostic.json out/diagnostic-failure.json
+              echo "Deterministic revision-pinned diagnostic failure captured on attempt ${attempt}."
+              exit 1
+            fi
+
             echo "Diagnostic attempt ${attempt}: status=${status:-no-status} bytes=${body_bytes} sha256=${body_sha}"
             sleep 20
           done
