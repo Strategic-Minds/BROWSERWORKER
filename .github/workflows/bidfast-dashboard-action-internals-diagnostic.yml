@@ -1,0 +1,132 @@
+name: BIDFAST Dashboard Action Internals Diagnostic
+
+on:
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - 'app/api/bidfast-dashboard-action-internals/route.ts'
+      - '.github/workflows/bidfast-dashboard-action-internals-diagnostic.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'app/api/bidfast-dashboard-action-internals/route.ts'
+      - '.github/workflows/bidfast-dashboard-action-internals-diagnostic.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-dashboard-action-internals-e61d2b28
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: e61d2b2886b237ad0197c3b1b428a948e8e10b22
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+
+jobs:
+  diagnostic:
+    name: Revision-pinned Quick Actions internals proof
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Wait for BrowserWorker diagnostic endpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-dashboard-action-internals?expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          for attempt in $(seq 1 40); do
+            status="$(curl -sS --max-time 180 -o /tmp/diagnostic.json -w '%{http_code}' "$endpoint" || true)"
+            if [[ "$status" == "200" ]] && node -e "const j=require('/tmp/diagnostic.json'); process.exit(j.ok===true ? 0 : 1)"; then
+              cp /tmp/diagnostic.json diagnostic.json
+              exit 0
+            fi
+            echo "Diagnostic attempt ${attempt}: ${status:-no-status}"
+            cat /tmp/diagnostic.json || true
+            sleep 20
+          done
+          exit 1
+
+      - name: Decode immutable screenshot evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const crypto = require('node:crypto')
+          const fs = require('node:fs')
+          const body = JSON.parse(fs.readFileSync('diagnostic.json', 'utf8'))
+          const bytes = Buffer.from(body.screenshot.data, 'base64')
+          const hash = crypto.createHash('sha256').update(bytes).digest('hex')
+          if (hash !== body.screenshot.sha256) throw new Error(`Screenshot hash mismatch: ${hash} != ${body.screenshot.sha256}`)
+          fs.writeFileSync('dashboard-action-internals.png', bytes)
+          delete body.screenshot.data
+          fs.writeFileSync('dashboard-action-internals.json', JSON.stringify(body, null, 2) + '\n')
+          NODE
+
+      - name: Enforce provenance, technical, and geometry gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const body = JSON.parse(fs.readFileSync('dashboard-action-internals.json', 'utf8'))
+          const failures = []
+          if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
+          if (body.provenance_pass !== true) failures.push(`provenance_pass=${String(body.provenance_pass)}`)
+          if (body.technical_pass !== true) failures.push(`technical_pass=${String(body.technical_pass)}`)
+          if (body.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`commit_sha=${String(body.source_revision?.commit_sha)}`)
+          if (body.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`commit_ref=${String(body.source_revision?.commit_ref)}`)
+          if (body.release_authorized !== false) failures.push(`release_authorized=${String(body.release_authorized)}`)
+          for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
+            if (!Array.isArray(body[name]) || body[name].length !== 0) failures.push(`${name}=${JSON.stringify(body[name])}`)
+          }
+          const actions = body.geometry?.actions
+          if (!Array.isArray(actions) || actions.length !== 5) failures.push(`action_count=${Array.isArray(actions) ? actions.length : 'missing'}`)
+          if (!body.geometry?.container) failures.push('quick_actions_container_missing')
+          if (body.geometry?.page?.scroll_width !== 390) failures.push(`page_scroll_width=${String(body.geometry?.page?.scroll_width)}`)
+          if (Array.isArray(actions)) {
+            actions.forEach((action, index) => {
+              if (!action.card || !action.icon || !action.label_box || !action.offsets) failures.push(`action_${index}_geometry_incomplete`)
+              if (action.card?.right > 390.01 || action.card?.left < -0.01) failures.push(`action_${index}_outside_viewport=${JSON.stringify(action.card)}`)
+            })
+          }
+          const summary = {
+            route: body.route,
+            source_revision: body.source_revision,
+            screenshot_sha256: body.screenshot?.sha256,
+            page: body.geometry?.page,
+            container: body.geometry?.container,
+            container_style: body.geometry?.container_style,
+            actions: Array.isArray(actions) ? actions.map(action => ({
+              index: action.index,
+              label: action.label,
+              href: action.href,
+              card: action.card,
+              icon: action.icon,
+              label_box: action.label_box,
+              offsets: action.offsets,
+              card_style: action.card_style,
+              label_style: action.label_style,
+            })) : [],
+            failures,
+          }
+          fs.writeFileSync('dashboard-action-internals-summary.json', JSON.stringify(summary, null, 2) + '\n')
+          console.log(JSON.stringify(summary, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-dashboard-action-internals-e61d2b28
+          path: |
+            diagnostic.json
+            dashboard-action-internals.json
+            dashboard-action-internals-summary.json
+            dashboard-action-internals.png
+          if-no-files-found: error
+          retention-days: 30
