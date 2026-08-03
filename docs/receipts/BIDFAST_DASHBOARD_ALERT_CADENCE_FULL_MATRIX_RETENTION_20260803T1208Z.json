@@ -1,0 +1,128 @@
+{
+  "receipt_type": "BIDFAST_DASHBOARD_ALERT_CADENCE_FULL_MATRIX_RETENTION",
+  "created_at": "2026-08-03T12:08:00Z",
+  "phase": "VALIDATE",
+  "release_authorized": false,
+  "production_status": "LOCKED",
+  "repositories": {
+    "application": {
+      "repository": "XTREME-SYSTEMS/bidfast",
+      "branch": "auto-builder/bidfast-complete-visual-system",
+      "pull_request": 2,
+      "candidate_commit": "cf1067bf2e7b63340ce82f16e33ac1d39dafa2fe",
+      "rollback_commit": "62a6f47e6b2090a007e50916f723e31d2333c6ae"
+    },
+    "validator": {
+      "repository": "Strategic-Minds/BROWSERWORKER",
+      "branch": "auto-builder/bidfast-proof-20260728",
+      "pull_request": 9,
+      "validator_commit": "ec2dfef7183ce6e80f2f3544e200eb4a7d4895a0"
+    }
+  },
+  "application_change": {
+    "files": ["app/dashboard-quick-actions-candidate.css"],
+    "scope": "mobile dashboard proposal-alert cadence and bottom-navigation height only",
+    "implemented_css": {
+      ".bfm-alert-section": {"margin-top": "23px"},
+      ".bfm-bottom-nav": {"height": "54px"}
+    },
+    "component_level_implementation": true,
+    "screenshot_background_used": false,
+    "overlay_used": false,
+    "real_ui_hidden": false,
+    "test_threshold_weakened": false,
+    "database_mutated": false,
+    "secrets_exposed": false
+  },
+  "deployment": {
+    "id": "dpl_BjazAiRY6ysmYXfTXuAtAnQ4xvwk",
+    "url": "bidfast-a31halfhn-strategic-minds-advisory.vercel.app",
+    "commit": "cf1067bf2e7b63340ce82f16e33ac1d39dafa2fe",
+    "ref": "auto-builder/bidfast-complete-visual-system"
+  },
+  "candidate_validation": {
+    "workflow_run": 30808748670,
+    "workflow_job": 91670155568,
+    "artifact_id": 8853869715,
+    "artifact_digest": "sha256:127a304054fcb59a114ec5c3719b378651fa2b47c818b0e6b21496066f9079f6",
+    "previous_dashboard_score": 0.822699,
+    "candidate_dashboard_score": 0.836091,
+    "delta": 0.013392,
+    "metrics": {
+      "pixel_similarity": 0.947927,
+      "structure_similarity": 0.975801,
+      "edge_similarity": 0.32462,
+      "color_similarity": 0.96839,
+      "composite_score": 0.836091
+    },
+    "live_sha256": "415b075d3ca349e4a9da3d91e653dc221113ddb14e6c16d2ada297b1db4fb916",
+    "page_height": 948,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "provenance_pass": true,
+    "reference_integrity_pass": true,
+    "technical_pass": true,
+    "improvement_gate_pass": true,
+    "release_threshold_pass": false
+  },
+  "full_matrix_validation": {
+    "workflow_run": 30808748531,
+    "workflow_job": 91670156624,
+    "artifact_id": 8854170062,
+    "artifact_digest": "sha256:68017c2050e24206db8173998c698a0c61c67008134d04c631ff2b13c4c6d7c9",
+    "route_count": 10,
+    "passed_routes": 10,
+    "visual_matrix_pass_rate": 1.0,
+    "routes_reaching_0_99": 0,
+    "scores": {
+      "/dashboard": 0.836091,
+      "/analytics": 0.830446,
+      "/approvals": 0.859067,
+      "/opportunities": 0.859699,
+      "/estimates/new": 0.813012,
+      "/proposals": 0.819855,
+      "/projects/demo-riverside": 0.818791,
+      "/takeoffs/demo-riverside": 0.818538,
+      "/settings/company": 0.825706,
+      "/assistant": 0.823121
+    },
+    "all_reference_integrity_checks_passed": true,
+    "all_revision_provenance_checks_passed": true,
+    "all_technical_checks_passed": true,
+    "all_route_non_regression_checks_passed": true,
+    "total_console_errors": 0,
+    "total_application_network_errors": 0,
+    "total_http_errors": 0,
+    "retain_candidate": true
+  },
+  "supabase_read_only_check": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "project_name": "Xtreme AI Systems",
+    "public_bidfast_table_count": 0,
+    "database_mutated": false
+  },
+  "unverified_release_gates": [
+    "minimum 0.99 visual parity for every approved route and viewport",
+    "complete approved light and dark visual coverage",
+    "tablet, desktop, and large-desktop approved parity",
+    "real Account -> Organization -> Opportunity -> Project -> Document -> Takeoff -> Estimate -> Proposal -> Approval -> Audit execution",
+    "1.00 end-to-end operational pass rate",
+    "zero dead controls across the complete application",
+    "tenant-isolation denial coverage",
+    "authorization-bypass denial coverage",
+    "production smoke-test receipt",
+    "production rollback receipt"
+  ],
+  "rollback": {
+    "target_commit": "62a6f47e6b2090a007e50916f723e31d2333c6ae",
+    "method": "revert application commit cf1067bf2e7b63340ce82f16e33ac1d39dafa2fe or restore app/dashboard-quick-actions-candidate.css to its prior blob",
+    "required_if_future_validation_regresses": true
+  },
+  "decision": {
+    "retain_feature_branch_candidate": true,
+    "merge_pull_request": false,
+    "promote_production": false,
+    "reason": "The component-level proposal-alert cadence candidate improved the dashboard composite from 0.822699 to 0.836091 and preserved every validated route baseline with zero technical errors. Release gates remain unmet."
+  }
+}
