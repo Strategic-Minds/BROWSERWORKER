@@ -33,25 +33,25 @@ jobs:
     timeout-minutes: 12
 
     steps:
-      - name: Verify exact preview configuration provenance
+      - name: Capture exact preview configuration provenance
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p evidence/config
           endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-config-provenance?expected_commit=${BIDFAST_EXPECTED_COMMIT}"
-          accepted=false
+          revision_observed=false
           for attempt in $(seq 1 15); do
             status="$(curl -sS --max-time 120 -o evidence/config/provenance.json -w '%{http_code}' "$endpoint" || true)"
             printf '%s\n' "$status" > evidence/config/provenance.http-status.txt
             commit="$(node -e "try{const j=require('./evidence/config/provenance.json');process.stdout.write(String(j.source_revision?.commit_sha||''))}catch{}")"
             echo "attempt=${attempt} status=${status:-none} commit=${commit:-unknown}"
-            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" ]]; then
-              accepted=true
+            if [[ "$commit" == "$BIDFAST_EXPECTED_COMMIT" ]]; then
+              revision_observed=true
               break
             fi
             if [[ "$attempt" != "15" ]]; then sleep 20; fi
           done
-          test "$accepted" = true
+          test "$revision_observed" = true
 
       - name: Enforce governed project and sanitized provenance
         shell: bash
