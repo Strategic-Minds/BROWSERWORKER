@@ -17,12 +17,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: bidfast-supabase-config-provenance-observable-ee80793
+  group: bidfast-supabase-config-provenance-observable-bcc52ae
   cancel-in-progress: true
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: ee807932694606d50b10c7f544afe6b8c9617ed5
+  BIDFAST_EXPECTED_COMMIT: bcc52ae864c73184754a94de65726ad2f6f9fa18
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   BIDFAST_EXPECTED_SUPABASE_PROJECT_REF: mhaovpyegtysfgualplu
   RELEASE_THRESHOLD: '0.99'
@@ -177,8 +177,9 @@ jobs:
           const summary = {
             application_commit: expectedCommit,
             application_ref: expectedRef,
-            rollback_commit: '2da86e312259db0a9df6a6ed96578a3e55e046f8',
-            candidate_change: 'fail-closed Supabase environment configuration and exact project-ref provenance enforcement',
+            rollback_commit: 'ee807932694606d50b10c7f544afe6b8c9617ed5',
+            retained_visual_commit: '2da86e312259db0a9df6a6ed96578a3e55e046f8',
+            candidate_change: 'explicit BIDFAST account entity, auth bootstrap function and trigger, account foreign keys, RLS, privilege restrictions, and build-time governance enforcement',
             supabase_configuration: {
               expected_project_ref: expectedProjectRef,
               actual_project_ref: config.health?.configuration?.project_ref || null,
@@ -209,7 +210,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-supabase-config-provenance-observable-ee80793
+          name: bidfast-supabase-config-provenance-observable-bcc52ae
           path: evidence/
           if-no-files-found: error
           retention-days: 30
