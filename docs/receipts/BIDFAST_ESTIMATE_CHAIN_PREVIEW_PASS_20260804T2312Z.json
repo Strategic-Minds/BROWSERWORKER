@@ -1,0 +1,68 @@
+{
+  "receipt_type": "BIDFAST_ESTIMATE_CHAIN_PREVIEW_PASS",
+  "created_at": "2026-08-04T23:12:00Z",
+  "phase": "VALIDATE",
+  "step": "preserve successful preview build for the repaired estimate-chain candidate without unlocking configuration, visual, operational, release, or production gates",
+  "prior_receipt": "docs/receipts/BIDFAST_ESTIMATE_CHAIN_CANDIDATE_20260804T2311Z.json",
+  "bidfast": {
+    "repository": "XTREME-SYSTEMS/bidfast",
+    "branch": "auto-builder/bidfast-complete-visual-system",
+    "pull_request": 2,
+    "commit": "750943579bca86da9a63cdfda7635ba038abe49b",
+    "rollback_commit": "9ea40afc8cb67b76849d0f75f02c8baf37c05340",
+    "vercel_reference": "CA4tnFE7KSRK8oYhLcyDteUbqbkX",
+    "vercel_status": "success",
+    "pull_request_open": true,
+    "pull_request_draft": true,
+    "pull_request_merged": false
+  },
+  "browserworker": {
+    "provenance_commit": "b08a40023e064a618b3d7639632c43a1ce8d969d",
+    "vercel_reference": "9iYcnnk8srdd6wiCtHd68XvHWNDu",
+    "vercel_status": "success",
+    "workflow_run": 30959055515,
+    "workflow_status": "queued",
+    "expected_application_commit": "750943579bca86da9a63cdfda7635ba038abe49b",
+    "expected_supabase_project_ref": "mhaovpyegtysfgualplu"
+  },
+  "retained_visual_evidence": {
+    "new_score_claimed": false,
+    "dashboard_score": 0.837024,
+    "routes_technically_passed": 10,
+    "routes_total": 10,
+    "routes_reaching_0_99": 0,
+    "console_error_count": 0,
+    "application_network_error_count": 0,
+    "http_error_count": 0
+  },
+  "constraints": {
+    "screenshot_substitution_used": false,
+    "real_components_hidden": false,
+    "secrets_changed": false,
+    "vercel_environment_changed": false,
+    "database_mutated": false,
+    "validation_thresholds_changed": false,
+    "tests_weakened": false,
+    "merged": false,
+    "production_changed": false
+  },
+  "decision": {
+    "preview_build_passed": true,
+    "configuration_gate_passed": false,
+    "visual_acceptance_complete": false,
+    "operational_acceptance_complete": false,
+    "release_authorized": false,
+    "production_promotion_authorized": false
+  },
+  "remaining_blockers": [
+    "Exact-revision configuration provenance has not completed and the preview has historically targeted prhppuuwcnmfdhwsagug rather than governed project mhaovpyegtysfgualplu.",
+    "Governed Supabase contains zero public.bidfast_* tables and functions, no takeoff-documents bucket, and no BIDFAST storage policies.",
+    "The estimate migration remains unapplied and untested for transaction rollback, tenant isolation, arithmetic denial, and authorization bypasses.",
+    "No approved route reaches measured parity 0.99 and complete approved light/dark multi-viewport evidence remains incomplete."
+  ],
+  "rollback": {
+    "application": "Revert the six additive BIDFAST estimate commits to 9ea40afc8cb67b76849d0f75f02c8baf37c05340.",
+    "database": "No rollback required because no migration was applied.",
+    "environment": "No rollback required because no environment value changed."
+  }
+}
