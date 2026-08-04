@@ -78,6 +78,15 @@
     "retention_days": 30,
     "uploaded_file_count": 3
   },
+  "supabase_catalog": {
+    "governed_project_id": "mhaovpyegtysfgualplu",
+    "query_mode": "read_only",
+    "public_bidfast_table_count": 0,
+    "public_bidfast_function_count": 0,
+    "takeoff_documents_bucket_count": 0,
+    "bidfast_storage_policy_count": 0,
+    "database_mutation_performed": false
+  },
   "visual_evidence": {
     "new_score_claimed": false,
     "last_retained_dashboard_score": 0.837024,
@@ -110,12 +119,12 @@
   "blockers": [
     "The exact BIDFAST revision is deployed, but its preview environment resolves to Supabase project prhppuuwcnmfdhwsagug instead of governed project mhaovpyegtysfgualplu.",
     "The route matrix and operational workflow matrix were correctly skipped because configuration provenance failed.",
-    "The governed Supabase project has not been proven to contain the required public.bidfast_* workflow schema, takeoff-documents bucket, or tenant-scoped storage policies.",
+    "The governed Supabase project currently contains zero public.bidfast_* tables, zero public.bidfast_* functions, no takeoff-documents bucket, and no BIDFAST storage policies.",
     "No approved route currently has measured visual parity of at least 0.99, and complete approved light/dark multi-viewport reference coverage remains incomplete."
   ],
   "rollback": {
     "application": "Reset the BIDFAST feature branch to 58e19f3429de3e22f767fa0190ae56569514c730 if the document-storage candidate is rejected.",
-    "browserworker": "Revert only the commit that adds this receipt to return BrowserWorker PR #9 to 94fb05bdecfd17bf46b74b14b278f0ad5a575d90.",
+    "browserworker": "Revert the receipt commits to return BrowserWorker PR #9 to 94fb05bdecfd17bf46b74b14b278f0ad5a575d90.",
     "database": "No database rollback is required because no schema or data mutation occurred."
   }
 }
