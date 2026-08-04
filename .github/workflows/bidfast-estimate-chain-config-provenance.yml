@@ -17,12 +17,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: bidfast-estimate-chain-config-provenance-912d988
+  group: bidfast-estimate-chain-config-provenance-7509435
   cancel-in-progress: true
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: 912d9885865bc74460c1b6c7771f32a97d46595c
+  BIDFAST_EXPECTED_COMMIT: 750943579bca86da9a63cdfda7635ba038abe49b
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   BIDFAST_EXPECTED_SUPABASE_PROJECT_REF: mhaovpyegtysfgualplu
 
@@ -79,7 +79,7 @@ jobs:
             application_commit: expectedCommit,
             application_ref: expectedRef,
             rollback_commit: '9ea40afc8cb67b76849d0f75f02c8baf37c05340',
-            candidate_change: 'tenant-bound Takeoff -> Estimate payload validation plus same-transaction project advancement and no-regression guard; no rendered UI or CSS change',
+            candidate_change: 'tenant-bound Takeoff -> Estimate payload validation, same-transaction project advancement, no-regression guard, and a real tenant-scoped estimate detail route; no screenshot substitution or CSS change',
             expected_supabase_project_ref: expectedProject,
             actual_supabase_project_ref: body.health?.configuration?.project_ref || null,
             configuration_source: body.health?.source || null,
@@ -100,7 +100,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-estimate-chain-config-provenance-912d988
+          name: bidfast-estimate-chain-config-provenance-7509435
           path: evidence/
           if-no-files-found: error
           retention-days: 30
