@@ -1,0 +1,142 @@
+{
+  "receipt_type": "BIDFAST_TAKEOFF_CHAIN_CONFIG_MISMATCH_BLOCKED",
+  "created_at": "2026-08-04T18:05:24Z",
+  "phase": "VALIDATE",
+  "step": "preserve exact-revision takeoff-chain configuration provenance failure and stop before visual or operational acceptance",
+  "auto_builder_bridge": {
+    "job_id": "bidfast-takeoff-chain-config-mismatch-receipt-20260804T1803Z",
+    "receipt_id": "receipt_1785866724642",
+    "mode": "dry_run",
+    "status": "dry_run_complete",
+    "command_folder_id": "13uLhv0NRhmdCdJCCLrroLzyRRttoXtpr",
+    "provider_adapter_status": "not_implemented",
+    "fallback_used": "governed direct GitHub feature-branch text write"
+  },
+  "inspection": {
+    "latest_prior_receipt": "docs/receipts/BIDFAST_TAKEOFF_CHAIN_STATE_CANDIDATE_20260804T1712Z.json",
+    "current_branch_diff_inspected": true,
+    "bidfast_diff_base": "abe2659c04c4e4ef4c51aaa2db9c8985b4aafb10",
+    "bidfast_diff_head": "9ea40afc8cb67b76849d0f75f02c8baf37c05340",
+    "bidfast_ahead_by": 2,
+    "bidfast_diff_files": [
+      "scripts/check-bidfast-takeoff-governance.mjs",
+      "supabase/migrations/202608041710_harden_bidfast_takeoff_chain_state.sql"
+    ],
+    "browserworker_head_before_receipt": "37576614953097604cd06b63068702e546dd480f"
+  },
+  "bidfast": {
+    "repository": "XTREME-SYSTEMS/bidfast",
+    "requested_repository_alias": "XTREME-AI-SYSTEMS/bidfast",
+    "branch": "auto-builder/bidfast-complete-visual-system",
+    "pull_request": 2,
+    "head_commit": "9ea40afc8cb67b76849d0f75f02c8baf37c05340",
+    "rollback_commit": "abe2659c04c4e4ef4c51aaa2db9c8985b4aafb10",
+    "pull_request_state": {
+      "open": true,
+      "draft": true,
+      "merged": false,
+      "mergeable": false
+    },
+    "vercel_check": "success",
+    "vercel_reference": "8HmTLnaHkkf2bhs25eaMsVJKSeCB",
+    "deployment_id": "dpl_8HmTLnaHkkf2bhs25eaMsVJKSeCB",
+    "deployment_url": "bidfast-680lj377c-strategic-minds-advisory.vercel.app",
+    "visual_code_changed": false,
+    "tests_weakened": false
+  },
+  "browserworker": {
+    "repository": "Strategic-Minds/BROWSERWORKER",
+    "branch": "auto-builder/bidfast-proof-20260728",
+    "pull_request": 9,
+    "workflow_commit": "37576614953097604cd06b63068702e546dd480f",
+    "pull_request_state_before_receipt": {
+      "open": true,
+      "draft": true,
+      "merged": false,
+      "mergeable": true
+    },
+    "vercel_check": "success",
+    "vercel_reference": "8nTpwZq1cpE5fv2JGLBDD1sarziL"
+  },
+  "provenance": {
+    "workflow_name": "BIDFAST Takeoff Chain Config Provenance",
+    "workflow_run": 30932786327,
+    "workflow_conclusion": "failure",
+    "artifact_id": 8902261114,
+    "artifact_name": "bidfast-takeoff-chain-config-provenance-9ea40af",
+    "artifact_sha256": "a64d825d40693cfc03b6600e7c430a179ce0e943d56547207172a96cd7f19be4",
+    "http_status": 409,
+    "application_revision_observed": "9ea40afc8cb67b76849d0f75f02c8baf37c05340",
+    "application_ref_observed": "auto-builder/bidfast-complete-visual-system",
+    "expected_supabase_project_ref": "mhaovpyegtysfgualplu",
+    "actual_supabase_project_ref": "prhppuuwcnmfdhwsagug",
+    "configuration_source": {
+      "supabase_url": "environment",
+      "supabase_publishable_key": "environment"
+    },
+    "provenance_pass": false,
+    "configuration_pass": false,
+    "route_matrix_executed": false,
+    "operational_matrix_executed": false
+  },
+  "governed_supabase_catalog": {
+    "project_ref": "mhaovpyegtysfgualplu",
+    "inspection_mode": "read_only",
+    "public_bidfast_table_count": 0,
+    "public_bidfast_function_count": 0,
+    "takeoff_documents_bucket_count": 0,
+    "bidfast_storage_policy_count": 0,
+    "database_mutated": false
+  },
+  "approved_visual_source": {
+    "file_name": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+    "drive_file_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+    "mime_type": "image/png",
+    "verified_this_cycle": true,
+    "changed_this_cycle": false
+  },
+  "retained_visual_evidence": {
+    "new_score_claimed": false,
+    "dashboard_score": 0.837024,
+    "routes_technically_passed": 10,
+    "routes_total": 10,
+    "matrix_pass_rate": 1.0,
+    "routes_reaching_0_99": 0,
+    "console_error_count": 0,
+    "application_network_error_count": 0,
+    "http_error_count": 0
+  },
+  "constraints": {
+    "screenshot_substitution_used": false,
+    "real_components_hidden": false,
+    "secrets_changed": false,
+    "vercel_environment_changed": false,
+    "database_mutated": false,
+    "validation_thresholds_changed": false,
+    "tests_weakened": false,
+    "merged": false,
+    "production_changed": false
+  },
+  "decision": {
+    "takeoff_chain_candidate_retained_provisionally": true,
+    "preview_build_passed": true,
+    "configuration_gate_passed": false,
+    "visual_acceptance_complete": false,
+    "operational_acceptance_complete": false,
+    "release_authorized": false,
+    "production_promotion_authorized": false
+  },
+  "blockers": [
+    "The exact BIDFAST preview revision targets Supabase project prhppuuwcnmfdhwsagug instead of governed project mhaovpyegtysfgualplu.",
+    "The governed Supabase project contains zero public.bidfast_* tables and functions, no takeoff-documents bucket, and no BIDFAST storage policies.",
+    "The takeoff-chain migration is not installed, transaction-tested, or tenant-denial tested in an isolated environment.",
+    "Visual and operational matrices are blocked by configuration provenance.",
+    "No approved route currently reaches measured parity of 0.99 and complete approved light/dark multi-viewport references remain incomplete."
+  ],
+  "rollback": {
+    "application": "Reset or revert the BIDFAST feature branch to abe2659c04c4e4ef4c51aaa2db9c8985b4aafb10 if the takeoff-chain candidate fails later isolated or operational validation.",
+    "browserworker": "Revert only this receipt commit if the evidence record is rejected.",
+    "database": "No database rollback is required because this cycle performed read-only inspection only.",
+    "environment": "No environment rollback is required because this cycle changed no Vercel or Supabase configuration."
+  }
+}
