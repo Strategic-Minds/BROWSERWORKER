@@ -17,12 +17,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: bidfast-supabase-config-provenance-observable-bd52c12
+  group: bidfast-supabase-config-provenance-observable-291646e
   cancel-in-progress: true
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: bd52c12edfac70d7d1e1f0b1cfeee79994b3e6e8
+  BIDFAST_EXPECTED_COMMIT: 291646ea70b8e992ec5e0c036334ec2d3ee8f001
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   BIDFAST_EXPECTED_SUPABASE_PROJECT_REF: mhaovpyegtysfgualplu
   RELEASE_THRESHOLD: '0.99'
@@ -177,9 +177,9 @@ jobs:
           const summary = {
             application_commit: expectedCommit,
             application_ref: expectedRef,
-            rollback_commit: '64b055632f73ada8067fc3f67453354f01bd6b04',
+            rollback_commit: 'bd52c12edfac70d7d1e1f0b1cfeee79994b3e6e8',
             retained_visual_commit: '2da86e312259db0a9df6a6ed96578a3e55e046f8',
-            candidate_change: 'status-aware mobile proposal approval-to-send lifecycle with finalized-state non-regression controls and governance enforcement',
+            candidate_change: 'atomic Account to Organization bootstrap with member-visible organization RLS, owner-only mutation, service-gated deletion, and organization/membership audit coverage',
             supabase_configuration: {
               expected_project_ref: expectedProjectRef,
               actual_project_ref: config.health?.configuration?.project_ref || null,
@@ -210,7 +210,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-supabase-config-provenance-observable-bd52c12
+          name: bidfast-supabase-config-provenance-observable-291646e
           path: evidence/
           if-no-files-found: error
           retention-days: 30
