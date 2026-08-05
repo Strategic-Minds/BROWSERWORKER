@@ -17,12 +17,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: bidfast-membership-authority-config-provenance-a89cf6b
+  group: bidfast-membership-authority-config-provenance-be2ac03
   cancel-in-progress: true
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: a89cf6b757a86e4f3fde54545783550aa94eaf34
+  BIDFAST_EXPECTED_COMMIT: be2ac0328c4e903aed05f4a4b075e3e197bac123
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   BIDFAST_EXPECTED_SUPABASE_PROJECT_REF: mhaovpyegtysfgualplu
 
@@ -80,7 +80,7 @@ jobs:
             application_commit: expectedCommit,
             application_ref: expectedRef,
             rollback_commit: '5b60dac9ee64537ab62dad519aa11a3e64b09191',
-            candidate_change: 'replace member-wide membership mutation policies with owner/admin authority boundaries that deny self-promotion, owner reassignment, inactive targets, admin-to-admin mutation, and unauthorized membership deletion',
+            candidate_change: 'replace member-wide membership mutation policies with owner/admin authority boundaries that deny self-promotion, owner reassignment, inactive targets, admin-to-admin mutation, unauthorized deletion, and organization_id or user_id membership transfer',
             expected_supabase_project_ref: expectedProject,
             observed_supabase_project_ref: body.health?.configuration?.project_ref || null,
             configuration_pass: body.configuration_pass === true,
@@ -100,7 +100,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-membership-authority-config-provenance-a89cf6b
+          name: bidfast-membership-authority-config-provenance-be2ac03
           path: evidence/
           if-no-files-found: error
           retention-days: 30
