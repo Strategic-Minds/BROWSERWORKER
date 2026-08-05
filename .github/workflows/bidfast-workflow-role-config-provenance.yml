@@ -17,12 +17,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: bidfast-workflow-role-config-provenance-9804d52
+  group: bidfast-opportunity-tenant-config-provenance-b30e6db
   cancel-in-progress: true
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: 9804d5247202e0814dfac68a59fb92c0ac9943d3
+  BIDFAST_EXPECTED_COMMIT: b30e6db06465a83f355cdcc121076923fa89b25e
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   BIDFAST_EXPECTED_SUPABASE_PROJECT_REF: mhaovpyegtysfgualplu
 
@@ -79,8 +79,8 @@ jobs:
           const summary = {
             application_commit: expectedCommit,
             application_ref: expectedRef,
-            rollback_commit: '07fb06cd63fcac60ca2b1b4cf47e66a6c5a18fe9',
-            candidate_change: 'replace membership-only private document storage write policies with workflow-role-gated insert, update, and delete policies while preserving tenant-member read access',
+            rollback_commit: '9804d5247202e0814dfac68a59fb92c0ac9943d3',
+            candidate_change: 'prevent cross-tenant opportunity reassignment so downstream project links, tenant ownership, and audit visibility cannot be split across organizations',
             expected_supabase_project_ref: expectedProject,
             observed_supabase_project_ref: body.health?.configuration?.project_ref || null,
             configuration_pass: body.configuration_pass === true,
@@ -100,7 +100,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-storage-role-config-provenance-9804d52
+          name: bidfast-opportunity-tenant-config-provenance-b30e6db
           path: evidence/
           if-no-files-found: error
           retention-days: 30
