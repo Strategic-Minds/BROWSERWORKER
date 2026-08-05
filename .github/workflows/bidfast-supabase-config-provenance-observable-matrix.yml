@@ -17,12 +17,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: bidfast-supabase-config-provenance-observable-291646e
+  group: bidfast-supabase-config-provenance-observable-e56189a
   cancel-in-progress: true
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: 291646ea70b8e992ec5e0c036334ec2d3ee8f001
+  BIDFAST_EXPECTED_COMMIT: e56189af0bb0c4c44a72ccfe04376dcf24fd799f
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   BIDFAST_EXPECTED_SUPABASE_PROJECT_REF: mhaovpyegtysfgualplu
   RELEASE_THRESHOLD: '0.99'
@@ -177,9 +177,9 @@ jobs:
           const summary = {
             application_commit: expectedCommit,
             application_ref: expectedRef,
-            rollback_commit: 'bd52c12edfac70d7d1e1f0b1cfeee79994b3e6e8',
+            rollback_commit: '291646ea70b8e992ec5e0c036334ec2d3ee8f001',
             retained_visual_commit: '2da86e312259db0a9df6a6ed96578a3e55e046f8',
-            candidate_change: 'atomic Account to Organization bootstrap with member-visible organization RLS, owner-only mutation, service-gated deletion, and organization/membership audit coverage',
+            candidate_change: 'scoped the organization delete-audit governance check to the named trigger statement so unrelated downstream audit triggers cannot create a false failure; all deletion, RLS, audit, parity, console, network, HTTP, and release gates remain unchanged',
             supabase_configuration: {
               expected_project_ref: expectedProjectRef,
               actual_project_ref: config.health?.configuration?.project_ref || null,
@@ -210,7 +210,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-supabase-config-provenance-observable-291646e
+          name: bidfast-supabase-config-provenance-observable-e56189a
           path: evidence/
           if-no-files-found: error
           retention-days: 30
