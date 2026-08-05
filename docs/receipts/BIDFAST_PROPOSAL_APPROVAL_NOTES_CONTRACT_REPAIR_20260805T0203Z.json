@@ -1,0 +1,115 @@
+{
+  "receipt_type": "BIDFAST_PROPOSAL_APPROVAL_NOTES_CONTRACT_REPAIR",
+  "created_at": "2026-08-05T02:03:38Z",
+  "phase": "VALIDATE",
+  "step": "repair the mobile proposal approval request to use the canonical bidfast_approvals.notes column and pin the contract in governance",
+  "prior_receipt": "docs/receipts/BIDFAST_ESTIMATE_CHAIN_CONFIG_MISMATCH_BLOCKED_20260805T0005Z.json",
+  "inspection": {
+    "bidfast_pull_request": 2,
+    "bidfast_pull_request_open": true,
+    "bidfast_pull_request_draft": true,
+    "bidfast_pull_request_merged": false,
+    "bidfast_pull_request_mergeable": false,
+    "bidfast_head_before_repair": "3b6456cda3a05a9c55fa78d7218b5d33818d6ff1",
+    "browserworker_pull_request": 9,
+    "browserworker_head_before_receipt": "889bd366d5fd852f50c0edcdc7ff8f6c75411a88",
+    "approved_drive_reference": {
+      "name": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+      "drive_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr"
+    }
+  },
+  "confirmed_defect": {
+    "component": "components/proposals/MobileProposalWorkspace.tsx",
+    "incorrect_field": "decision_notes",
+    "canonical_field": "notes",
+    "schema_source": "supabase/migrations/202607280001_create_bidfast_v2.sql",
+    "impact": "The live mobile Send Proposal control could fail when inserting a pending proposal approval against the governed schema."
+  },
+  "repair": {
+    "application_commits": [
+      {
+        "sha": "d034d54418c833973c79e491a8da3b3e77d7ac28",
+        "message": "fix(proposals): use canonical approval notes field"
+      },
+      {
+        "sha": "64b055632f73ada8067fc3f67453354f01bd6b04",
+        "message": "test(governance): pin canonical approval notes contract"
+      }
+    ],
+    "rollback_commit": "3b6456cda3a05a9c55fa78d7218b5d33818d6ff1",
+    "changed_files": [
+      "components/proposals/MobileProposalWorkspace.tsx",
+      "scripts/check-bidfast-proposal-governance.mjs"
+    ],
+    "diff_summary": {
+      "commits_ahead": 2,
+      "files_changed": 2,
+      "additions": 4,
+      "deletions": 2
+    },
+    "governance_guards_added": [
+      "Require the canonical notes field in the mobile approval insert.",
+      "Reject the obsolete decision_notes field if reintroduced.",
+      "Record canonical_approval_notes_contract as required."
+    ]
+  },
+  "preview": {
+    "deployment_reference": "HnXJNUfCZbi1rK81VCAxZgHG6p5o",
+    "state_at_receipt": "pending",
+    "scope": "strategic-minds-advisory",
+    "scope_access": "not authorized through the currently connected Vercel token",
+    "prior_proposal_candidate_deployment": "9kYKm4k7immBsVWre6De9t12bt4N",
+    "prior_proposal_candidate_state": "success"
+  },
+  "governed_supabase_catalog": {
+    "project_ref": "mhaovpyegtysfgualplu",
+    "read_only_inspection": true,
+    "public_bidfast_tables": 0,
+    "public_bidfast_functions": 0,
+    "public_autobid_tables": 44,
+    "takeoff_documents_buckets": 0,
+    "bidfast_storage_policies": 0,
+    "database_mutated": false
+  },
+  "retained_visual_evidence": {
+    "new_score_claimed": false,
+    "dashboard_score": 0.837024,
+    "routes_technically_passed": 10,
+    "routes_total": 10,
+    "routes_reaching_0_99": 0,
+    "console_error_count": 0,
+    "application_network_error_count": 0,
+    "http_error_count": 0
+  },
+  "constraints": {
+    "screenshot_substitution_used": false,
+    "real_components_hidden": false,
+    "secrets_changed": false,
+    "vercel_environment_changed": false,
+    "database_mutated": false,
+    "validation_thresholds_changed": false,
+    "tests_weakened": false,
+    "merged": false,
+    "production_changed": false
+  },
+  "decision": {
+    "repair_retained_pending_preview": true,
+    "visual_acceptance_complete": false,
+    "operational_acceptance_complete": false,
+    "release_authorized": false,
+    "production_promotion_authorized": false
+  },
+  "remaining_blockers": [
+    "The new preview deployment has not completed.",
+    "The preview still has not passed exact governed Supabase provenance for mhaovpyegtysfgualplu.",
+    "Governed Supabase contains zero public.bidfast_* tables and functions and no takeoff-documents bucket.",
+    "The proposal and approval workflow remains unapplied and untested against tenant-isolation and authorization-bypass cases.",
+    "No approved route reaches measured visual parity 0.99 and complete approved light/dark multi-viewport coverage remains incomplete."
+  ],
+  "rollback": {
+    "application": "Revert d034d54418c833973c79e491a8da3b3e77d7ac28 and 64b055632f73ada8067fc3f67453354f01bd6b04 to return to 3b6456cda3a05a9c55fa78d7218b5d33818d6ff1.",
+    "browserworker": "Revert this receipt-only commit if the evidence record is malformed.",
+    "database": "No rollback required because no migration was applied.",
+    "environment": "No rollback required because no environment value changed."
+  }
+}
