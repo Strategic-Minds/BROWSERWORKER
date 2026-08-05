@@ -1,0 +1,127 @@
+{
+  "receipt_type": "BIDFAST_CURRENT_PROVENANCE_PIN",
+  "created_at": "2026-08-05T04:07:00Z",
+  "phase": "VALIDATE",
+  "step": "pin the observable Supabase provenance matrix to the current BIDFAST proposal lifecycle candidate after both prior previews passed",
+  "inspection": {
+    "latest_receipt": "docs/receipts/BIDFAST_PROPOSAL_LIFECYCLE_ACTION_REPAIR_20260805T0312Z.json",
+    "latest_receipt_inspected": true,
+    "bidfast_repository": "XTREME-SYSTEMS/bidfast",
+    "bidfast_pull_request": 2,
+    "bidfast_branch": "auto-builder/bidfast-complete-visual-system",
+    "bidfast_head": "bd52c12edfac70d7d1e1f0b1cfeee79994b3e6e8",
+    "bidfast_current_commit_diff_inspected": true,
+    "browserworker_repository": "Strategic-Minds/BROWSERWORKER",
+    "browserworker_pull_request": 9,
+    "browserworker_branch": "auto-builder/bidfast-proof-20260728",
+    "browserworker_head_before_change": "5c48d4baef1d8207bd802e18104416fc18d9acde",
+    "approved_drive_reference": {
+      "name": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+      "drive_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+      "mime_type": "image/png",
+      "size_bytes": 1087711,
+      "modified_at": "2026-07-28T02:14:36.777Z"
+    }
+  },
+  "verified_previews": {
+    "bidfast": {
+      "commit": "bd52c12edfac70d7d1e1f0b1cfeee79994b3e6e8",
+      "deployment_reference": "4EfP4v9LZA9R3sEUsy82hJV8yQzZ",
+      "status": "success"
+    },
+    "browserworker_prior_receipt": {
+      "commit": "5c48d4baef1d8207bd802e18104416fc18d9acde",
+      "deployment_reference": "5VjdN7rSL7PKKGLHjZnBBFQEmbPo",
+      "status": "success"
+    },
+    "browserworker_current_workflow_pin": {
+      "commit": "c63ab4aff2efb89f043f5b8c8b272538d5007951",
+      "deployment_reference": "J7H45e4aS7KSFeT2NZATU94LiBg5",
+      "status": "success"
+    }
+  },
+  "confirmed_provenance_blocker": {
+    "prior_run_id": 30971602694,
+    "prior_job_id": 92196941125,
+    "artifact_id": 8916825342,
+    "artifact_sha256": "455ea37a39b539ddf762a66421d0ebbb15b91bf58593ee4d2a646c0ec9cb7a62",
+    "http_status": 409,
+    "workflow_expected_commit_before_repair": "bcc52ae864c73184754a94de65726ad2f6f9fa18",
+    "observed_commit": "bd52c12edfac70d7d1e1f0b1cfeee79994b3e6e8",
+    "expected_supabase_project_ref": "mhaovpyegtysfgualplu",
+    "observed_supabase_project_ref": "prhppuuwcnmfdhwsagug",
+    "route_matrix_executed": false,
+    "operational_matrix_executed": false
+  },
+  "repair": {
+    "commit": "c63ab4aff2efb89f043f5b8c8b272538d5007951",
+    "message": "test(validation): pin current BIDFAST provenance candidate",
+    "changed_files": [
+      ".github/workflows/bidfast-supabase-config-provenance-observable-matrix.yml"
+    ],
+    "controls_preserved": [
+      "exact application commit and branch provenance",
+      "expected governed Supabase project provenance",
+      "ten approved-route sequential capture matrix",
+      "per-route retained visual non-regression baselines",
+      "0.99 release threshold accounting",
+      "zero console, application-network, and HTTP error gates",
+      "release and production promotion remain false"
+    ],
+    "current_run_id": 30974137682,
+    "current_run_state_at_receipt": "pending"
+  },
+  "governed_supabase_catalog": {
+    "project_ref": "mhaovpyegtysfgualplu",
+    "read_only_inspection": true,
+    "public_bidfast_tables": 0,
+    "public_bidfast_functions": 0,
+    "public_autobid_tables": 44,
+    "takeoff_documents_buckets": 0,
+    "related_storage_policies": 0,
+    "database_mutated": false
+  },
+  "retained_visual_evidence": {
+    "new_score_claimed": false,
+    "dashboard_score": 0.837024,
+    "routes_technically_passed": 10,
+    "routes_total": 10,
+    "routes_reaching_0_99": 0,
+    "console_error_count": 0,
+    "application_network_error_count": 0,
+    "http_error_count": 0
+  },
+  "constraints": {
+    "screenshot_substitution_used": false,
+    "real_components_hidden": false,
+    "approved_reference_modified": false,
+    "secrets_changed": false,
+    "vercel_environment_changed": false,
+    "database_mutated": false,
+    "validation_thresholds_changed": false,
+    "tests_weakened": false,
+    "merged": false,
+    "production_changed": false
+  },
+  "decision": {
+    "workflow_pin_retained": true,
+    "visual_acceptance_complete": false,
+    "operational_acceptance_complete": false,
+    "release_authorized": false,
+    "production_promotion_authorized": false
+  },
+  "remaining_blockers": [
+    "The current exact-revision provenance run has not completed.",
+    "The BIDFAST preview remains configured for Supabase project prhppuuwcnmfdhwsagug instead of governed project mhaovpyegtysfgualplu.",
+    "Governed Supabase contains zero public.bidfast_* tables and functions, no takeoff-documents bucket, and no related storage policies.",
+    "The complete Account to Audit workflow, tenant denials, and authorization-bypass cases cannot be accepted against the governed contract.",
+    "No approved route reaches measured visual parity 0.99, and complete approved light and dark multi-viewport coverage remains incomplete."
+  ],
+  "rollback": {
+    "browserworker_workflow": "Revert c63ab4aff2efb89f043f5b8c8b272538d5007951 to restore BrowserWorker head 5c48d4baef1d8207bd802e18104416fc18d9acde.",
+    "receipt": "Revert this receipt-only commit if the evidence record is malformed.",
+    "application": "No BIDFAST application rollback is required because application code was not changed in this cycle.",
+    "database": "No rollback required because no database mutation occurred.",
+    "environment": "No rollback required because no environment value changed."
+  }
+}
