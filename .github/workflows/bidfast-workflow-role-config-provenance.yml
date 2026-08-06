@@ -1,4 +1,4 @@
-name: BIDFAST Membership Authority Config Provenance
+name: BIDFAST Tenant Retention Config Provenance
 
 on:
   pull_request:
@@ -17,12 +17,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: bidfast-membership-authority-config-provenance-be2ac03
+  group: bidfast-tenant-retention-config-provenance-9048486
   cancel-in-progress: true
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: be2ac0328c4e903aed05f4a4b075e3e197bac123
+  BIDFAST_EXPECTED_COMMIT: 9048486d754646d7a39ddde98fd7c65108876085
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   BIDFAST_EXPECTED_SUPABASE_PROJECT_REF: mhaovpyegtysfgualplu
 
@@ -79,8 +79,8 @@ jobs:
           const summary = {
             application_commit: expectedCommit,
             application_ref: expectedRef,
-            rollback_commit: '5b60dac9ee64537ab62dad519aa11a3e64b09191',
-            candidate_change: 'replace member-wide membership mutation policies with owner/admin authority boundaries that deny self-promotion, owner reassignment, inactive targets, admin-to-admin mutation, unauthorized deletion, and organization_id or user_id membership transfer',
+            rollback_commit: 'be2ac0328c4e903aed05f4a4b075e3e197bac123',
+            candidate_change: 'replace tenant-destroying owner and audit foreign-key cascades with restrictive retention boundaries while preserving client organization and audit deletion revocations',
             expected_supabase_project_ref: expectedProject,
             observed_supabase_project_ref: body.health?.configuration?.project_ref || null,
             configuration_pass: body.configuration_pass === true,
@@ -100,7 +100,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-membership-authority-config-provenance-be2ac03
+          name: bidfast-tenant-retention-config-provenance-9048486
           path: evidence/
           if-no-files-found: error
           retention-days: 30
