@@ -1,0 +1,137 @@
+{
+  "receipt_type": "BIDFAST_APPROVAL_SEPARATION_CONFIG_PROVENANCE_MISMATCH_RECONFIRMED",
+  "created_at": "2026-08-06T05:10:00Z",
+  "phase": "VALIDATE",
+  "step": "consume the latest exact-revision approval-separation provenance run, preserve the immutable artifact digest, and keep schema, visual, operational, merge, and production gates closed",
+  "inspection": {
+    "latest_receipt": "docs/receipts/BIDFAST_APPROVAL_SEPARATION_CONFIG_PROVENANCE_MISMATCH_BLOCKED_20260806T0412Z.json",
+    "latest_receipt_inspected": true,
+    "bidfast_repository_requested": "XTREME-AI-SYSTEMS/bidfast",
+    "bidfast_repository_resolved": "XTREME-SYSTEMS/bidfast",
+    "bidfast_pull_request": 2,
+    "bidfast_branch": "auto-builder/bidfast-complete-visual-system",
+    "bidfast_head": "d5c20eaf620829c6c97c5e60958ba976cbb18bb3",
+    "bidfast_diff_inspected_before_change": true,
+    "bidfast_delta_base": "9048486d754646d7a39ddde98fd7c65108876085",
+    "bidfast_delta_commits": 4,
+    "bidfast_delta_files": [
+      "components/approvals/ApprovalWorkspace.tsx",
+      "package.json",
+      "scripts/check-bidfast-approval-separation-governance.mjs",
+      "supabase/migrations/202608060305_harden_bidfast_approval_separation_of_duties.sql"
+    ],
+    "browserworker_repository": "Strategic-Minds/BROWSERWORKER",
+    "browserworker_pull_request": 9,
+    "browserworker_branch": "auto-builder/bidfast-proof-20260728",
+    "browserworker_head_before_receipt": "832765305fc99cfb9550eef7f6a0cbf515fd6d34",
+    "browserworker_diff_inspected_before_change": true,
+    "browserworker_delta_base": "7e2f24398900439fb306bccdd5de23137ea99967",
+    "browserworker_delta_commits": 1,
+    "browserworker_delta_files": [
+      "docs/receipts/BIDFAST_APPROVAL_SEPARATION_CONFIG_PROVENANCE_MISMATCH_BLOCKED_20260806T0412Z.json"
+    ],
+    "approved_drive_reference": {
+      "name": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+      "drive_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+      "mime_type": "image/png"
+    }
+  },
+  "application_preview": {
+    "commit": "d5c20eaf620829c6c97c5e60958ba976cbb18bb3",
+    "commit_ref": "auto-builder/bidfast-complete-visual-system",
+    "deployment_reference": "F6JebGtkjM5fYHeKQWzPmMB7fbrL",
+    "deployment_id": "dpl_F6JebGtkjM5fYHeKQWzPmMB7fbrL",
+    "deployment_url": "bidfast-q7ga8ekyp-strategic-minds-advisory.vercel.app",
+    "exact_revision_observed": true
+  },
+  "browserworker_preview": {
+    "commit": "832765305fc99cfb9550eef7f6a0cbf515fd6d34",
+    "deployment_reference": "BqvTS2CTw82fthdoQ6ppDtmqjyip",
+    "vercel_check": "success"
+  },
+  "provenance_execution": {
+    "workflow_run_id": 31070566878,
+    "workflow_job_id": 92517462991,
+    "workflow_name": "BIDFAST Approval Separation Config Provenance",
+    "workflow_conclusion": "failure",
+    "failed_step": "Verify exact Supabase configuration provenance",
+    "route_matrix_executed": false,
+    "operational_matrix_executed": false,
+    "http_status": 409,
+    "configuration_pass": false,
+    "provenance_pass": false,
+    "attempts": 15,
+    "artifact": {
+      "id": 8955548730,
+      "name": "bidfast-approval-separation-config-provenance-d5c20ea",
+      "sha256": "29caac595e63534986cdf7299040dca23f54bdeeb974e348b3ab5422fb94f810",
+      "size_bytes": 764,
+      "download_verified": true,
+      "expires_at": "2026-09-05T04:16:35Z"
+    }
+  },
+  "configuration_evidence": {
+    "expected_supabase_project_ref": "mhaovpyegtysfgualplu",
+    "observed_supabase_project_ref": "prhppuuwcnmfdhwsagug",
+    "supabase_url_configured": true,
+    "supabase_publishable_key_configured": true,
+    "supabase_project_ref_detected": true,
+    "supabase_project_ref_matches_expected": false,
+    "health_status": 503,
+    "failures": [
+      "health_status=503",
+      "health_ok=false",
+      "supabase_project_ref_mismatch",
+      "project_ref=prhppuuwcnmfdhwsagug"
+    ]
+  },
+  "retained_visual_evidence": {
+    "new_score_claimed": false,
+    "dashboard_score": 0.837024,
+    "routes_technically_passed": 10,
+    "routes_total": 10,
+    "routes_reaching_0_99": 0,
+    "console_error_count": 0,
+    "application_network_error_count": 0,
+    "http_error_count": 0,
+    "operational_pass_rate": null
+  },
+  "constraints": {
+    "application_code_changed": false,
+    "validation_thresholds_changed": false,
+    "tests_weakened": false,
+    "screenshot_substitution_used": false,
+    "real_components_hidden": false,
+    "approved_reference_modified": false,
+    "secrets_changed": false,
+    "vercel_environment_changed": false,
+    "database_mutated": false,
+    "merged": false,
+    "production_changed": false
+  },
+  "decision": {
+    "candidate_retained": true,
+    "configuration_gate_passed": false,
+    "schema_gate_passed": false,
+    "visual_acceptance_complete": false,
+    "operational_acceptance_complete": false,
+    "release_authorized": false,
+    "production_promotion_authorized": false
+  },
+  "remaining_blockers": [
+    "The exact BIDFAST preview remains configured for Supabase project prhppuuwcnmfdhwsagug instead of governed project mhaovpyegtysfgualplu.",
+    "The active Vercel connector cannot administer the strategic-minds-advisory preview scope.",
+    "The active Supabase connector cannot inspect or branch governed project mhaovpyegtysfgualplu.",
+    "The approval-separation migration remains unapplied and untested in an isolated governed Supabase branch.",
+    "Requester self-decision denial, independent reviewer success, inactive-account denial, cross-tenant denial, audit creation, rollback, and full workflow matrices remain unexecuted.",
+    "The complete Account to Organization to Opportunity to Project to Document to Takeoff to Estimate to Proposal to Approval to Audit workflow remains unverified.",
+    "No approved route reaches measured parity 0.99 and complete approved light and dark multi-viewport reference coverage remains incomplete."
+  ],
+  "rollback": {
+    "browserworker_receipt": "Revert the commit that introduced this receipt file.",
+    "bidfast": "Return the BIDFAST branch to 9048486d754646d7a39ddde98fd7c65108876085 if the approval-separation candidate must be removed.",
+    "database": "No rollback required because no database mutation occurred.",
+    "environment": "No rollback required because no environment mutation occurred.",
+    "production": "No rollback required because production was not changed."
+  }
+}
