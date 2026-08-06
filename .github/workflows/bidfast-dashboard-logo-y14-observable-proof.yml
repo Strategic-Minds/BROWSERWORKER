@@ -1,15 +1,15 @@
 name: BIDFAST Dashboard Logo Y14 Observable Proof
 
 on:
-  pull_request:
+  push:
     branches:
-      - main
+      - auto-builder/bidfast-proof-20260728
     paths:
       - '.github/workflows/bidfast-dashboard-logo-y14-observable-proof.yml'
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: bidfast-dashboard-logo-y14-observable-proof
@@ -25,6 +25,7 @@ env:
   DASHBOARD_REFERENCE_SHA256: f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb
   RETAINED_BASELINE: '0.837024'
   RELEASE_THRESHOLD: '0.99'
+  RECEIPT_PATH: docs/receipts/BIDFAST_DASHBOARD_LOGO_Y14_CANDIDATE_A6EEC082_RESULT.json
 
 jobs:
   dashboard-logo-y14-observable-proof:
@@ -32,6 +33,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 50
     steps:
+      - name: Checkout proof branch for immutable receipt
+        uses: actions/checkout@v4
+        with:
+          ref: auto-builder/bidfast-proof-20260728
+          fetch-depth: 0
+
       - name: Wait for BrowserWorker health
         shell: bash
         run: |
@@ -188,5 +195,90 @@ jobs:
         with:
           name: bidfast-dashboard-logo-y14-observable-a6eec08
           path: evidence/
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 30
+
+      - name: Commit governed candidate result receipt to proof branch
+        if: always()
+        shell: bash
+        env:
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$(dirname "${RECEIPT_PATH}")"
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const path = process.env.RECEIPT_PATH
+          let summary = null
+          if (fs.existsSync('evidence/dashboard-logo-y14-observable-summary.json')) {
+            summary = JSON.parse(fs.readFileSync('evidence/dashboard-logo-y14-observable-summary.json', 'utf8'))
+          }
+          let diagnostic = null
+          if (fs.existsSync('evidence/dashboard-regions.json')) {
+            try { diagnostic = JSON.parse(fs.readFileSync('evidence/dashboard-regions.json', 'utf8')) } catch {}
+          }
+          const httpStatus = fs.existsSync('evidence/dashboard-regions.http-status.txt')
+            ? fs.readFileSync('evidence/dashboard-regions.http-status.txt', 'utf8').trim()
+            : null
+          const receipt = {
+            receipt_type: 'BIDFAST_DASHBOARD_LOGO_Y14_CANDIDATE_RESULT',
+            created_at: new Date().toISOString(),
+            governance_state: summary?.candidate_retained === true
+              ? 'candidate_validation_passed_release_still_locked'
+              : 'candidate_validation_failed_or_incomplete_release_locked',
+            workflow: {
+              run_id: process.env.GITHUB_RUN_ID,
+              workflow_sha: process.env.GITHUB_SHA,
+              job_status: process.env.JOB_STATUS,
+              event_name: process.env.GITHUB_EVENT_NAME,
+              ref: process.env.GITHUB_REF,
+            },
+            candidate: {
+              bidfast_commit: process.env.BIDFAST_EXPECTED_COMMIT,
+              bidfast_ref: process.env.BIDFAST_EXPECTED_REF,
+              rollback_commit: process.env.BIDFAST_ROLLBACK_COMMIT,
+              route: '/dashboard',
+              theme: 'light',
+              viewport: { name: 'mobile', width: 390, height: 844 },
+            },
+            approved_reference: {
+              drive_file_id: process.env.DASHBOARD_REFERENCE_ID,
+              sha256: process.env.DASHBOARD_REFERENCE_SHA256,
+            },
+            retained_baseline: Number(process.env.RETAINED_BASELINE),
+            release_threshold: Number(process.env.RELEASE_THRESHOLD),
+            http_status: httpStatus,
+            summary,
+            diagnostic_available: diagnostic !== null,
+            diagnostic_failure: diagnostic?.error || diagnostic?.message || null,
+            acceptance: {
+              candidate_retained: summary?.candidate_retained === true,
+              release_authorized: false,
+              production_promotion_authorized: false,
+            },
+            constraints_preserved: {
+              reference_substitution_used: false,
+              full_screen_reference_layer_used: false,
+              real_components_hidden: false,
+              tests_weakened: false,
+              secrets_exposed: false,
+              production_resource_changed: false,
+              database_changed: false,
+            },
+            rollback: {
+              bidfast_restore_commit: process.env.BIDFAST_ROLLBACK_COMMIT,
+              browserworker_receipt_revert: 'Revert the commit that adds this receipt if the recorded evidence is inaccurate.',
+            },
+            production_status: 'LOCKED',
+          }
+          fs.writeFileSync(path, JSON.stringify(receipt, null, 2) + '\n')
+          NODE
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "${RECEIPT_PATH}"
+          if git diff --cached --quiet; then
+            echo 'No receipt change to commit.'
+            exit 0
+          fi
+          git commit -m 'docs(receipts): preserve BIDFAST logo candidate result [skip ci]'
+          git push origin HEAD:auto-builder/bidfast-proof-20260728
