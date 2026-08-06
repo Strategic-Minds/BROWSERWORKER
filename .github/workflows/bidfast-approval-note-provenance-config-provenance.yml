@@ -17,10 +17,10 @@ concurrency:
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: c1dfebc80d09899d1eefb797018a739dd721fd3f
+  BIDFAST_EXPECTED_COMMIT: b533e52e740f624f426ffffe2c35261a2a2eb9e8
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   BIDFAST_EXPECTED_SUPABASE_PROJECT_REF: mhaovpyegtysfgualplu
-  BIDFAST_ROLLBACK_COMMIT: fda77fc67c29b779e7ae365313475237bb156b32
+  BIDFAST_ROLLBACK_COMMIT: c1dfebc80d09899d1eefb797018a739dd721fd3f
 
 jobs:
   provenance:
@@ -69,7 +69,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-approval-note-provenance-config-provenance-c1dfebc
+          name: bidfast-approval-note-provenance-config-provenance-b533e52
           path: evidence/
           if-no-files-found: error
           retention-days: 30
