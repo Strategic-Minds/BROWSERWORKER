@@ -6,11 +6,6 @@ on:
       - main
     paths:
       - '.github/workflows/bidfast-dashboard-active-bids-rollback-proof.yml'
-  push:
-    branches:
-      - auto-builder/bidfast-proof-20260728
-    paths:
-      - '.github/workflows/bidfast-dashboard-active-bids-rollback-proof.yml'
   workflow_dispatch:
 
 permissions:
