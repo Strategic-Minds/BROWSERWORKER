@@ -1,4 +1,4 @@
-name: BIDFAST Tenant Retention Config Provenance
+name: BIDFAST Approval Separation Config Provenance
 
 on:
   pull_request:
@@ -17,12 +17,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: bidfast-tenant-retention-config-provenance-9048486
+  group: bidfast-approval-separation-config-provenance-d5c20ea
   cancel-in-progress: true
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: 9048486d754646d7a39ddde98fd7c65108876085
+  BIDFAST_EXPECTED_COMMIT: d5c20eaf620829c6c97c5e60958ba976cbb18bb3
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   BIDFAST_EXPECTED_SUPABASE_PROJECT_REF: mhaovpyegtysfgualplu
 
@@ -79,8 +79,8 @@ jobs:
           const summary = {
             application_commit: expectedCommit,
             application_ref: expectedRef,
-            rollback_commit: 'be2ac0328c4e903aed05f4a4b075e3e197bac123',
-            candidate_change: 'replace tenant-destroying owner and audit foreign-key cascades with restrictive retention boundaries while preserving client organization and audit deletion revocations',
+            rollback_commit: '9048486d754646d7a39ddde98fd7c65108876085',
+            candidate_change: 'prevent an approval requester from deciding the same request at the database boundary and remove self-decision controls from the implemented approval workspace',
             expected_supabase_project_ref: expectedProject,
             observed_supabase_project_ref: body.health?.configuration?.project_ref || null,
             configuration_pass: body.configuration_pass === true,
@@ -100,7 +100,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-tenant-retention-config-provenance-9048486
+          name: bidfast-approval-separation-config-provenance-d5c20ea
           path: evidence/
           if-no-files-found: error
           retention-days: 30
