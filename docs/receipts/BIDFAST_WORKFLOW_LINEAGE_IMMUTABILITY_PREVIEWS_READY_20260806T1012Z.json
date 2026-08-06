@@ -1,0 +1,71 @@
+{
+  "receipt_type": "BIDFAST_WORKFLOW_LINEAGE_IMMUTABILITY_PREVIEWS_READY",
+  "created_at": "2026-08-06T10:12:30Z",
+  "governance_state": "preview_ready_provenance_pending",
+  "prior_receipt": "docs/receipts/BIDFAST_WORKFLOW_LINEAGE_IMMUTABILITY_CANDIDATE_20260806T1011Z.json",
+  "bidfast": {
+    "repository": "XTREME-SYSTEMS/bidfast",
+    "branch": "auto-builder/bidfast-complete-visual-system",
+    "pull_request": 2,
+    "head_commit": "8099ee3cf19a05bf95df8718f0534479e279b8ef",
+    "rollback_commit": "5fb45d3cd497e1d976a4b4c5dfc05f8841db550d",
+    "deployment_reference": "4Jg4cMoq2EuE6yExtpTrKQn1FTKs",
+    "deployment_status": "SUCCESS"
+  },
+  "browserworker": {
+    "repository": "Strategic-Minds/BROWSERWORKER",
+    "branch": "auto-builder/bidfast-proof-20260728",
+    "pull_request": 9,
+    "proof_commit": "39f9eae2c1d881ed7adb750c092bae4748765319",
+    "proof_deployment_reference": "3ihgwnnvtMQYoxducAw524ADbroh",
+    "proof_deployment_status": "SUCCESS",
+    "workflow_file": ".github/workflows/bidfast-workflow-lineage-config-provenance.yml",
+    "expected_bidfast_commit": "8099ee3cf19a05bf95df8718f0534479e279b8ef",
+    "expected_supabase_project_ref": "mhaovpyegtysfgualplu",
+    "artifact_name": "bidfast-workflow-lineage-config-provenance-8099ee3",
+    "workflow_run_id": "COULD_NOT_VERIFY_FIRST_PAGE_FANOUT",
+    "workflow_job_id": "COULD_NOT_VERIFY_FIRST_PAGE_FANOUT",
+    "artifact_digest": "PENDING"
+  },
+  "source_truth": {
+    "approved_drive_reference_name": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+    "approved_drive_reference_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+    "complete_light_dark_multiviewport_pairs": false
+  },
+  "validation": {
+    "source_and_receipt_inspection_before_change": true,
+    "bidfast_preview_build": "PASS",
+    "browserworker_preview_build": "PASS",
+    "migration_applied": false,
+    "isolated_database_test": false,
+    "governed_supabase_provenance": "PENDING",
+    "visual_parity_remeasured": false,
+    "operational_workflow_pass_rate": "NOT_EXECUTED",
+    "tests_weakened": false,
+    "screenshot_substitution_used": false,
+    "real_components_hidden": false,
+    "production_promoted": false
+  },
+  "retained_evidence": {
+    "dashboard_parity": 0.837024,
+    "routes_technically_passed": "10/10",
+    "routes_reaching_0_99": 0,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "operational_pass_rate": "NOT_MEASURED"
+  },
+  "blockers": [
+    "The exact workflow-lineage configuration-provenance run and artifact are not visible through the first-page workflow fanout.",
+    "The active Supabase connector cannot access governed project mhaovpyegtysfgualplu.",
+    "The active Vercel connector cannot inspect the strategic-minds-advisory scope or expose underlying dpl identifiers.",
+    "The migration remains unapplied and untested in an isolated governed branch.",
+    "Same-tenant lineage reassignment denial, cross-tenant denial, authorization, audit, rollback, full workflow execution, and exact visual acceptance remain unverified."
+  ],
+  "rollback": {
+    "bidfast": "Return the BIDFAST feature branch to 5fb45d3cd497e1d976a4b4c5dfc05f8841db550d.",
+    "browserworker": "Revert 39f9eae2c1d881ed7adb750c092bae4748765319 and both workflow-lineage receipt commits.",
+    "database": "No database rollback is required because no migration was applied."
+  },
+  "production_status": "LOCKED"
+}
