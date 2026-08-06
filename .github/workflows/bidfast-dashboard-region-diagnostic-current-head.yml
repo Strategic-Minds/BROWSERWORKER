@@ -1,4 +1,4 @@
-name: BIDFAST Dashboard Current Head Regional Diagnostic
+name: BIDFAST Dashboard Active Bids Typography Candidate
 
 on:
   pull_request:
@@ -17,13 +17,13 @@ permissions:
   contents: read
 
 concurrency:
-  group: bidfast-dashboard-region-diagnostic-8099ee3
+  group: bidfast-dashboard-active-bids-fbef99f
   cancel-in-progress: true
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
   BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: 8099ee3cf19a05bf95df8718f0534479e279b8ef
+  BIDFAST_EXPECTED_COMMIT: fbef99f89611f908573d125ad0a5d975316c962c
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   DASHBOARD_REFERENCE_ID: 1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr
   DASHBOARD_REFERENCE_SHA256: f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb
@@ -32,7 +32,7 @@ env:
 
 jobs:
   dashboard-regional-diagnostic:
-    name: Exact current-head dashboard regional diagnostic
+    name: Exact active-bids typography regional diagnostic
     runs-on: ubuntu-latest
     timeout-minutes: 50
 
@@ -144,7 +144,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-dashboard-region-diagnostic-8099ee3
+          name: bidfast-dashboard-active-bids-typography-fbef99f
           path: evidence/
           if-no-files-found: error
           retention-days: 30
