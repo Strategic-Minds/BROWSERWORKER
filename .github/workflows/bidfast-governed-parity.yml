@@ -21,15 +21,16 @@ concurrency:
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: 106579c02ab6da9af87d1747b9645e348509883e
+  BIDFAST_EXPECTED_COMMIT: 8099ee3cf19a05bf95df8718f0534479e279b8ef
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   VISUAL_THRESHOLD: '0.99'
+  BROWSERWORKER_BURST_COOLDOWN_SECONDS: '65'
 
 jobs:
   parity:
     name: Exact approved route parity
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       max-parallel: 1
@@ -75,9 +76,29 @@ jobs:
           route_slug="$(printf '%s' '${{ matrix.route }}' | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
           encoded_route="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "${{ matrix.route }}")"
           endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-parity-v3?route=${encoded_route}&expected_commit=${BIDFAST_EXPECTED_COMMIT}"
-          http_status="$(curl -sS --retry 2 --retry-all-errors --max-time 210 -o "evidence/${route_slug}.json" -w '%{http_code}' "$endpoint")"
-          printf '%s\n' "$http_status" > "evidence/${route_slug}.http-status.txt"
-          echo "HTTP status: $http_status"
+          for attempt in $(seq 1 8); do
+            http_status="$(curl -sS --max-time 210 -D "evidence/${route_slug}.headers.txt" -o "evidence/${route_slug}.json" -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$http_status" > "evidence/${route_slug}.http-status.txt"
+            rate_limited="$(node - "evidence/${route_slug}.json" <<'NODE'
+          const fs = require('node:fs')
+          const file = process.argv[2]
+          try {
+            const body = JSON.parse(fs.readFileSync(file, 'utf8'))
+            const text = String(body?.error || body?.message || '')
+            process.stdout.write(/429|too many requests|burst rate limit/i.test(text) ? 'true' : 'false')
+          } catch {
+            process.stdout.write('false')
+          }
+          NODE
+            )"
+            echo "Attempt ${attempt}: HTTP ${http_status}; rate_limited=${rate_limited}"
+            if [[ "$rate_limited" != "true" ]]; then
+              break
+            fi
+            if [[ "$attempt" != "8" ]]; then
+              sleep "$BROWSERWORKER_BURST_COOLDOWN_SECONDS"
+            fi
+          done
           cat "evidence/${route_slug}.json"
 
       - name: Capture implemented-component screenshot
@@ -89,8 +110,31 @@ jobs:
           route_slug="$(printf '%s' '${{ matrix.route }}' | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
           encoded_route="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "${{ matrix.route }}")"
           endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=${encoded_route}&theme=light&viewport=mobile&format=image"
-          screenshot_status="$(curl -sS --retry 2 --retry-all-errors --max-time 180 -D "evidence/${route_slug}.live.headers.txt" -o "evidence/${route_slug}.live.png" -w '%{http_code}' "$endpoint" || true)"
-          printf '%s\n' "$screenshot_status" > "evidence/${route_slug}.live.http-status.txt"
+          sleep "$BROWSERWORKER_BURST_COOLDOWN_SECONDS"
+          for attempt in $(seq 1 8); do
+            screenshot_status="$(curl -sS --max-time 180 -D "evidence/${route_slug}.live.headers.txt" -o "evidence/${route_slug}.live.png" -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$screenshot_status" > "evidence/${route_slug}.live.http-status.txt"
+            if [[ "$screenshot_status" == "200" ]] && grep -qi '^content-type: image/' "evidence/${route_slug}.live.headers.txt"; then
+              break
+            fi
+            rate_limited="$(node - "evidence/${route_slug}.live.png" <<'NODE'
+          const fs = require('node:fs')
+          const file = process.argv[2]
+          try {
+            const body = JSON.parse(fs.readFileSync(file, 'utf8'))
+            const text = String(body?.error || body?.message || '')
+            process.stdout.write(/429|too many requests|burst rate limit/i.test(text) ? 'true' : 'false')
+          } catch {
+            process.stdout.write('false')
+          }
+          NODE
+            )"
+            echo "Screenshot attempt ${attempt}: HTTP ${screenshot_status}; rate_limited=${rate_limited}"
+            if [[ "$rate_limited" != "true" || "$attempt" == "8" ]]; then
+              break
+            fi
+            sleep "$BROWSERWORKER_BURST_COOLDOWN_SECONDS"
+          done
           if [[ -s "evidence/${route_slug}.live.png" ]]; then
             file "evidence/${route_slug}.live.png" | tee "evidence/${route_slug}.live.file.txt"
             sha256sum "evidence/${route_slug}.live.png" | tee "evidence/${route_slug}.live.sha256.txt"
@@ -148,12 +192,17 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
 
+      - name: Cool down Browserbase burst window
+        if: always()
+        shell: bash
+        run: sleep "$BROWSERWORKER_BURST_COOLDOWN_SECONDS"
+
   dashboard-screenshot:
     name: Dashboard implemented-component screenshot
     if: always()
     needs: parity
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Wait for lightweight health endpoint
         shell: bash
@@ -175,9 +224,11 @@ jobs:
           set -euo pipefail
           mkdir -p evidence
           endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=%2Fdashboard&theme=light&viewport=mobile&format=image"
-          status="$(curl -sS --retry 2 --retry-all-errors --max-time 180 -D evidence/dashboard.headers.txt -o evidence/dashboard.live.png -w '%{http_code}' "$endpoint")"
+          sleep "$BROWSERWORKER_BURST_COOLDOWN_SECONDS"
+          status="$(curl -sS --max-time 180 -D evidence/dashboard.headers.txt -o evidence/dashboard.live.png -w '%{http_code}' "$endpoint")"
           printf '%s\n' "$status" > evidence/dashboard.status.txt
           test "$status" = "200"
+          grep -qi '^content-type: image/' evidence/dashboard.headers.txt
           file evidence/dashboard.live.png
 
       - name: Upload immutable dashboard screenshot
