@@ -1,9 +1,9 @@
 name: BIDFAST Supabase Config Provenance Current Head cffc151
 
 on:
-  push:
+  pull_request:
     branches:
-      - auto-builder/bidfast-proof-20260728
+      - main
     paths:
       - '.github/workflows/bidfast-supabase-config-provenance-current-head-cffc151.yml'
   workflow_dispatch:
