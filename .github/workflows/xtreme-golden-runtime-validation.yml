@@ -1,0 +1,57 @@
+name: Xtreme Golden Runtime Validation
+
+on:
+  push:
+    branches:
+      - auto-builder/xtreme-golden-parity-20260807
+    paths:
+      - 'scripts/xtreme-golden-runtime-validation.mjs'
+      - '.github/workflows/xtreme-golden-runtime-validation.yml'
+      - 'lib/**'
+      - 'app/api/run/**'
+      - 'package.json'
+      - 'package-lock.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-live-option1:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      XTREME_TARGET_URL: https://xtreme-ai-systems.base44.app
+      XTREME_ARTIFACT_DIR: runtime-artifacts
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install deterministic dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Locate system Chrome
+        run: |
+          CHROME_PATH="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$CHROME_PATH" ]; then
+            echo "No Chrome/Chromium executable found on runner"
+            exit 1
+          fi
+          echo "CHROME_PATH=$CHROME_PATH" >> "$GITHUB_ENV"
+          "$CHROME_PATH" --version
+      - name: Run component-rendered Golden acceptance matrix
+        id: runtime
+        continue-on-error: true
+        run: node scripts/xtreme-golden-runtime-validation.mjs
+      - name: Upload actual renders and acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xtreme-golden-runtime-evidence
+          path: runtime-artifacts
+          if-no-files-found: error
+          retention-days: 14
+      - name: Enforce fail-closed runtime gate
+        if: steps.runtime.outcome != 'success'
+        run: exit 1

@@ -4,8 +4,12 @@ import { validatePublicUrl } from '@/lib/ssrf';
 import { JobRequestSchema } from '@/lib/schemas';
 import { launchBrowser, closeBrowser, WORKER_VERSION } from '@/lib/browser';
 import { executeStep } from '@/lib/actions';
+import { runVisualParity } from '@/lib/visual';
+import { runAccessibilityAudit, runResponsiveAudit } from '@/lib/audits';
 import { acquireSlot, releaseSlot } from '@/lib/concurrency';
 import type { Captures } from '@/lib/actions';
+import type { VisualParityResult } from '@/lib/visual';
+import type { AccessibilityAudit, ResponsiveAudit } from '@/lib/audits';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -13,7 +17,6 @@ export const maxDuration = 120;
 
 const MAX_SCREENSHOTS = parseInt(process.env.BROWSER_MAX_SCREENSHOTS || '6', 10);
 
-// Predefined steps for website-generator-proof
 function buildGeneratorProofSteps(url: string) {
   return [
     { action: 'goto' as const, url },
@@ -26,7 +29,6 @@ function buildGeneratorProofSteps(url: string) {
   ];
 }
 
-// Predefined steps for generated-site-validation
 function buildSiteValidationSteps(url: string) {
   return [
     { action: 'goto' as const, url },
@@ -43,11 +45,19 @@ function buildSiteValidationSteps(url: string) {
   ];
 }
 
+function buildVisualParitySteps(url: string) {
+  return [
+    { action: 'goto' as const, url },
+    { action: 'wait_for_selector' as const, selector: 'body', timeout_ms: 15000 },
+    { action: 'get_title' as const },
+    { action: 'capture_accessibility_snapshot' as const },
+  ];
+}
+
 export async function POST(request: Request) {
   const auth = verifyAuth(request);
   if (!auth.ok) return authResponse();
 
-  // Payload size check (~256KB)
   const contentLength = parseInt(request.headers.get('content-length') || '0', 10);
   if (contentLength > 262144) {
     return Response.json({ ok: false, error: 'Payload too large', code: 'INVALID_PAYLOAD' }, { status: 413 });
@@ -62,12 +72,7 @@ export async function POST(request: Request) {
 
   const parsed = JobRequestSchema.safeParse(rawBody);
   if (!parsed.success) {
-    return Response.json({
-      ok: false,
-      error: 'Validation failed',
-      code: 'INVALID_PAYLOAD',
-      details: parsed.error.flatten(),
-    }, { status: 400 });
+    return Response.json({ ok: false, error: 'Validation failed', code: 'INVALID_PAYLOAD', details: parsed.error.flatten() }, { status: 400 });
   }
 
   const job = parsed.data;
@@ -77,29 +82,25 @@ export async function POST(request: Request) {
   const startedAt = new Date().toISOString();
   const startMs = Date.now();
 
-  // Concurrency check
   if (!acquireSlot()) {
-    return Response.json({
-      ok: false,
-      error: 'Too many concurrent jobs',
-      code: 'RATE_LIMITED',
-    }, { status: 429 });
+    return Response.json({ ok: false, error: 'Too many concurrent jobs', code: 'RATE_LIMITED' }, { status: 429 });
   }
 
   let browser = null;
-  const stepResults: Array<{
-    index: number; action: string; status: 'pass' | 'fail' | 'skip'; duration_ms: number; result?: unknown; error?: string;
-  }> = [];
+  const stepResults: Array<{ index: number; action: string; status: 'pass' | 'fail' | 'skip'; duration_ms: number; result?: unknown; error?: string }> = [];
   const captures: Captures = { consoleErrors: [], networkErrors: [], screenshots: [] };
   const errors: string[] = [];
   const warnings: string[] = [];
   let browserVersion = 'unknown';
   let finalUrl = job.url ?? '';
+  let visualResult: VisualParityResult | undefined;
+  let accessibilityAudit: AccessibilityAudit | undefined;
+  let responsiveAudit: ResponsiveAudit | undefined;
+  let operationalResult: Record<string, unknown> | undefined;
   type JobStatus = 'pass' | 'warn' | 'fail' | 'blocked';
   let overallStatus: JobStatus = 'pass';
 
   try {
-    // Handle launch-check without URL validation
     if (job.type === 'launch-check') {
       const { browser: b, version } = await launchBrowser();
       browser = b;
@@ -109,7 +110,6 @@ export async function POST(request: Request) {
       await pg.goto('about:blank');
       await pg.close();
       await ctx.close();
-
       return Response.json({
         ok: true,
         status: 'pass',
@@ -117,53 +117,31 @@ export async function POST(request: Request) {
         correlation_id: correlationId,
         worker_version: WORKER_VERSION,
         browser: { name: 'chromium', version: browserVersion },
-        timing: {
-          started_at: startedAt,
-          completed_at: new Date().toISOString(),
-          duration_ms: Date.now() - startMs,
-        },
+        timing: { started_at: startedAt, completed_at: new Date().toISOString(), duration_ms: Date.now() - startMs },
         steps: [{ index: 1, action: 'launch-check', status: 'pass', duration_ms: Date.now() - startMs }],
-        artifacts: { screenshots: [], console_errors: [], network_errors: [] },
-        errors: [],
-        warnings: [],
-        receipt_id: receiptId,
+        artifacts: { screenshots: [], console_errors: [], network_errors: [], diff_images: [] },
+        errors: [], warnings: [], receipt_id: receiptId,
       });
     }
 
-    // URL validation required for all other types
     if (job.url) {
       const urlCheck = await validatePublicUrl(job.url);
-      if (!urlCheck.ok) {
-        return Response.json({
-          ok: false,
-          error: urlCheck.error,
-          code: urlCheck.code,
-        }, { status: 400 });
-      }
+      if (!urlCheck.ok) return Response.json({ ok: false, error: urlCheck.error, code: urlCheck.code }, { status: 400 });
     }
 
-    // Resolve steps
     let steps = job.steps ?? [];
-    if (job.type === 'website-generator-proof' && job.url) {
-      steps = buildGeneratorProofSteps(job.url) as typeof steps;
-    } else if (job.type === 'generated-site-validation' && job.url) {
-      steps = buildSiteValidationSteps(job.url) as typeof steps;
-    }
+    if (job.type === 'website-generator-proof' && job.url) steps = buildGeneratorProofSteps(job.url) as typeof steps;
+    else if (job.type === 'generated-site-validation' && job.url) steps = buildSiteValidationSteps(job.url) as typeof steps;
+    else if (job.type === 'visual-parity' && job.url && steps.length === 0) steps = buildVisualParitySteps(job.url) as typeof steps;
 
-    // Launch browser
     const { browser: b, version } = await launchBrowser();
     browser = b;
     browserVersion = version;
-
     const context = await browser.newContext({
-      viewport: {
-        width: job.viewport?.width ?? 1440,
-        height: job.viewport?.height ?? 1200,
-      },
+      viewport: { width: job.viewport?.width ?? 1440, height: job.viewport?.height ?? 1200 },
       deviceScaleFactor: job.viewport?.deviceScaleFactor ?? 1,
     });
 
-    // Block downloads
     const validatedHosts = new Map<string, boolean>();
     await context.route('**', async (route) => {
       const requestUrl = route.request().url();
@@ -176,33 +154,18 @@ export async function POST(request: Request) {
           validatedHosts.set(host, allowed);
           if (!allowed) warnings.push(`Blocked unsafe browser request to ${host}: ${check.error}`);
         }
-        if (!allowed) {
-          await route.abort('blockedbyclient');
-          return;
-        }
+        if (!allowed) { await route.abort('blockedbyclient'); return; }
       }
       await route.continue();
     });
 
     const page = await context.newPage();
+    const captureConsole = Boolean(job.capture?.console || job.type === 'visual-parity' || job.type === 'operational-parity');
+    const captureNetwork = Boolean(job.capture?.network_errors || job.type === 'visual-parity' || job.type === 'operational-parity');
 
-    // Console capture
-    if (job.capture?.console) {
-      page.on('console', (msg) => {
-        if (msg.type() === 'error') {
-          captures.consoleErrors.push(`[${msg.type()}] ${msg.text()}`.slice(0, 500));
-        }
-      });
-    }
+    if (captureConsole) page.on('console', (msg) => { if (msg.type() === 'error') captures.consoleErrors.push(`[${msg.type()}] ${msg.text()}`.slice(0, 500)); });
+    if (captureNetwork) page.on('requestfailed', (req) => captures.networkErrors.push(`${req.method()} ${req.url()} — ${req.failure()?.errorText}`.slice(0, 500)));
 
-    // Network error capture
-    if (job.capture?.network_errors) {
-      page.on('requestfailed', (req) => {
-        captures.networkErrors.push(`${req.method()} ${req.url()} — ${req.failure()?.errorText}`.slice(0, 500));
-      });
-    }
-
-    // Execute steps
     let stepFailed = false;
     for (let i = 0; i < steps.length; i++) {
       const step = steps[i];
@@ -211,37 +174,78 @@ export async function POST(request: Request) {
         warnings.push(`Screenshot limit (${MAX_SCREENSHOTS}) reached — skipped step ${i + 1}`);
         continue;
       }
-
       const result = await executeStep(page, step, captures);
       stepResults.push({ index: i + 1, action: step.action, ...result });
-
       if (result.status === 'fail') {
         stepFailed = true;
         errors.push(`Step ${i + 1} (${step.action}) failed: ${result.error}`);
-        // Continue unless it's a critical step
         if (['goto', 'wait_for_selector'].includes(step.action) && i < 2) break;
       }
     }
 
-    // Top-level screenshot if capture requested and no explicit screenshot step
+    if (!stepFailed && job.type === 'visual-parity' && job.visual) {
+      try {
+        visualResult = await runVisualParity(page, job.visual);
+        captures.screenshots.push(visualResult.actual_screenshot);
+        if (!visualResult.pass) {
+          stepFailed = true;
+          errors.push(`Visual parity failed: ${visualResult.mismatch_percent}% mismatch exceeds ${visualResult.threshold_percent}% or a critical region failed`);
+        }
+      } catch (error) {
+        stepFailed = true;
+        errors.push(`Visual parity engine failed: ${(error as Error).message}`);
+      }
+    }
+
+    if (!stepFailed && (job.type === 'visual-parity' || job.type === 'operational-parity')) {
+      accessibilityAudit = await runAccessibilityAudit(page);
+      responsiveAudit = await runResponsiveAudit(page);
+      if (!accessibilityAudit.pass) {
+        stepFailed = true;
+        errors.push(`Accessibility parity failed: ${accessibilityAudit.violations.join('; ')}`);
+      }
+      if (!responsiveAudit.pass) {
+        stepFailed = true;
+        errors.push(`Responsive parity failed: overflow=${responsiveAudit.horizontal_overflow_px}px small_touch_targets=${responsiveAudit.small_touch_target_count}`);
+      }
+    }
+
+    if (job.type === 'operational-parity' && job.operational) {
+      const consolePass = !job.operational.require_console_zero || captures.consoleErrors.length === 0;
+      const networkPass = !job.operational.require_network_zero || captures.networkErrors.length === 0;
+      const pass = !stepFailed && consolePass && networkPass && Boolean(accessibilityAudit?.pass) && Boolean(responsiveAudit?.pass);
+      operationalResult = {
+        contract_id: job.operational.contract_id,
+        case_id: job.operational.case_id,
+        steps_pass: !stepFailed,
+        console_pass: consolePass,
+        network_pass: networkPass,
+        accessibility_pass: Boolean(accessibilityAudit?.pass),
+        responsive_pass: Boolean(responsiveAudit?.pass),
+        console_error_count: captures.consoleErrors.length,
+        network_error_count: captures.networkErrors.length,
+        pass,
+      };
+      if (!pass) {
+        stepFailed = true;
+        if (!consolePass) errors.push(`Operational parity failed: ${captures.consoleErrors.length} console error(s)`);
+        if (!networkPass) errors.push(`Operational parity failed: ${captures.networkErrors.length} network error(s)`);
+      }
+    }
+
     if (job.capture?.screenshot && captures.screenshots.length === 0) {
       try {
         const buf = await page.screenshot({ fullPage: false, type: 'png' });
-        if (buf.length < 102400) {
-          captures.screenshots.push(`data:image/png;base64,${buf.toString('base64')}`);
-        }
-      } catch { /* best-effort */ }
+        if (buf.length < 102400) captures.screenshots.push(`data:image/png;base64,${buf.toString('base64')}`);
+      } catch { /* best effort */ }
     }
 
     finalUrl = page.url();
     await page.close();
     await context.close();
-
     overallStatus = stepFailed ? 'fail' : warnings.length > 0 ? 'warn' : 'pass';
-
   } catch (err) {
-    const msg = (err as Error).message || 'Unknown error';
-    errors.push(msg);
+    errors.push((err as Error).message || 'Unknown error');
     overallStatus = 'fail';
   } finally {
     await closeBrowser(browser);
@@ -249,28 +253,39 @@ export async function POST(request: Request) {
   }
 
   return Response.json({
-    ok: (overallStatus === 'pass' || overallStatus === 'warn'),
+    ok: overallStatus === 'pass' || overallStatus === 'warn',
     status: overallStatus,
     job_id: jobId,
     correlation_id: correlationId,
     worker_version: WORKER_VERSION,
     browser: { name: 'chromium', version: browserVersion },
-    timing: {
-      started_at: startedAt,
-      completed_at: new Date().toISOString(),
-      duration_ms: Date.now() - startMs,
-    },
-    navigation: {
-      requested_url: job.url ?? '',
-      final_url: finalUrl,
-      redirects: [],
-    },
+    timing: { started_at: startedAt, completed_at: new Date().toISOString(), duration_ms: Date.now() - startMs },
+    navigation: { requested_url: job.url ?? '', final_url: finalUrl, redirects: [] },
     steps: stepResults,
     artifacts: {
       screenshots: captures.screenshots,
       console_errors: captures.consoleErrors,
       network_errors: captures.networkErrors,
+      diff_images: visualResult?.diff_image ? [visualResult.diff_image] : [],
     },
+    visual: visualResult ? {
+      reference_id: visualResult.reference_id,
+      reference_url: visualResult.reference_url,
+      mode: visualResult.mode,
+      pass: visualResult.pass,
+      dimension_match: visualResult.dimension_match,
+      actual_width: visualResult.actual_width,
+      actual_height: visualResult.actual_height,
+      reference_width: visualResult.reference_width,
+      reference_height: visualResult.reference_height,
+      mismatch_percent: visualResult.mismatch_percent,
+      threshold_percent: visualResult.threshold_percent,
+      mean_absolute_error: visualResult.mean_absolute_error,
+      compared_pixels: visualResult.compared_pixels,
+      regions: visualResult.regions,
+    } : undefined,
+    operational: operationalResult,
+    audits: { accessibility: accessibilityAudit, responsive: responsiveAudit },
     errors,
     warnings,
     rollback: [],
