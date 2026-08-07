@@ -1,4 +1,4 @@
-name: BIDFAST Dashboard Active Bids Rollback Proof
+name: BIDFAST Dashboard Logo Candidate Rollback Proof
 
 on:
   pull_request:
@@ -12,23 +12,23 @@ permissions:
   contents: read
 
 concurrency:
-  group: bidfast-dashboard-active-bids-rollback-fb57e2b
+  group: bidfast-dashboard-logo-rollback-1039d80
   cancel-in-progress: true
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
   BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: fb57e2b752ad1a4e67b74a2d238ec77114d46320
+  BIDFAST_EXPECTED_COMMIT: 1039d807e4d63db03013d3a5786e087a5196669f
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
-  BIDFAST_ROLLED_BACK_COMMIT: fbef99f89611f908573d125ad0a5d975316c962c
+  BIDFAST_ROLLED_BACK_COMMIT: a6eec0820c7eea1866e8e093bfb449f37e7497d3
   DASHBOARD_REFERENCE_ID: 1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr
   DASHBOARD_REFERENCE_SHA256: f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb
   RETAINED_BASELINE: '0.837024'
   RELEASE_THRESHOLD: '0.99'
 
 jobs:
-  dashboard-active-bids-rollback-proof:
-    name: Exact active-bids rollback regional proof
+  dashboard-logo-rollback-proof:
+    name: Exact dashboard logo rollback regional proof
     runs-on: ubuntu-latest
     timeout-minutes: 50
 
@@ -165,7 +165,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-dashboard-active-bids-rollback-fb57e2b
+          name: bidfast-dashboard-logo-rollback-1039d80
           path: evidence/
           if-no-files-found: error
           retention-days: 30
