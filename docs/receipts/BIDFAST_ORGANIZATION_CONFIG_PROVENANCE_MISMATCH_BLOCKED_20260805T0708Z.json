@@ -1,0 +1,123 @@
+{
+  "receipt_type": "BIDFAST_ORGANIZATION_CONFIG_PROVENANCE_MISMATCH_BLOCKED",
+  "created_at": "2026-08-05T07:08:00Z",
+  "phase": "VALIDATE",
+  "step": "preserve completed exact-revision configuration provenance evidence and keep route, operational, schema, merge, and production gates closed",
+  "inspection": {
+    "latest_receipt": "docs/receipts/BIDFAST_ORGANIZATION_GOVERNANCE_FALSE_POSITIVE_REPAIR_20260805T0612Z.json",
+    "latest_receipt_inspected": true,
+    "bidfast_repository": "XTREME-SYSTEMS/bidfast",
+    "bidfast_pull_request": 2,
+    "bidfast_branch": "auto-builder/bidfast-complete-visual-system",
+    "bidfast_head": "e56189af0bb0c4c44a72ccfe04376dcf24fd799f",
+    "bidfast_diff_inspected_before_change": true,
+    "browserworker_repository": "Strategic-Minds/BROWSERWORKER",
+    "browserworker_pull_request": 9,
+    "browserworker_branch": "auto-builder/bidfast-proof-20260728",
+    "browserworker_head_before_receipt": "fed5998b5d151ba5798b99dfdb70d68fe81ea437",
+    "browserworker_diff_inspected_before_change": true,
+    "approved_drive_reference": {
+      "name": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+      "drive_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+      "mime_type": "image/png"
+    },
+    "auto_builder_dry_run_receipt": "receipt_1785913684193"
+  },
+  "application_preview": {
+    "commit": "e56189af0bb0c4c44a72ccfe04376dcf24fd799f",
+    "commit_ref": "auto-builder/bidfast-complete-visual-system",
+    "deployment_reference": "HSb9TasDzAxkboa72yKPRvD6KYeQ",
+    "deployment_id": "dpl_HSb9TasDzAxkboa72yKPRvD6KYeQ",
+    "deployment_url": "bidfast-lzpogsk7s-strategic-minds-advisory.vercel.app",
+    "exact_revision_observed": true
+  },
+  "provenance_execution": {
+    "workflow_run_id": 30980551120,
+    "workflow_job_id": 92223847670,
+    "workflow_conclusion": "failure",
+    "failed_step": "Verify exact Supabase configuration provenance",
+    "route_matrix_executed": false,
+    "operational_matrix_executed": false,
+    "http_status": 409,
+    "configuration_pass": false,
+    "provenance_pass": false,
+    "attempts": 15,
+    "artifact": {
+      "id": 8920059346,
+      "name": "bidfast-supabase-config-provenance-observable-e56189a",
+      "sha256": "04a755750db77824022bad4142ff85c3edcc979318c67b0b3e3849cce7d1623b",
+      "size_bytes": 791,
+      "download_verified": true
+    }
+  },
+  "configuration_evidence": {
+    "expected_supabase_project_ref": "mhaovpyegtysfgualplu",
+    "observed_supabase_project_ref": "prhppuuwcnmfdhwsagug",
+    "supabase_url_configured": true,
+    "supabase_publishable_key_configured": true,
+    "supabase_project_ref_detected": true,
+    "supabase_project_ref_matches_expected": false,
+    "failures": [
+      "health_status=503",
+      "health_ok=false",
+      "supabase_project_ref_mismatch",
+      "project_ref=prhppuuwcnmfdhwsagug"
+    ]
+  },
+  "governed_supabase_catalog": {
+    "project_ref": "mhaovpyegtysfgualplu",
+    "public_bidfast_table_count": 0,
+    "public_bidfast_function_count": 0,
+    "public_autobid_table_count": 44,
+    "takeoff_documents_bucket_count": 0,
+    "related_storage_policy_count": 0,
+    "database_mutated": false
+  },
+  "retained_visual_evidence": {
+    "new_score_claimed": false,
+    "dashboard_score": 0.837024,
+    "routes_technically_passed": 10,
+    "routes_total": 10,
+    "routes_reaching_0_99": 0,
+    "console_error_count": 0,
+    "application_network_error_count": 0,
+    "http_error_count": 0
+  },
+  "constraints": {
+    "application_code_changed": false,
+    "validation_code_changed": false,
+    "screenshot_substitution_used": false,
+    "real_components_hidden": false,
+    "approved_reference_modified": false,
+    "secrets_changed": false,
+    "vercel_environment_changed": false,
+    "database_mutated": false,
+    "validation_thresholds_changed": false,
+    "tests_weakened": false,
+    "merged": false,
+    "production_changed": false
+  },
+  "decision": {
+    "candidate_retained": true,
+    "configuration_gate_passed": false,
+    "schema_gate_passed": false,
+    "visual_acceptance_complete": false,
+    "operational_acceptance_complete": false,
+    "release_authorized": false,
+    "production_promotion_authorized": false
+  },
+  "remaining_blockers": [
+    "The exact BIDFAST preview is configured for Supabase project prhppuuwcnmfdhwsagug instead of governed project mhaovpyegtysfgualplu.",
+    "The governed Supabase project contains no public.bidfast_* tables or functions and no required takeoff document storage controls.",
+    "The Account to Organization migration remains unapplied, unrolled back, and untested in an isolated Supabase environment.",
+    "The complete Account to Organization to Opportunity to Project to Document to Takeoff to Estimate to Proposal to Approval to Audit workflow remains unverified.",
+    "No approved route reaches measured parity 0.99 and complete light and dark multi-viewport reference coverage remains incomplete."
+  ],
+  "rollback": {
+    "browserworker_receipt": "Revert the commit that introduced this receipt file.",
+    "bidfast": "No rollback required because BIDFAST code was not changed in this validation cycle.",
+    "database": "No rollback required because no database mutation occurred.",
+    "environment": "No rollback required because no environment value changed.",
+    "production": "No rollback required because production was not changed."
+  }
+}

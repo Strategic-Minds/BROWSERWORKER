@@ -1,0 +1,140 @@
+{
+  "receipt_type": "BIDFAST_ACTIVE_BIDS_ROLLBACK_PROOF_REESTABLISHED",
+  "created_at": "2026-08-06T20:00:25Z",
+  "governance_state": "rollback_proof_passed_retained_baseline_reestablished_production_locked",
+  "inspection": {
+    "latest_receipt_inspected": "docs/receipts/BIDFAST_ACTIVE_BIDS_TYPOGRAPHY_CANDIDATE_REJECTED_20260806T1907Z.json",
+    "bidfast_repository_current_name": "XTREME-SYSTEMS/bidfast",
+    "bidfast_pull_request": 2,
+    "bidfast_branch": "auto-builder/bidfast-complete-visual-system",
+    "bidfast_head": "fb57e2b752ad1a4e67b74a2d238ec77114d46320",
+    "bidfast_diff_from_retained_baseline": {
+      "base": "8099ee3cf19a05bf95df8718f0534479e279b8ef",
+      "ahead_by_commits": 4,
+      "files_changed": 0
+    },
+    "browserworker_repository": "Strategic-Minds/BROWSERWORKER",
+    "browserworker_pull_request": 9,
+    "browserworker_branch": "auto-builder/bidfast-proof-20260728",
+    "browserworker_pre_receipt_head": "3df9b67dbc3252e7ffe503f5856c0d87747df55d",
+    "browserworker_diff_since_rollback_workflow_head": {
+      "base": "1319155583c72a229db664d65c360215902eda82",
+      "head": "3df9b67dbc3252e7ffe503f5856c0d87747df55d",
+      "ahead_by_commits": 1,
+      "files": [
+        "docs/receipts/BIDFAST_ACTIVE_BIDS_TYPOGRAPHY_CANDIDATE_REJECTED_20260806T1907Z.json"
+      ]
+    }
+  },
+  "approved_reference": {
+    "title": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+    "drive_file_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+    "sha256": "f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb",
+    "crop": {
+      "x": 178,
+      "y": 150,
+      "width": 570,
+      "height": 1387
+    }
+  },
+  "rollback_proof": {
+    "workflow_run_id": 31122341634,
+    "workflow_job_id": 92685410483,
+    "workflow_head_sha": "1319155583c72a229db664d65c360215902eda82",
+    "workflow_conclusion": "SUCCESS",
+    "artifact_id": 8974690794,
+    "artifact_name": "bidfast-dashboard-active-bids-rollback-fb57e2b",
+    "artifact_size_bytes": 3830,
+    "artifact_sha256": "f4ec74ab04eee4313d83c2fbec002d959e4af71afa4c2a05153e896afc1bcf59",
+    "artifact_expires_at": "2026-09-05T19:42:41Z",
+    "source_revision": {
+      "commit_sha": "fb57e2b752ad1a4e67b74a2d238ec77114d46320",
+      "commit_ref": "auto-builder/bidfast-complete-visual-system",
+      "deployment_id": "dpl_73cKpgGR2AjR96d4vKxhGQ3VbbXk",
+      "deployment_url": "bidfast-fnhd8xxw8-strategic-minds-advisory.vercel.app"
+    },
+    "rolled_back_candidate_commit": "fbef99f89611f908573d125ad0a5d975316c962c",
+    "route": "/dashboard",
+    "theme": "light",
+    "viewport": {
+      "name": "mobile",
+      "width": 390,
+      "height": 844
+    },
+    "page_height": 948,
+    "live_screenshot_sha256": "a36ce9d4f7c4575d5383ef57ba1a6f779532117afa48d3502afee0c2ca1c3adc",
+    "metrics": {
+      "pixel_similarity": 0.948064,
+      "structure_similarity": 0.976117,
+      "edge_similarity": 0.328977,
+      "color_similarity": 0.967785,
+      "composite_score": 0.837024,
+      "retained_baseline": 0.837024,
+      "release_threshold": 0.99,
+      "release_threshold_pass": false
+    },
+    "regions": {
+      "active_bid_3": 0.704336,
+      "active_bid_2": 0.714608,
+      "active_bid_1": 0.722198,
+      "header_logo": 0.722688,
+      "metrics_row_2": 0.729406,
+      "bottom_navigation": 0.753053,
+      "quick_actions": 0.761245,
+      "overview_heading": 0.777489,
+      "metrics_row_1": 0.783647,
+      "active_bids_heading": 0.795158,
+      "proposal_alert_2": 0.816409,
+      "search": 0.822644,
+      "proposal_alert_1": 0.829816,
+      "proposal_alerts_heading": 0.834863,
+      "quick_actions_heading": 0.877763
+    },
+    "technical_pass": true,
+    "provenance_pass": true,
+    "integrity_pass": true,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "failures": []
+  },
+  "acceptance": {
+    "rejected_candidate_retained": false,
+    "rollback_accepted": true,
+    "retained_baseline_reestablished": true,
+    "all_fifteen_regional_floors_reestablished": true,
+    "routes_reaching_0_99": 0,
+    "operational_pass_rate": "NOT_EXECUTED",
+    "complete_light_dark_multiviewport_coverage": false,
+    "merge_gate": "CLOSED",
+    "production_gate": "CLOSED"
+  },
+  "constraints_preserved": {
+    "reference_substitution_used": false,
+    "full_screen_reference_layer_used": false,
+    "real_components_hidden": false,
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "production_resource_changed": false,
+    "database_changed": false
+  },
+  "blockers": [
+    "All approved route measurements remain below 0.99.",
+    "Complete approved light and dark desktop, tablet, mobile, and large-desktop reference coverage remains unavailable.",
+    "Governed Supabase project mhaovpyegtysfgualplu remains inaccessible through the active connector.",
+    "Pending workflow-lineage migrations remain unapplied and untested in an isolated governed database branch.",
+    "The complete Account to Organization to Opportunity to Project to Document to Takeoff to Estimate to Proposal to Approval to Audit workflow remains unverified.",
+    "Operational, tenant-isolation, and authorization-bypass acceptance remain unexecuted."
+  ],
+  "next_action": {
+    "authorized_scope": "validation_only_until_one_new_single_variable_component_candidate_is_revision_pinned",
+    "recommended_target": "Use the retained current-head regional evidence to select one component-level repair. The next candidate must preserve the 0.837024 composite floor and every one of the fifteen regional floors.",
+    "production_promotion_authorized": false
+  },
+  "rollback_of_receipt": {
+    "instruction": "Revert only this receipt commit if any recorded evidence is inaccurate.",
+    "application": "No application rollback is required because this is evidence-only.",
+    "database": "No database rollback is required because no database change occurred."
+  },
+  "production_status": "LOCKED"
+}

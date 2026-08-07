@@ -1,0 +1,142 @@
+{
+  "schema_version": "bidfast-browserworker-validation-receipt-v1",
+  "timestamp_utc": "2026-08-01T04:33:00Z",
+  "phase": "VALIDATION",
+  "step": "component-level mobile company settings repair and current-head full route non-regression matrix",
+  "inspection_before_mutation": {
+    "bidfast_repository": "XTREME-SYSTEMS/bidfast",
+    "bidfast_branch": "auto-builder/bidfast-complete-visual-system",
+    "bidfast_pull_request": 2,
+    "prior_bidfast_head": "9559f07c2a67aad1bb6e009e82704b629971e4de",
+    "current_pr_diff_inspected": true,
+    "latest_bidfast_receipt": "docs/receipts/BIDFAST_VALIDATION_RECEIPT_20260801T0032Z.json",
+    "browserworker_repository": "Strategic-Minds/BROWSERWORKER",
+    "browserworker_branch": "auto-builder/bidfast-proof-20260728",
+    "browserworker_pull_request": 9,
+    "prior_browserworker_head": "84eb5e5b3a69254905fe271523abc7a799b9988a",
+    "latest_browserworker_receipt": "docs/receipts/BIDFAST_OPPORTUNITY_REPAIR_VALIDATION_20260801T0314Z.json"
+  },
+  "approved_reference": {
+    "route": "/settings/company",
+    "drive_file_id": "16PwtPY7HPvE7B0Mj68pF-m6xypZQ3XLI",
+    "title": "09_BIDFAST_MOBILE_COMPANY_SETTINGS.png",
+    "sha256": "9c970f77a58082c5859b0d08e1042c7d025aa27e6be196e8bf024772f10f5e25",
+    "crop": { "x": 178, "y": 150, "width": 570, "height": 1387 },
+    "allowed_reference_asset_use": "isolated approved BIDFAST logo only",
+    "full_screen_substitution": false
+  },
+  "bidfast": {
+    "validated_head": "ec6e61f9554e60cb098e19a6c1bba320e59a2866",
+    "deployment_id": "dpl_82KxkXHRWY4h2ju1MJXsUaGTEjCo",
+    "deployment_url": "bidfast-o5xyinp0c-strategic-minds-advisory.vercel.app",
+    "rollback_head": "9559f07c2a67aad1bb6e009e82704b629971e4de",
+    "commits": [
+      { "commit": "7201a27eb3b161eb93a78a44f196f192e8237131", "message": "feat(bidfast): add governed mobile company settings workspace" },
+      { "commit": "8c52e51b691b73602af19bce16bff0746eb87e88", "message": "style(bidfast): align mobile company settings to approved reference" },
+      { "commit": "48defd2415cba7274c3827e9ef9027219f578724", "message": "feat(bidfast): activate responsive company settings parity route" },
+      { "commit": "ec6e61f9554e60cb098e19a6c1bba320e59a2866", "message": "style(bidfast): load governed company settings parity styles" }
+    ],
+    "changed_files_from_rollback": [
+      "app/layout.tsx",
+      "app/settings-mobile.css",
+      "app/settings/company/page.tsx",
+      "components/settings/MobileCompanySettings.tsx"
+    ]
+  },
+  "settings_single_route_proof": {
+    "run_id": 30683743603,
+    "artifact_id": 8813182548,
+    "artifact_sha256": "313042f5f34ccd16c2bb4dc19c4cb784d8560f04064cc0903d5518da6da1dd79",
+    "viewport": "390x844",
+    "theme": "light",
+    "page_height": 949,
+    "prior_composite": 0.763501,
+    "current_composite": 0.825706,
+    "absolute_improvement": 0.062205,
+    "relative_improvement_percent": 8.1473,
+    "metrics": {
+      "pixel_similarity": 0.949240,
+      "structure_similarity": 0.978038,
+      "edge_similarity": 0.261309,
+      "color_similarity": 0.975730
+    },
+    "live_sha256": "1558e965af86f5e7ac9a7519d1945bd392906e75190517fa5c0e1fddd81f541c",
+    "technical_pass": true,
+    "provenance_pass": true,
+    "reference_integrity_pass": true,
+    "screenshot_integrity_pass": true,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "non_regression_gate": "PASS",
+    "release_threshold_0_99": "FAIL"
+  },
+  "current_head_full_matrix": {
+    "workflow_source_commit": "c1d465c0101f7304204fc34b7571e94c2d3e53d9",
+    "run_id": 30683827740,
+    "viewport": "390x844",
+    "theme": "light",
+    "threshold": 0.99,
+    "routes_measured": 10,
+    "routes_passing_threshold": 0,
+    "technical_results": {
+      "exact_route_identity": "10/10",
+      "source_commit_branch_deployment_provenance": "10/10",
+      "reference_hash_integrity": "10/10",
+      "screenshot_hash_integrity": "10/10",
+      "zero_console_errors": "10/10",
+      "zero_application_network_errors": "10/10",
+      "zero_http_errors": "10/10"
+    },
+    "routes": [
+      { "route": "/dashboard", "score": 0.810876, "artifact_id": 8813210140, "artifact_sha256": "12eb689427d1f10982acfbc9ca16e39ecc0eb696fff74f36c36cab00ae7ae5a3" },
+      { "route": "/analytics", "score": 0.810237, "artifact_id": 8813213330, "artifact_sha256": "d801784b9efd3d1392d8e72cabf80fb36b682e477c914005384a03543bee059e" },
+      { "route": "/approvals", "score": 0.802620, "artifact_id": 8813217111, "artifact_sha256": "85adf6f190670d09af189ae3cc8591420daa8d79e2a0ac0f2d283fd6d9e58aca" },
+      { "route": "/opportunities", "score": 0.802843, "artifact_id": 8813221772, "artifact_sha256": "35fc9e18e071150ae677d3dab662e8c1f4bbbd25b64023f36843c341203dfdce" },
+      { "route": "/estimates/new", "score": 0.813012, "artifact_id": 8813225581, "artifact_sha256": "00463d41a47c6125929330e78988c32ac52746f6c7578969bc9199513b0a7fa3" },
+      { "route": "/proposals", "score": 0.795438, "artifact_id": 8813228915, "artifact_sha256": "0e41506750a150466b8aa1b026b8a02aa05e5488858098fa448f4c368da80524" },
+      { "route": "/projects/demo-riverside", "score": 0.818800, "artifact_id": 8813233720, "artifact_sha256": "c9ece7e600c6f7294ad5808f9a2a799ec5c7a6142275c592b2e0e22ac8264c22" },
+      { "route": "/takeoffs/demo-riverside", "score": 0.779775, "artifact_id": 8813238467, "artifact_sha256": "ece3be7d9086c9147c8384833e03583c496b4721f9e51a3846a8ddbaa6b0f971" },
+      { "route": "/settings/company", "score": 0.825706, "artifact_id": 8813242696, "artifact_sha256": "b49923b242770b53a172c0cb1f48ebe2a370f9e5088e979324db657cc838eab6" },
+      { "route": "/assistant", "score": 0.778712, "artifact_id": 8813247717, "artifact_sha256": "47d10df5bdc30d6334ca0e3667bedf84add8ef0ca07438ce62ec30de7e8d29ca" }
+    ],
+    "non_regression_result": "PASS_FOR_ALL_UNAFFECTED_ROUTES_AND_IMPROVEMENT_FOR_SETTINGS"
+  },
+  "browserworker": {
+    "workflow_commits": [
+      "6be8b4600ac835104fc5864a0d040291fac58aa8",
+      "b7b8437a5da953522809ab9c97bb99a5a18f9fde",
+      "ac29d54b621affe6c73b9910495644f80a7da24c",
+      "c1d465c0101f7304204fc34b7571e94c2d3e53d9"
+    ]
+  },
+  "supabase": {
+    "project_id": "azajysheebfhyzoyplpf",
+    "read_only_retry_result": "BLOCKED_PERMISSION_DENIED",
+    "error_code": -32600,
+    "database_mutation_performed": false
+  },
+  "safety": {
+    "approved_full_screen_reference_used_as_page_background_overlay_hidden_layer_or_component_substitute": false,
+    "real_components_hidden_to_manufacture_parity": false,
+    "isolated_approved_assets_only": true,
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "production_mutated": false
+  },
+  "gates": {
+    "visual_parity_0_99_all_routes": false,
+    "operational_pass_rate_1_00": false,
+    "complete_light_dark_coverage": false,
+    "zero_dead_controls_all_routes": false,
+    "zero_tenant_leaks": false,
+    "zero_authorization_bypasses": false,
+    "production_promotion": "LOCKED"
+  },
+  "remaining_blockers": [
+    "All ten approved current-head light-mobile routes remain below 0.99.",
+    "Supabase read-only inspection remains permission denied, blocking Account through Audit execution and hostile tenant tests.",
+    "Complete approved light and dark reference pairs remain unavailable.",
+    "BIDFAST PR 2 remains draft and non-mergeable."
+  ]
+}

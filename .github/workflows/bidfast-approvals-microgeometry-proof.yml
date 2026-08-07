@@ -1,0 +1,148 @@
+name: BIDFAST Approvals Microgeometry Candidate Proof
+
+on:
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-approvals-microgeometry-proof.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-approvals-microgeometry-candidate
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: 8db9cb761944b0bddd713c43564721916e39d1c5
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  ROUTE: /approvals
+  RETAINED_BASELINE: '0.836456'
+  REQUIRED_THRESHOLD: '0.99'
+
+jobs:
+  approvals-microgeometry:
+    name: Revision-pinned approvals microgeometry proof
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out BrowserWorker proof branch
+        uses: actions/checkout@v4
+
+      - name: Wait for BrowserWorker health
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 20); do
+            status="$(curl -sS -o /tmp/health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            if [[ "$status" == "200" ]]; then
+              cat /tmp/health.json
+              exit 0
+            fi
+            sleep 15
+          done
+          exit 1
+
+      - name: Wait for exact BIDFAST candidate revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 48); do
+            status="$(curl -sS -o /tmp/build-info.json -w '%{http_code}' --max-time 30 "${BIDFAST_ORIGIN}/api/build-info" || true)"
+            commit="$(node -e "try{const j=require('/tmp/build-info.json');process.stdout.write(String(j?.source_revision?.commit_sha||''))}catch{}")"
+            ref="$(node -e "try{const j=require('/tmp/build-info.json');process.stdout.write(String(j?.source_revision?.commit_ref||''))}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" && "$ref" == "$BIDFAST_EXPECTED_REF" ]]; then
+              cat /tmp/build-info.json
+              exit 0
+            fi
+            sleep 15
+          done
+          cat /tmp/build-info.json || true
+          exit 1
+
+      - name: Allow remote browser burst window to clear
+        shell: bash
+        run: sleep 120
+
+      - name: Execute revision-pinned approvals parity proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-parity-v3?route=%2Fapprovals&expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          for attempt in $(seq 1 5); do
+            status="$(curl -sS --max-time 210 -o evidence/approvals.json -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/approvals.http-status.txt
+            if [[ "$status" == "200" ]] && node -e "const j=require('./evidence/approvals.json');process.exit(j.ok===true?0:1)"; then
+              cat evidence/approvals.json
+              exit 0
+            fi
+            cat evidence/approvals.json || true
+            if [[ "$attempt" != "5" ]]; then sleep 70; fi
+          done
+          exit 1
+
+      - name: Separate parity and screenshot sessions
+        shell: bash
+        run: sleep 70
+
+      - name: Capture implemented-component screenshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=%2Fapprovals&theme=light&viewport=mobile&format=image"
+          for attempt in $(seq 1 5); do
+            status="$(curl -sS --max-time 180 -D evidence/approvals.live.headers.txt -o evidence/approvals.live.png -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/approvals.live.http-status.txt
+            content_type="$(awk 'BEGIN{IGNORECASE=1} /^content-type:/{print $2}' evidence/approvals.live.headers.txt | tail -1 | tr -d '\r')"
+            if [[ "$status" == "200" && "$content_type" == image/png* ]]; then
+              file evidence/approvals.live.png | tee evidence/approvals.live.file.txt
+              sha256sum evidence/approvals.live.png | tee evidence/approvals.live.sha256.txt
+              exit 0
+            fi
+            if [[ "$attempt" != "5" ]]; then sleep 70; fi
+          done
+          exit 1
+
+      - name: Enforce provenance, integrity, technical, non-regression, and release gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const crypto = require('node:crypto')
+          const fs = require('node:fs')
+          const body = JSON.parse(fs.readFileSync('evidence/approvals.json', 'utf8'))
+          const screenshot = fs.readFileSync('evidence/approvals.live.png')
+          const screenshotSha = crypto.createHash('sha256').update(screenshot).digest('hex')
+          const score = body?.metrics?.composite_score
+          const failures = []
+          if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
+          if (body.route !== process.env.ROUTE) failures.push(`route=${String(body.route)}`)
+          if (body.provenance_pass !== true) failures.push(`provenance_pass=${String(body.provenance_pass)}`)
+          if (body?.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`commit_sha=${String(body?.source_revision?.commit_sha)}`)
+          if (body?.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`commit_ref=${String(body?.source_revision?.commit_ref)}`)
+          if (body.integrity_pass !== true) failures.push(`integrity_pass=${String(body.integrity_pass)}`)
+          if (body.technical_pass !== true) failures.push(`technical_pass=${String(body.technical_pass)}`)
+          if (!Number.isFinite(score)) failures.push('composite score missing')
+          else if (score <= Number(process.env.RETAINED_BASELINE)) failures.push(`REGRESSION_OR_NO_IMPROVEMENT composite_score=${score} retained_baseline=${process.env.RETAINED_BASELINE}`)
+          for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
+            if (!Array.isArray(body[name]) || body[name].length !== 0) failures.push(`${name}=${JSON.stringify(body[name])}`)
+          }
+          if (screenshotSha !== body?.live?.sha256) failures.push(`screenshot_sha=${screenshotSha} expected=${String(body?.live?.sha256)}`)
+          if (score < Number(process.env.REQUIRED_THRESHOLD)) failures.push(`release_threshold composite_score=${score} below ${process.env.REQUIRED_THRESHOLD}`)
+          console.log(JSON.stringify({ route: body.route, score, retained_baseline: Number(process.env.RETAINED_BASELINE), release_threshold: Number(process.env.REQUIRED_THRESHOLD), source_revision: body.source_revision, failures }, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable candidate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-approvals-microgeometry-8db9cb7
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30

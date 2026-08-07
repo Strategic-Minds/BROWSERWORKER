@@ -1,0 +1,97 @@
+{
+  "receipt_type": "bidfast_governance_checker_repair",
+  "recorded_at_utc": "2026-08-06T08:13:00Z",
+  "phase": "validation",
+  "repositories": {
+    "bidfast": {
+      "repository": "XTREME-SYSTEMS/bidfast",
+      "requested_alias": "XTREME-AI-SYSTEMS/bidfast",
+      "branch": "auto-builder/bidfast-complete-visual-system",
+      "pull_request": 2,
+      "previous_head": "c1dfebc80d09899d1eefb797018a739dd721fd3f",
+      "candidate_head": "b533e52e740f624f426ffffe2c35261a2a2eb9e8",
+      "repair_commit": "b533e52e740f624f426ffffe2c35261a2a2eb9e8",
+      "repair_message": "fix(governance): avoid BIDFAST note field false positives",
+      "repair_delta": {
+        "commits": 1,
+        "files": 1,
+        "additions": 9,
+        "deletions": 5,
+        "paths": [
+          "scripts/check-bidfast-approval-note-provenance-governance.mjs"
+        ]
+      },
+      "diagnosis": {
+        "verified": true,
+        "summary": "The checker used substring matching for obsolete notes assignments. The forbidden text `notes: requestNotes.trim() || null` is contained inside the required `request_notes: requestNotes.trim() || null`, so the valid implementation was rejected. The same ambiguity existed between notes and decision_notes.",
+        "repair": "Replace ambiguous substring checks with line-anchored regular expressions that reject only exact legacy notes and updated_at assignments while preserving all positive migration, authorization, RLS, audit and rollback invariants."
+      },
+      "vercel": {
+        "deployment_reference": "GWtQxHbTrbzji9UJnf4kkda5F84f",
+        "preview_url": "https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app",
+        "status": "ready",
+        "underlying_dpl_id": "could_not_verify_with_active_vercel_scope"
+      }
+    },
+    "browserworker": {
+      "repository": "Strategic-Minds/BROWSERWORKER",
+      "branch": "auto-builder/bidfast-proof-20260728",
+      "pull_request": 9,
+      "previous_head": "113fa9098fb67705aba126d1f487474cd6fa3cf6",
+      "proof_pin_commit": "f0627b68a4e975917c989907ef0a0f49c4b32a73",
+      "proof_file": ".github/workflows/bidfast-approval-note-provenance-config-provenance.yml",
+      "expected_bidfast_commit": "b533e52e740f624f426ffffe2c35261a2a2eb9e8",
+      "rollback_bidfast_commit": "c1dfebc80d09899d1eefb797018a739dd721fd3f",
+      "artifact_name": "bidfast-approval-note-provenance-config-provenance-b533e52",
+      "vercel_deployment_reference": "Ksh1e2E1eXbsCUHK7qchXSvScro5",
+      "vercel_status": "ready",
+      "exact_provenance_run": "triggered_but_not_identifiable_in_first_page_due_historical_workflow_fanout"
+    }
+  },
+  "source_truth": {
+    "approved_reference": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+    "drive_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+    "changed": false
+  },
+  "validation": {
+    "governance_and_preview_build": "pass",
+    "visual_parity_new_measurement": "not_executed",
+    "operational_pass_rate": "not_executed",
+    "console_errors": "not_measured",
+    "application_network_errors": "not_measured",
+    "tenant_isolation": "not_executed",
+    "authorization_matrix": "not_executed",
+    "configuration_provenance": "pending_exact_workflow_result"
+  },
+  "supabase": {
+    "expected_project_ref": "mhaovpyegtysfgualplu",
+    "active_connector_projects": [
+      "azajysheebfhyzoyplpf"
+    ],
+    "governed_project_access": false,
+    "database_mutations": 0
+  },
+  "constraints": {
+    "screenshots_used_as_page_layers": false,
+    "real_components_hidden": false,
+    "tests_weakened": false,
+    "thresholds_lowered": false,
+    "secrets_exposed": false,
+    "production_changed": false,
+    "database_changed": false
+  },
+  "blockers": [
+    "Exact governed Supabase configuration provenance for BIDFAST commit b533e52e740f624f426ffffe2c35261a2a2eb9e8 has not completed.",
+    "The active Supabase connector cannot access governed project mhaovpyegtysfgualplu.",
+    "The active Vercel connector cannot retrieve dpl_* metadata or build logs from the strategic-minds-advisory scope.",
+    "The approval-note migration remains unapplied and untested in an isolated governed database branch.",
+    "The full Account -> Organization -> Opportunity -> Project -> Document -> Takeoff -> Estimate -> Proposal -> Approval -> Audit workflow remains unverified.",
+    "No approved route has newly demonstrated 0.99 visual parity or complete light/dark multi-viewport coverage."
+  ],
+  "rollback": {
+    "bidfast_repair": "return auto-builder/bidfast-complete-visual-system to c1dfebc80d09899d1eefb797018a739dd721fd3f",
+    "browserworker_proof": "return auto-builder/bidfast-proof-20260728 to 113fa9098fb67705aba126d1f487474cd6fa3cf6",
+    "receipt": "revert the commit that adds this receipt"
+  },
+  "production_status": "locked"
+}

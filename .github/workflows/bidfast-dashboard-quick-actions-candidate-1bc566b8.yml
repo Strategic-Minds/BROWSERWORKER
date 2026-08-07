@@ -1,0 +1,143 @@
+name: BIDFAST Dashboard Quick Actions Candidate 1bc566b8
+
+on:
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-dashboard-quick-actions-candidate-1bc566b8.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-dashboard-quick-actions-candidate-1bc566b8
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: 1bc566b89a16af6ca180bc0a2069070e6630192b
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  DASHBOARD_BASELINE: '0.810876'
+  QUICK_ACTIONS_BASELINE: '0.677388'
+  QUICK_ACTIONS_EDGE_BASELINE: '0.078722'
+
+jobs:
+  validate-candidate:
+    name: Revision-pinned Quick Actions candidate proof
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - name: Wait for exact BIDFAST preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          for attempt in $(seq 1 50); do
+            status="$(curl -sS -o evidence/build-info.json -w '%{http_code}' --max-time 30 "${BIDFAST_ORIGIN}/api/build-info" || true)"
+            commit="$(node -e "try{const j=require('./evidence/build-info.json');process.stdout.write(String(j?.source_revision?.commit_sha||''))}catch{}")"
+            ref="$(node -e "try{const j=require('./evidence/build-info.json');process.stdout.write(String(j?.source_revision?.commit_ref||''))}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" && "$ref" == "$BIDFAST_EXPECTED_REF" ]]; then
+              cat evidence/build-info.json
+              exit 0
+            fi
+            echo "Preview attempt ${attempt}: status=${status:-none} commit=${commit:-unknown} ref=${ref:-unknown}"
+            sleep 20
+          done
+          exit 1
+
+      - name: Capture exact regional comparison
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-dashboard-regions?expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          for attempt in $(seq 1 8); do
+            status="$(curl -sS --max-time 240 -o evidence/dashboard-regions.json -w '%{http_code}' "$endpoint" || true)"
+            if [[ "$status" == "200" ]] && node -e "const j=require('./evidence/dashboard-regions.json');process.exit(j.ok===true&&j.diagnostic_pass===true?0:1)"; then
+              exit 0
+            fi
+            echo "Regional attempt ${attempt}: status=${status:-none}"
+            if [[ "$attempt" != "8" ]]; then sleep 45; fi
+          done
+          exit 1
+
+      - name: Capture internal geometry
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-dashboard-action-internals?expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          for attempt in $(seq 1 8); do
+            status="$(curl -sS --max-time 240 -o evidence/action-internals.json -w '%{http_code}' "$endpoint" || true)"
+            if [[ "$status" == "200" ]] && node -e "const j=require('./evidence/action-internals.json');process.exit(j.ok===true&&j.diagnostic_pass===true?0:1)"; then
+              exit 0
+            fi
+            echo "Internals attempt ${attempt}: status=${status:-none}"
+            if [[ "$attempt" != "8" ]]; then sleep 45; fi
+          done
+          exit 1
+
+      - name: Enforce improvement and technical gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const regional = JSON.parse(fs.readFileSync('evidence/dashboard-regions.json', 'utf8'))
+          const internals = JSON.parse(fs.readFileSync('evidence/action-internals.json', 'utf8'))
+          const quick = regional?.analysis?.regions?.find(region => region.name === 'quick_actions')
+          const score = Number(regional?.metrics?.composite_score)
+          const quickScore = Number(quick?.diagnostic_score)
+          const quickEdge = Number(quick?.edge_similarity)
+          const failures = []
+          for (const [name, body] of [['regional', regional], ['internals', internals]]) {
+            if (body.ok !== true) failures.push(`${name}.ok=${String(body.ok)}`)
+            if (body.provenance_pass !== true) failures.push(`${name}.provenance_pass=${String(body.provenance_pass)}`)
+            if (body.technical_pass !== true) failures.push(`${name}.technical_pass=${String(body.technical_pass)}`)
+            if (body?.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`${name}.commit=${String(body?.source_revision?.commit_sha)}`)
+            if (body?.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`${name}.ref=${String(body?.source_revision?.commit_ref)}`)
+            for (const errorKey of ['console_errors', 'app_network_errors', 'http_errors']) {
+              if (!Array.isArray(body[errorKey]) || body[errorKey].length !== 0) failures.push(`${name}.${errorKey}=${JSON.stringify(body[errorKey])}`)
+            }
+          }
+          if (!(score > Number(process.env.DASHBOARD_BASELINE))) failures.push(`dashboard_score=${score} baseline=${process.env.DASHBOARD_BASELINE}`)
+          if (!(quickScore > Number(process.env.QUICK_ACTIONS_BASELINE))) failures.push(`quick_actions_score=${quickScore} baseline=${process.env.QUICK_ACTIONS_BASELINE}`)
+          if (!(quickEdge > Number(process.env.QUICK_ACTIONS_EDGE_BASELINE))) failures.push(`quick_actions_edge=${quickEdge} baseline=${process.env.QUICK_ACTIONS_EDGE_BASELINE}`)
+          const summary = {
+            candidate_commit: process.env.BIDFAST_EXPECTED_COMMIT,
+            source_revision: regional.source_revision,
+            deployment_id: regional?.source_revision?.deployment_id || null,
+            dashboard: {
+              baseline: Number(process.env.DASHBOARD_BASELINE),
+              candidate: score,
+              delta: Number((score - Number(process.env.DASHBOARD_BASELINE)).toFixed(6)),
+              metrics: regional.metrics,
+            },
+            quick_actions: {
+              baseline: Number(process.env.QUICK_ACTIONS_BASELINE),
+              candidate: quickScore,
+              delta: Number((quickScore - Number(process.env.QUICK_ACTIONS_BASELINE)).toFixed(6)),
+              edge_baseline: Number(process.env.QUICK_ACTIONS_EDGE_BASELINE),
+              edge_candidate: quickEdge,
+              edge_delta: Number((quickEdge - Number(process.env.QUICK_ACTIONS_EDGE_BASELINE)).toFixed(6)),
+            },
+            screenshot_sha256: regional?.live?.sha256 || internals?.screenshot?.sha256 || null,
+            geometry: internals.geometry,
+            failures,
+            retain_candidate: failures.length === 0,
+            release_authorized: false,
+          }
+          fs.writeFileSync('evidence/candidate-summary.json', JSON.stringify(summary, null, 2) + '\n')
+          console.log(JSON.stringify(summary, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable candidate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-dashboard-quick-actions-candidate-1bc566b8
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30

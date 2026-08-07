@@ -1,0 +1,167 @@
+{
+  "receipt_type": "BIDFAST_OPPORTUNITY_KEBAB_CANDIDATE_ROLLBACK",
+  "created_at": "2026-08-02T22:18:00Z",
+  "governance": {
+    "phase": "VALIDATE",
+    "production_locked": true,
+    "database_mutated": false,
+    "tests_weakened": false,
+    "release_threshold_changed": false,
+    "reference_image_substitution_detected": false,
+    "hidden_ui_for_parity_detected": false,
+    "release_authorized": false
+  },
+  "repositories": {
+    "bidfast": {
+      "repository": "XTREME-SYSTEMS/bidfast",
+      "requested_alias": "XTREME-AI-SYSTEMS/bidfast",
+      "branch": "auto-builder/bidfast-complete-visual-system",
+      "pr": 2,
+      "retained_head_before_cycle": "8db9cb761944b0bddd713c43564721916e39d1c5",
+      "candidate_commit": "1c9f2db79e7cf27373068296733c9e392d3744c0",
+      "rollback_commit": "65bd7345221c96915fba1f4c7704977c7d072e07",
+      "candidate_path": "app/opportunities-parity-adjustments.css",
+      "candidate_change": {
+        "selector": ".bfo-more",
+        "description": "rotated the implemented horizontal more-action SVG 90 degrees and shifted it six pixels right to test the approved vertical-kebab geometry"
+      },
+      "net_diff_from_retained_head_after_rollback": [],
+      "rollback_tree_restored": true
+    },
+    "browserworker": {
+      "repository": "Strategic-Minds/BROWSERWORKER",
+      "branch": "auto-builder/bidfast-proof-20260728",
+      "pr": 9,
+      "candidate_workflow_commit": "43647c5137ed01e2ece4a35f7118bb1b9b7e3065",
+      "candidate_workflow_path": ".github/workflows/bidfast-opportunity-kebab-candidate-proof.yml",
+      "rollback_workflow_commit": "0e543ea387bc5135d65c10f5eadb2032a0841dc8",
+      "rollback_workflow_path": ".github/workflows/bidfast-opportunity-kebab-rollback-proof.yml"
+    }
+  },
+  "source_of_truth": {
+    "drive_file_id": "1haXSs0QuoSMACLXzo-sVaSGPc1roz0jR",
+    "title": "04_BIDFAST_MOBILE_OPPORTUNITIES_LIST.png",
+    "sha256": "c3cd0b2ed394491128784384e19561457bfe800f4b0182a391b78b888db389ef",
+    "crop": {
+      "x": 178,
+      "y": 150,
+      "width": 570,
+      "height": 1387
+    }
+  },
+  "candidate": {
+    "deployment": {
+      "id": "dpl_8v4Z9hmrAHVR68SzBpJWU8xeHU4m",
+      "url": "bidfast-pqmktq2sc-strategic-minds-advisory.vercel.app",
+      "commit_sha": "1c9f2db79e7cf27373068296733c9e392d3744c0",
+      "commit_ref": "auto-builder/bidfast-complete-visual-system"
+    },
+    "workflow": {
+      "run_id": 30769525347,
+      "job_id": 91554088418,
+      "conclusion": "failure",
+      "artifact": {
+        "id": 8840049523,
+        "name": "bidfast-opportunity-kebab-candidate-1c9f2db7",
+        "digest": "sha256:a472994f5a9ff65d1c5434b7ec177e1753ff0fa4a2cf6a7bfa354bbcefb9b4eb"
+      }
+    },
+    "official_parity": {
+      "composite_score": 0.858978,
+      "pixel_similarity": 0.958675,
+      "structure_similarity": 0.986244,
+      "edge_similarity": 0.39881,
+      "color_similarity": 0.976187,
+      "retained_baseline": 0.858978,
+      "strict_improvement": false,
+      "official_live_sha256": "1a94ea4eae5cb271921c691d955cf2b8141f3f04e7c42ccb293d2cd0f245d632"
+    },
+    "regional_diagnostic": {
+      "live_sha256": "fed58dfabea4058040f5fd808c1e48a2360a1e080c692e7eacb6c943a3e1511a",
+      "overall_score": 0.790512,
+      "retained_overall_score": 0.791098,
+      "overall_delta": -0.000586,
+      "edge_similarity": 0.397016,
+      "retained_edge_similarity": 0.39881,
+      "edge_delta": -0.001794,
+      "opportunity_3": {
+        "diagnostic_score": 0.756165,
+        "retained_diagnostic_score": 0.756879,
+        "diagnostic_delta": -0.000714,
+        "edge_similarity": 0.308728,
+        "retained_edge_similarity": 0.31091,
+        "edge_delta": -0.002182
+      }
+    },
+    "technical": {
+      "provenance_pass": true,
+      "reference_integrity_pass": true,
+      "official_execution_pass": true,
+      "regional_execution_pass": true,
+      "console_errors": 0,
+      "application_network_errors": 0,
+      "http_errors": 0,
+      "screenshot_hash_coherence_pass": false,
+      "release_threshold_pass": false
+    },
+    "decision": "REJECT_AND_REVERT"
+  },
+  "rollback": {
+    "deployment": {
+      "id": "dpl_FTCtSra8K5QUgVRDcqdTxLyRZDc8",
+      "url": "bidfast-f123p4q5a-strategic-minds-advisory.vercel.app",
+      "commit_sha": "65bd7345221c96915fba1f4c7704977c7d072e07",
+      "commit_ref": "auto-builder/bidfast-complete-visual-system"
+    },
+    "workflow": {
+      "run_id": 30769629350,
+      "job_id": 91554349355,
+      "conclusion": "failure_due_only_to_release_threshold",
+      "artifact": {
+        "id": 8840113896,
+        "name": "bidfast-opportunity-kebab-rollback-65bd7345",
+        "digest": "sha256:2001a8e63b012da65a0aa7676da00f3acd9e1daf3563c15951ee1d7aa562ae64"
+      }
+    },
+    "official_parity": {
+      "composite_score": 0.858978,
+      "pixel_similarity": 0.958675,
+      "structure_similarity": 0.986244,
+      "edge_similarity": 0.39881,
+      "color_similarity": 0.976187,
+      "retained_baseline": 0.858978,
+      "non_regression_pass": true
+    },
+    "regional_diagnostic": {
+      "overall_score": 0.791098,
+      "retained_overall_score": 0.791098,
+      "opportunity_3": {
+        "diagnostic_score": 0.756879,
+        "retained_diagnostic_score": 0.756879,
+        "edge_similarity": 0.31091
+      }
+    },
+    "live_sha256": "1a94ea4eae5cb271921c691d955cf2b8141f3f04e7c42ccb293d2cd0f245d632",
+    "technical": {
+      "provenance_pass": true,
+      "reference_integrity_pass": true,
+      "screenshot_hash_coherence_pass": true,
+      "console_errors": 0,
+      "application_network_errors": 0,
+      "http_errors": 0,
+      "release_threshold_pass": false
+    },
+    "restored_exact_retained_state": true
+  },
+  "supabase": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "public_bidfast_table_count": 0,
+    "mutation_performed": false
+  },
+  "decision": {
+    "candidate_retained": false,
+    "rollback_retained": true,
+    "next_safe_target": "stage-tab component geometry or another region proven through a single coherent screenshot capture",
+    "production_status": "LOCKED"
+  }
+}

@@ -1,0 +1,133 @@
+name: BIDFAST Dashboard Quick Actions Rollback
+
+on:
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-dashboard-quick-actions-rollback.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/bidfast-dashboard-quick-actions-rollback.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-dashboard-quick-actions-rollback-e61d2b28
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: e61d2b2886b237ad0197c3b1b428a948e8e10b22
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  DASHBOARD_REFERENCE_ID: 1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr
+  DASHBOARD_REFERENCE_SHA256: f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb
+  EXPECTED_LIVE_SHA256: d32cf8745580ecb4d53189ff5b0f808feab9e56d61c1f4051cd83b6c69b160e5
+  RETAINED_BASELINE: '0.810876'
+  QUICK_ACTIONS_BASELINE: '0.677388'
+  QUICK_ACTIONS_EDGE_BASELINE: '0.078722'
+  RELEASE_THRESHOLD: '0.99'
+
+jobs:
+  rollback-proof:
+    name: Revision-pinned dashboard Quick Actions rollback
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Wait for BrowserWorker health
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 32); do
+            status="$(curl -sS -o /tmp/browserworker-health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            if [[ "$status" == "200" ]]; then cat /tmp/browserworker-health.json; exit 0; fi
+            sleep 15
+          done
+          exit 1
+
+      - name: Verify exact rollback preview provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 48); do
+            status="$(curl -sS -o /tmp/bidfast-build-info.json -w '%{http_code}' --max-time 30 "${BIDFAST_ORIGIN}/api/build-info" || true)"
+            commit="$(node -e "try{const j=require('/tmp/bidfast-build-info.json');process.stdout.write(String(j?.source_revision?.commit_sha||''))}catch{}")"
+            ref="$(node -e "try{const j=require('/tmp/bidfast-build-info.json');process.stdout.write(String(j?.source_revision?.commit_ref||''))}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" && "$ref" == "$BIDFAST_EXPECTED_REF" ]]; then cat /tmp/bidfast-build-info.json; exit 0; fi
+            sleep 15
+          done
+          cat /tmp/bidfast-build-info.json || true
+          exit 1
+
+      - name: Execute coherent rollback diagnostic
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-dashboard-regions?expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          for attempt in $(seq 1 8); do
+            status="$(curl -sS --max-time 240 -o evidence/dashboard-rollback.json -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/dashboard-rollback.http-status.txt
+            if [[ "$status" == "200" ]] && node -e "const j=require('./evidence/dashboard-rollback.json');process.exit(j.ok===true&&j.diagnostic_pass===true?0:1)"; then cat evidence/dashboard-rollback.json; exit 0; fi
+            if [[ "$attempt" != "8" ]]; then sleep 60; fi
+          done
+          exit 1
+
+      - name: Enforce exact rollback restoration
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const body = JSON.parse(fs.readFileSync('evidence/dashboard-rollback.json', 'utf8'))
+          const regions = Array.isArray(body?.analysis?.regions) ? body.analysis.regions : []
+          const target = regions.find(region => region?.name === 'quick_actions')
+          const failures = []
+          if (body.ok !== true || body.diagnostic_pass !== true) failures.push('diagnostic failed')
+          if (body.release_authorized !== false) failures.push(`release_authorized=${String(body.release_authorized)}`)
+          if (body.provenance_pass !== true || body.integrity_pass !== true || body.technical_pass !== true) failures.push('technical/provenance/integrity failed')
+          if (body?.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`commit_sha=${String(body?.source_revision?.commit_sha)}`)
+          if (body?.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`commit_ref=${String(body?.source_revision?.commit_ref)}`)
+          if (body?.reference?.drive_file_id !== process.env.DASHBOARD_REFERENCE_ID) failures.push(`reference_id=${String(body?.reference?.drive_file_id)}`)
+          if (body?.reference?.sha256 !== process.env.DASHBOARD_REFERENCE_SHA256) failures.push(`reference_sha256=${String(body?.reference?.sha256)}`)
+          if (body?.live?.sha256 !== process.env.EXPECTED_LIVE_SHA256) failures.push(`live_sha256=${String(body?.live?.sha256)}`)
+          if (body?.metrics?.composite_score !== Number(process.env.RETAINED_BASELINE)) failures.push(`composite=${String(body?.metrics?.composite_score)}`)
+          if (!target) failures.push('quick_actions region missing')
+          else {
+            if (target.diagnostic_score !== Number(process.env.QUICK_ACTIONS_BASELINE)) failures.push(`quick_actions=${target.diagnostic_score}`)
+            if (target.edge_similarity !== Number(process.env.QUICK_ACTIONS_EDGE_BASELINE)) failures.push(`quick_actions_edge=${target.edge_similarity}`)
+          }
+          for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
+            if (!Array.isArray(body[name]) || body[name].length !== 0) failures.push(`${name}=${JSON.stringify(body[name])}`)
+          }
+          const summary = {
+            route: body.route,
+            score: body?.metrics?.composite_score,
+            quick_actions: target || null,
+            live_sha256: body?.live?.sha256 || null,
+            source_revision: body.source_revision,
+            page_height: body.page_height,
+            geometry: body.geometry,
+            release_threshold: Number(process.env.RELEASE_THRESHOLD),
+            release_threshold_pass: body?.metrics?.composite_score >= Number(process.env.RELEASE_THRESHOLD),
+            release_authorized: false,
+            failures,
+          }
+          fs.writeFileSync('evidence/dashboard-rollback-summary.json', JSON.stringify(summary, null, 2))
+          console.log(JSON.stringify(summary, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable rollback evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-dashboard-quick-actions-rollback-e61d2b28
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30

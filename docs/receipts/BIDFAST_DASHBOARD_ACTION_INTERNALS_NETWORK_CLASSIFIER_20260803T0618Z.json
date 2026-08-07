@@ -1,0 +1,152 @@
+{
+  "receipt_type": "bidfast_dashboard_action_internals_network_classifier",
+  "created_at": "2026-08-03T06:18:01Z",
+  "production_authorized": false,
+  "release_authorized": false,
+  "scope": {
+    "application_repository": "XTREME-SYSTEMS/bidfast",
+    "application_branch": "auto-builder/bidfast-complete-visual-system",
+    "application_pr": 2,
+    "validator_repository": "Strategic-Minds/BROWSERWORKER",
+    "validator_branch": "auto-builder/bidfast-proof-20260728",
+    "validator_pr": 9,
+    "route": "/dashboard",
+    "theme": "light",
+    "viewport": "390x844"
+  },
+  "pre_change_inspection": {
+    "bidfast_head": "e61d2b2886b237ad0197c3b1b428a948e8e10b22",
+    "retained_visual_commit": "584767bbd75aad1c7b9459bbc710cd225e51ec53",
+    "application_tree_changed_files_between_retained_and_head": 0,
+    "bidfast_pr_state": "open_draft_unmerged_non_mergeable",
+    "browserworker_starting_head": "3c78983d31d56e977731cce2e7d3cbe27cd07a02"
+  },
+  "failure_evidence": {
+    "workflow_commit": "b03475f0449e14da0418ad933c6c09de280c2612",
+    "workflow_run_id": 30789595277,
+    "workflow_job_id": 91610176745,
+    "artifact_id": 8846531368,
+    "artifact_digest": "sha256:4051bf79a5fafba7ce707c0ef5cc8ce146cd9c49b53416f8bf3adfc173d5013b",
+    "provenance_pass": true,
+    "main_document_status": 200,
+    "console_error_count": 0,
+    "http_error_count": 0,
+    "app_network_error_count": 7,
+    "observed_failure_classes": [
+      "Next.js RSC prefetch ERR_ABORTED requests",
+      "Vercel /.well-known/vercel/jwe ERR_ABORTED request",
+      "origin OPTIONS ERR_ABORTED request",
+      "dashboard HEAD ERR_ABORTED request"
+    ]
+  },
+  "changes": [
+    {
+      "commit": "814cccdf1487bfca6c8fc7b35a437feb247496df",
+      "file": ".github/workflows/bidfast-dashboard-action-internals-diagnostic.yml",
+      "description": "Preserve bounded sanitized console, application-network and HTTP failure samples without exposing query strings or fragments."
+    },
+    {
+      "commit": "b03475f0449e14da0418ad933c6c09de280c2612",
+      "file": ".github/workflows/bidfast-dashboard-action-internals-diagnostic.yml",
+      "description": "Stop retrying a deterministic revision-pinned HTTP 409 after preserving its immutable failure artifact."
+    },
+    {
+      "commit": "41efd925cac26f2f38c9301f4c5beacc98c8fa69",
+      "file": "app/api/bidfast-dashboard-action-internals/route.ts",
+      "description": "Use the existing governed BrowserWorker classification contract for Vercel infrastructure requests, target HEAD probes, origin OPTIONS probes and aborted Next.js RSC prefetches. All other failed BIDFAST-origin requests remain application-network errors."
+    }
+  ],
+  "successful_validation": {
+    "browserworker_commit": "41efd925cac26f2f38c9301f4c5beacc98c8fa69",
+    "browserworker_vercel_check": "success",
+    "browserworker_vercel_deployment_reference": "DvYWnFRx8aLKX1yNi8W43euTPDPe",
+    "workflow_run_id": 30789692358,
+    "workflow_job_id": 91610432236,
+    "workflow_conclusion": "success",
+    "artifact_id": 8846571823,
+    "artifact_digest": "sha256:afdd25bae6a66d9e1354eeb9ad5a14b538b227ed5e261c880db623883df2396d",
+    "bidfast_source_revision": {
+      "commit_sha": "e61d2b2886b237ad0197c3b1b428a948e8e10b22",
+      "commit_ref": "auto-builder/bidfast-complete-visual-system",
+      "deployment_id": "dpl_FQVsUSvTryKUrjffXJeJf7Y7nzNR",
+      "deployment_url": "bidfast-29hvcwbn9-strategic-minds-advisory.vercel.app"
+    },
+    "reference": {
+      "drive_file_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+      "title": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+      "sha256": "f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb"
+    },
+    "screenshot_sha256": "d32cf8745580ecb4d53189ff5b0f808feab9e56d61c1f4051cd83b6c69b160e5",
+    "screenshot_bytes": 87305,
+    "provenance_pass": true,
+    "technical_pass": true,
+    "main_document_status": 200,
+    "console_error_count": 0,
+    "app_network_error_count": 0,
+    "http_error_count": 0,
+    "geometry_gate_pass": true,
+    "release_authorized": false,
+    "browser_version": "150.0.7871.182"
+  },
+  "quick_actions_geometry": {
+    "page": {
+      "scroll_width": 390,
+      "scroll_height": 948
+    },
+    "container": {
+      "x": 15,
+      "y": 420,
+      "width": 360,
+      "height": 68,
+      "columns": [67.1875, 67.2031, 67.2031, 67.2031, 67.1875],
+      "gap": 6
+    },
+    "action_count": 5,
+    "card_height": 68,
+    "icon_width": 23,
+    "icon_height": 23,
+    "icon_top_from_card_top": 14.813,
+    "icon_to_label_gap": 5,
+    "label_height": 10.359,
+    "label_font_size": 6.9,
+    "label_line_height": 10.35,
+    "label_bottom_from_card_bottom": 14.828,
+    "horizontal_center_max_rounding_error": 0.008
+  },
+  "visual_baseline": {
+    "dashboard_composite": 0.810876,
+    "dashboard_pixel_similarity": 0.93598,
+    "dashboard_structure_similarity": 0.970456,
+    "dashboard_edge_similarity": 0.226313,
+    "dashboard_color_similarity": 0.967731,
+    "quick_actions_diagnostic": 0.677388,
+    "quick_actions_edge_similarity": 0.078722,
+    "score_changed_in_this_cycle": false
+  },
+  "database": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "read_only_query": true,
+    "public_bidfast_table_count": 0,
+    "mutation_performed": false
+  },
+  "governance": {
+    "bidfast_application_mutation_performed": false,
+    "database_mutation_performed": false,
+    "production_mutation_performed": false,
+    "secret_exposure": false,
+    "test_threshold_changed": false,
+    "test_weakened": false,
+    "screenshot_substitution_used": false,
+    "real_ui_hidden": false,
+    "rollback_commit": "b03475f0449e14da0418ad933c6c09de280c2612"
+  },
+  "remaining_gates": {
+    "visual_parity_0_99_all_routes_viewports": false,
+    "operational_pass_rate_1_00": false,
+    "complete_light_dark_coverage": false,
+    "zero_dead_controls_verified": false,
+    "zero_tenant_leaks_verified": false,
+    "zero_authorization_bypasses_verified": false,
+    "production_smoke_and_rollback_receipts": false
+  }
+}

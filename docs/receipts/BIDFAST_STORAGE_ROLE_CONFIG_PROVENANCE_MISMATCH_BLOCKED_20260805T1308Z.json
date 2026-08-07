@@ -1,0 +1,143 @@
+{
+  "receipt_type": "BIDFAST_STORAGE_ROLE_CONFIG_PROVENANCE_MISMATCH_BLOCKED",
+  "created_at": "2026-08-05T13:08:30Z",
+  "phase": "VALIDATE",
+  "step": "preserve completed exact-revision storage-role configuration provenance evidence and keep route, operational, schema, merge, and production gates closed",
+  "inspection": {
+    "latest_receipt": "docs/receipts/BIDFAST_ORGANIZATION_CONFIG_PROVENANCE_MISMATCH_BLOCKED_20260805T0708Z.json",
+    "latest_receipt_inspected": true,
+    "bidfast_repository": "XTREME-SYSTEMS/bidfast",
+    "bidfast_pull_request": 2,
+    "bidfast_branch": "auto-builder/bidfast-complete-visual-system",
+    "bidfast_head": "9804d5247202e0814dfac68a59fb92c0ac9943d3",
+    "bidfast_diff_inspected_before_change": true,
+    "bidfast_delta_base": "07fb06cd63fcac60ca2b1b4cf47e66a6c5a18fe9",
+    "bidfast_delta_files": [
+      "scripts/check-bidfast-workflow-role-governance.mjs",
+      "supabase/migrations/202608050810_harden_bidfast_document_storage_role_authorization.sql"
+    ],
+    "browserworker_repository": "Strategic-Minds/BROWSERWORKER",
+    "browserworker_pull_request": 9,
+    "browserworker_branch": "auto-builder/bidfast-proof-20260728",
+    "browserworker_head_before_receipt": "5148b82cab7494bd42dd506dc0d205976b654757",
+    "browserworker_diff_inspected_before_change": true,
+    "approved_drive_reference": {
+      "name": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+      "drive_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+      "mime_type": "image/png"
+    },
+    "auto_builder_dry_run_receipt": "receipt_1785935310967"
+  },
+  "application_preview": {
+    "commit": "9804d5247202e0814dfac68a59fb92c0ac9943d3",
+    "commit_ref": "auto-builder/bidfast-complete-visual-system",
+    "deployment_reference": "8R3r2z2Wrs3RZzaaF9TQKxPVrn59",
+    "deployment_id": "dpl_8R3r2z2Wrs3RZzaaF9TQKxPVrn59",
+    "deployment_url": "bidfast-7w2vrz1lj-strategic-minds-advisory.vercel.app",
+    "exact_revision_observed": true
+  },
+  "browserworker_preview": {
+    "commit": "5148b82cab7494bd42dd506dc0d205976b654757",
+    "deployment_reference": "DCEpw8rWWHynx3q7oEfMAarsj1Kq",
+    "status_before_receipt": "success"
+  },
+  "provenance_execution": {
+    "workflow_run_id": 31004594442,
+    "workflow_job_id": 92301327296,
+    "workflow_conclusion": "failure",
+    "failed_step": "Verify exact Supabase configuration provenance",
+    "route_matrix_executed": false,
+    "operational_matrix_executed": false,
+    "http_status": 409,
+    "configuration_pass": false,
+    "provenance_pass": false,
+    "attempts": 15,
+    "artifact": {
+      "id": 8930353620,
+      "name": "bidfast-storage-role-config-provenance-9804d52",
+      "sha256": "1fe73a7ae48963f77210a05975d2f28b0877cc38d712e50d66c759fda19b49cd",
+      "size_bytes": 762,
+      "download_verified": true
+    }
+  },
+  "configuration_evidence": {
+    "expected_supabase_project_ref": "mhaovpyegtysfgualplu",
+    "observed_supabase_project_ref": "prhppuuwcnmfdhwsagug",
+    "supabase_url_configured": true,
+    "supabase_publishable_key_configured": true,
+    "supabase_project_ref_detected": true,
+    "supabase_project_ref_matches_expected": false,
+    "failures": [
+      "health_status=503",
+      "health_ok=false",
+      "supabase_project_ref_mismatch",
+      "project_ref=prhppuuwcnmfdhwsagug"
+    ]
+  },
+  "governed_supabase_catalog": {
+    "project_ref": "mhaovpyegtysfgualplu",
+    "public_bidfast_table_count": 0,
+    "public_bidfast_function_count": 0,
+    "public_autobid_table_count": 44,
+    "takeoff_documents_bucket_count": 0,
+    "related_storage_policy_count": 0,
+    "database_mutated": false
+  },
+  "retained_visual_evidence": {
+    "new_score_claimed": false,
+    "dashboard_score": 0.837024,
+    "routes_technically_passed": 10,
+    "routes_total": 10,
+    "routes_reaching_0_99": 0,
+    "console_error_count": 0,
+    "application_network_error_count": 0,
+    "http_error_count": 0,
+    "operational_pass_rate": null
+  },
+  "preview_environment_change_plan": {
+    "mode": "dry_run",
+    "scope": "preview_only",
+    "approval_required": true,
+    "provider_adapter_status": "not_implemented",
+    "routed_to": "manual_receipt",
+    "secret_values_included": false,
+    "external_mutation_performed": false
+  },
+  "constraints": {
+    "application_code_changed": false,
+    "validation_thresholds_changed": false,
+    "tests_weakened": false,
+    "screenshot_substitution_used": false,
+    "real_components_hidden": false,
+    "approved_reference_modified": false,
+    "secrets_changed": false,
+    "vercel_environment_changed": false,
+    "database_mutated": false,
+    "merged": false,
+    "production_changed": false
+  },
+  "decision": {
+    "candidate_retained": true,
+    "configuration_gate_passed": false,
+    "schema_gate_passed": false,
+    "visual_acceptance_complete": false,
+    "operational_acceptance_complete": false,
+    "release_authorized": false,
+    "production_promotion_authorized": false
+  },
+  "remaining_blockers": [
+    "The exact BIDFAST preview is configured for Supabase project prhppuuwcnmfdhwsagug instead of governed project mhaovpyegtysfgualplu.",
+    "The governed Supabase project contains no public.bidfast_* tables or functions and no required takeoff document storage controls.",
+    "The storage-role migration remains unapplied, unrolled back, and untested in an isolated Supabase environment.",
+    "The complete Account to Organization to Opportunity to Project to Document to Takeoff to Estimate to Proposal to Approval to Audit workflow remains unverified.",
+    "No approved route reaches measured parity 0.99 and complete approved light and dark multi-viewport reference coverage remains incomplete.",
+    "Preview environment mutation requires operator approval and the AUTO BUILDER Vercel provider adapter is not implemented for direct execution."
+  ],
+  "rollback": {
+    "browserworker_receipt": "Revert the commit that introduced this receipt file.",
+    "bidfast": "No rollback required because BIDFAST code was not changed in this validation cycle.",
+    "database": "No rollback required because no database mutation occurred.",
+    "environment": "No rollback required because the environment correction was dry-run only.",
+    "production": "No rollback required because production was not changed."
+  }
+}

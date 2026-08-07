@@ -1,0 +1,165 @@
+{
+  "schema_version": "bidfast-browserworker-validation-receipt-v1",
+  "timestamp_utc": "2026-08-01T05:21:11Z",
+  "phase": "VALIDATION",
+  "step": "component-level mobile AI assistant repair and current-head full route non-regression matrix",
+  "inspection_before_mutation": {
+    "bidfast_repository_requested": "XTREME-AI-SYSTEMS/bidfast",
+    "bidfast_repository_resolved": "XTREME-SYSTEMS/bidfast",
+    "bidfast_branch": "auto-builder/bidfast-complete-visual-system",
+    "bidfast_pull_request": 2,
+    "prior_bidfast_head": "ec6e61f9554e60cb098e19a6c1bba320e59a2866",
+    "prior_bidfast_commits": 178,
+    "prior_bidfast_changed_files": 103,
+    "current_pr_diff_inspected": true,
+    "latest_bidfast_receipt": "docs/receipts/BIDFAST_VALIDATION_RECEIPT_20260801T0032Z.json",
+    "browserworker_repository": "Strategic-Minds/BROWSERWORKER",
+    "browserworker_branch": "auto-builder/bidfast-proof-20260728",
+    "browserworker_pull_request": 9,
+    "prior_browserworker_head": "5145d57f9fedf62b3359165438c7f85f54093e62",
+    "latest_browserworker_receipt": "docs/receipts/BIDFAST_SETTINGS_REPAIR_VALIDATION_20260801T0433Z.json"
+  },
+  "approved_reference": {
+    "route": "/assistant",
+    "drive_file_id": "1h5b3hB2OnhozgzotwUi3h2hZkrlDIuRw",
+    "title": "10_BIDFAST_MOBILE_AI_ASSISTANT.png",
+    "theme": "light",
+    "viewport": "390x844",
+    "bytes": 1324261,
+    "sha256": "37ac9f0007621b57163b05200e4516657831a7640c0478fc36b1d4cd1e8ffd74",
+    "crop": { "x": 178, "y": 150, "width": 570, "height": 1387 },
+    "allowed_reference_asset_use": "isolated approved BIDFAST logo only",
+    "full_screen_substitution": false
+  },
+  "bidfast": {
+    "validated_head": "7744bf8d569038badf618ef9c4fd4a93f765f214",
+    "deployment_id": "dpl_6gPmfyP2KjS1fHht29QL85YkGPiq",
+    "deployment_url": "bidfast-8ax582v7h-strategic-minds-advisory.vercel.app",
+    "rollback_head": "ec6e61f9554e60cb098e19a6c1bba320e59a2866",
+    "rollback_deployment_id": "dpl_82KxkXHRWY4h2ju1MJXsUaGTEjCo",
+    "commits": [
+      { "commit": "f4f157e8144843b3c984de5fbf76fffe21462244", "message": "feat(bidfast): add governed mobile AI assistant workspace" },
+      { "commit": "8297f75d2cf933183f86008d3a6feb8f7660d3da", "message": "style(bidfast): align mobile AI assistant to approved reference" },
+      { "commit": "3368e086a00be4b7ff35f6a92b8565ce3e6c6a96", "message": "feat(bidfast): activate responsive AI assistant parity route" },
+      { "commit": "7744bf8d569038badf618ef9c4fd4a93f765f214", "message": "style(bidfast): load governed AI assistant parity styles" }
+    ],
+    "changed_files_from_rollback": [
+      "app/assistant-mobile.css",
+      "app/assistant/page.tsx",
+      "app/layout.tsx",
+      "components/assistant/MobileAssistant.tsx"
+    ],
+    "pr_after_change": {
+      "commits": 182,
+      "changed_files": 105,
+      "open": true,
+      "draft": true,
+      "merged": false,
+      "mergeable": false
+    }
+  },
+  "assistant_single_route_proof": {
+    "workflow_source_commit": "8078c3f7a8cfe93e413f5620ef8167f2d5620c75",
+    "run_id": 30685439762,
+    "job_id": 91330147020,
+    "artifact_id": 8813733912,
+    "artifact_sha256": "4a03cf606949ec342ac9f4538bedf7cf5be8a0640d01581f2e56c55fc240a006",
+    "viewport": "390x844",
+    "theme": "light",
+    "page_height": 949,
+    "prior_page_height": 1755,
+    "prior_composite": 0.778712,
+    "current_composite": 0.823121,
+    "absolute_improvement": 0.044409,
+    "relative_improvement_percent": 5.7029,
+    "metrics": {
+      "pixel_similarity": 0.942599,
+      "structure_similarity": 0.978979,
+      "edge_similarity": 0.263616,
+      "color_similarity": 0.966503
+    },
+    "live_sha256": "8e13da8c6690d931f7e98d505fc478913b828686209a7d00120536fdc1ee13ae",
+    "reference_sha256": "37ac9f0007621b57163b05200e4516657831a7640c0478fc36b1d4cd1e8ffd74",
+    "technical_pass": true,
+    "provenance_pass": true,
+    "reference_integrity_pass": true,
+    "screenshot_integrity_pass": true,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "non_regression_gate": "PASS",
+    "release_threshold_0_99": "FAIL"
+  },
+  "current_head_full_matrix": {
+    "workflow_source_commit": "5aa3584527c34cabc2305659d911f336e5ce8316",
+    "run_id": 30685507186,
+    "viewport": "390x844",
+    "theme": "light",
+    "threshold": 0.99,
+    "routes_measured": 10,
+    "routes_passing_threshold": 0,
+    "technical_results": {
+      "exact_route_identity": "10/10",
+      "source_commit_branch_deployment_provenance": "10/10",
+      "reference_hash_integrity": "10/10",
+      "screenshot_hash_integrity": "10/10",
+      "zero_console_errors": "10/10",
+      "zero_application_network_errors": "10/10",
+      "zero_http_errors": "10/10"
+    },
+    "routes": [
+      { "route": "/dashboard", "score": 0.810876, "artifact_id": 8813750705, "artifact_sha256": "16f66fa6bdb32e8f1e7a90df5311cc538e8a4e49819ae0d49c0a2041f11d351c", "live_sha256": "d32cf8745580ecb4d53189ff5b0f808feab9e56d61c1f4051cd83b6c69b160e5" },
+      { "route": "/analytics", "score": 0.810237, "artifact_id": 8813754734, "artifact_sha256": "c15734c457c862ed901b1fd87a40173b89780399a268a31077b1b854b2e67105", "live_sha256": "6c68a9e9b6d3cfc04a01ebe670f1f83b73fc904c50f068ebdaedb9fe0e9d825d" },
+      { "route": "/approvals", "score": 0.802620, "artifact_id": 8813758653, "artifact_sha256": "860b9ae37b8e07d9ad65214c6841797454c20c1997b847556cc2f33a5465bd49", "live_sha256": "c4478237e170fd3ef445cbd64fe65ae88b05085ccc925e4c81822e6a87ad647c" },
+      { "route": "/opportunities", "score": 0.802843, "artifact_id": 8813762959, "artifact_sha256": "2eacd68e4b310720c1929a65db24feab466cdcea02c0143a23228e3017b6d20b", "live_sha256": "6010772f2314ba23f9b6f1af32da26ad42712106777733645d059b6cf782fa08" },
+      { "route": "/estimates/new", "score": 0.813012, "artifact_id": 8813768178, "artifact_sha256": "67e9575e8212e672a3cef9d805a7f5bab812dffd20adedbf19f4884e1901825c", "live_sha256": "e9fa9a8bc06eac289888a1368cf3bd31e41a1824690e7a6f58878aa1087135df" },
+      { "route": "/proposals", "score": 0.795438, "artifact_id": 8813772083, "artifact_sha256": "ef85903ec29c02358eb76cbf115844478531857a22c7b90f5c24af958923699e", "live_sha256": "374cbbafbfd06f68af1863ba643abf59cda5638562dca8ae35cdb7e3fdc2498d" },
+      { "route": "/projects/demo-riverside", "score": 0.818800, "artifact_id": 8813776200, "artifact_sha256": "c4f8e2c31f393ab5005b580c8d3a60e7be47a56c96ac228e790235ed40903fda", "live_sha256": "b3148af83d407c1eb0e7a5beb6c559b7a4d81de3b978fa5f45b6c97c6ceccbe7" },
+      { "route": "/takeoffs/demo-riverside", "score": 0.779775, "artifact_id": 8813780264, "artifact_sha256": "1558dbf67bd99bda2f9ef627fb74e9952c3ff1e0045e2dc03f6785294d7eb8a6", "live_sha256": "43f9081c4e112d933c873831f1745812a9f8d585fd3b553a00ebbc83122bd8bc" },
+      { "route": "/settings/company", "score": 0.825706, "artifact_id": 8813784204, "artifact_sha256": "c1854950d3cff2639b09be8079a38938c7452d6b0b1207507a1899a348f96c60", "live_sha256": "1558e965af86f5e7ac9a7519d1945bd392906e75190517fa5c0e1fddd81f541c" },
+      { "route": "/assistant", "score": 0.823121, "artifact_id": 8813787940, "artifact_sha256": "752ab8acdd926d836234dc160f0f06905aa6aa453e8272b66cb1e40b8b0423da", "live_sha256": "8e13da8c6690d931f7e98d505fc478913b828686209a7d00120536fdc1ee13ae" }
+    ],
+    "dashboard_screenshot_artifact": {
+      "artifact_id": 8813790962,
+      "artifact_sha256": "6acbf6ba37e97f118ba4b7be01fae22e61cd7e6522c53465364c4fc73a6fdb18"
+    },
+    "non_regression_result": "PASS_FOR_ALL_NINE_UNAFFECTED_ROUTES_AND_IMPROVEMENT_FOR_ASSISTANT"
+  },
+  "browserworker": {
+    "validation_commits": [
+      { "commit": "8078c3f7a8cfe93e413f5620ef8167f2d5620c75", "message": "ci(validation): measure BIDFAST assistant repair" },
+      { "commit": "5aa3584527c34cabc2305659d911f336e5ce8316", "message": "ci(validation): pin full BIDFAST matrix to assistant repair head" }
+    ]
+  },
+  "supabase": {
+    "project_id": "azajysheebfhyzoyplpf",
+    "read_only_retry_result": "BLOCKED_PERMISSION_DENIED",
+    "error_code": -32600,
+    "database_mutation_performed": false
+  },
+  "safety": {
+    "approved_full_screen_reference_used_as_page_background_overlay_hidden_layer_or_component_substitute": false,
+    "real_components_hidden_to_manufacture_parity": false,
+    "isolated_approved_assets_only": true,
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "production_mutated": false
+  },
+  "gates": {
+    "visual_parity_0_99_all_routes": false,
+    "operational_pass_rate_1_00": false,
+    "complete_light_dark_coverage": false,
+    "zero_dead_controls_all_routes": false,
+    "zero_unintended_console_errors_current_matrix": true,
+    "zero_unexpected_application_network_failures_current_matrix": true,
+    "zero_tenant_leaks": false,
+    "zero_authorization_bypasses": false,
+    "production_promotion": "LOCKED"
+  },
+  "remaining_blockers": [
+    "All ten approved current-head light-mobile routes remain below 0.99.",
+    "Supabase read-only inspection remains permission denied, blocking Account through Audit execution and hostile tenant tests.",
+    "Complete approved light and dark reference pairs remain unavailable.",
+    "BIDFAST PR 2 remains draft and non-mergeable."
+  ]
+}

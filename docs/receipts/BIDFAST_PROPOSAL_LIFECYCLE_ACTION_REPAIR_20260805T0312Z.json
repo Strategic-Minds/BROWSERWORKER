@@ -1,0 +1,132 @@
+{
+  "receipt_type": "BIDFAST_PROPOSAL_LIFECYCLE_ACTION_REPAIR",
+  "created_at": "2026-08-05T03:12:00Z",
+  "phase": "VALIDATE",
+  "step": "align the mobile proposal controls with the governed draft to approval to sent lifecycle without changing approved preview geometry",
+  "prior_receipt": "docs/receipts/BIDFAST_PROPOSAL_APPROVAL_NOTES_CONTRACT_REPAIR_20260805T0203Z.json",
+  "inspection": {
+    "bidfast_repository": "XTREME-SYSTEMS/bidfast",
+    "bidfast_pull_request": 2,
+    "bidfast_pull_request_open": true,
+    "bidfast_pull_request_draft": true,
+    "bidfast_pull_request_merged": false,
+    "bidfast_head_before_repair": "64b055632f73ada8067fc3f67453354f01bd6b04",
+    "browserworker_repository": "Strategic-Minds/BROWSERWORKER",
+    "browserworker_pull_request": 9,
+    "browserworker_head_before_receipt": "7ed88d213f3c9f7aa1f0e0d066a314d7d571a16a",
+    "approved_drive_reference": {
+      "name": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+      "drive_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr"
+    }
+  },
+  "confirmed_defect": {
+    "component": "components/proposals/MobileProposalWorkspace.tsx",
+    "behavior_before_repair": [
+      "The Send Proposal control always inserted a new pending approval, including when the proposal was already approved.",
+      "An approved proposal could therefore fail instead of transitioning through the governed approved to sent path.",
+      "The Save Draft control remained active for approved and externally progressed proposals even though database governance rejects those regressions."
+    ],
+    "governed_contract_sources": [
+      "supabase/migrations/202607310218_harden_bidfast_approval_integrity.sql",
+      "supabase/migrations/202608050125_harden_bidfast_proposal_chain_state.sql"
+    ]
+  },
+  "repair": {
+    "application_commits": [
+      {
+        "sha": "7ec9ce1d2b4c5e160b24bacfa17f669cc162939f",
+        "message": "fix(proposals): align mobile send action with lifecycle"
+      },
+      {
+        "sha": "bd52c12edfac70d7d1e1f0b1cfeee79994b3e6e8",
+        "message": "test(governance): pin mobile proposal lifecycle actions"
+      }
+    ],
+    "rollback_commit": "64b055632f73ada8067fc3f67453354f01bd6b04",
+    "changed_files": [
+      "components/proposals/MobileProposalWorkspace.tsx",
+      "scripts/check-bidfast-proposal-governance.mjs"
+    ],
+    "diff_summary": {
+      "commits_ahead": 2,
+      "files_changed": 2,
+      "additions": 60,
+      "deletions": 7
+    },
+    "controls": [
+      "Draft proposals request one governed approval.",
+      "Internal-review proposals expose a disabled Approval Pending action rather than creating duplicate requests.",
+      "Approved proposals transition to sent through bidfast_proposals so the database role, approval, timestamp, and audit triggers remain authoritative.",
+      "Sent, viewed, signed, declined, and expired proposals cannot invoke another send write.",
+      "Save Draft is disabled after approval or external progression.",
+      "The preview sample remains approved, retaining the approved Send Proposal label and component geometry."
+    ],
+    "governance_guards_added": [
+      "Require status-aware request and send branches.",
+      "Require non-regression button disabling.",
+      "Reject reintroduction of the obsolete requestSendApproval click handler."
+    ]
+  },
+  "previews": {
+    "previous_bidfast_commit": "64b055632f73ada8067fc3f67453354f01bd6b04",
+    "previous_bidfast_deployment": "HnXJNUfCZbi1rK81VCAxZgHG6p5o",
+    "previous_bidfast_deployment_state": "success",
+    "current_bidfast_commit": "bd52c12edfac70d7d1e1f0b1cfeee79994b3e6e8",
+    "current_bidfast_deployment": "4EfP4v9LZA9R3sEUsy82hJV8yQzZ",
+    "current_bidfast_deployment_state_at_receipt": "pending",
+    "previous_browserworker_commit": "7ed88d213f3c9f7aa1f0e0d066a314d7d571a16a",
+    "previous_browserworker_deployment": "2T9TuHr9mc6WDCnNYNVmadvZsrdT",
+    "previous_browserworker_deployment_state": "success"
+  },
+  "governed_supabase_catalog": {
+    "project_ref": "mhaovpyegtysfgualplu",
+    "read_only_inspection": true,
+    "public_bidfast_tables": 0,
+    "public_bidfast_functions": 0,
+    "public_autobid_tables": 44,
+    "takeoff_documents_buckets": 0,
+    "bidfast_storage_policies": 0,
+    "database_mutated": false
+  },
+  "retained_visual_evidence": {
+    "new_score_claimed": false,
+    "dashboard_score": 0.837024,
+    "routes_technically_passed": 10,
+    "routes_total": 10,
+    "routes_reaching_0_99": 0,
+    "console_error_count": 0,
+    "application_network_error_count": 0,
+    "http_error_count": 0
+  },
+  "constraints": {
+    "screenshot_substitution_used": false,
+    "real_components_hidden": false,
+    "secrets_changed": false,
+    "vercel_environment_changed": false,
+    "database_mutated": false,
+    "validation_thresholds_changed": false,
+    "tests_weakened": false,
+    "merged": false,
+    "production_changed": false
+  },
+  "decision": {
+    "repair_retained_pending_preview": true,
+    "visual_acceptance_complete": false,
+    "operational_acceptance_complete": false,
+    "release_authorized": false,
+    "production_promotion_authorized": false
+  },
+  "remaining_blockers": [
+    "The new BIDFAST preview deployment has not completed.",
+    "The preview has not passed exact governed Supabase provenance for mhaovpyegtysfgualplu.",
+    "Governed Supabase contains zero public.bidfast_* tables and functions and no takeoff-documents bucket.",
+    "The proposal lifecycle repair cannot be transaction-tested against tenant-isolation and authorization-bypass cases until an isolated BIDFAST schema exists.",
+    "No approved route reaches measured visual parity 0.99 and complete approved light/dark multi-viewport coverage remains incomplete."
+  ],
+  "rollback": {
+    "application": "Revert 7ec9ce1d2b4c5e160b24bacfa17f669cc162939f and bd52c12edfac70d7d1e1f0b1cfeee79994b3e6e8 to return to 64b055632f73ada8067fc3f67453354f01bd6b04.",
+    "browserworker": "Revert this receipt-only commit if the evidence record is malformed.",
+    "database": "No rollback required because no migration was applied.",
+    "environment": "No rollback required because no environment value changed."
+  }
+}

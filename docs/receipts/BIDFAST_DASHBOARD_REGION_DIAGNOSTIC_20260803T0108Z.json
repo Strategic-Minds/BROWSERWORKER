@@ -1,0 +1,172 @@
+{
+  "receipt_type": "BIDFAST_DASHBOARD_REGION_DIAGNOSTIC",
+  "created_at": "2026-08-03T01:08:00Z",
+  "governance": {
+    "phase": "VALIDATE",
+    "production_locked": true,
+    "application_mutated": false,
+    "database_mutated": false,
+    "tests_weakened": false,
+    "release_threshold_changed": false,
+    "reference_image_substitution_detected": false,
+    "hidden_ui_for_parity_detected": false,
+    "release_authorized": false
+  },
+  "auto_builder": {
+    "job_id": "bidfast-dashboard-regional-validator-20260803T0103Z",
+    "status": "accepted_fallback_execution",
+    "receipt_id": "receipt_1785719031161",
+    "provider_adapter": "manual_receipt_fallback",
+    "blocked_actions": [
+      "merge_pull_request",
+      "production_promotion",
+      "database_mutation",
+      "secret_access",
+      "threshold_reduction",
+      "test_weakening",
+      "reference_image_substitution",
+      "hide_real_ui"
+    ]
+  },
+  "repositories": {
+    "bidfast": {
+      "repository": "XTREME-SYSTEMS/bidfast",
+      "requested_alias": "XTREME-AI-SYSTEMS/bidfast",
+      "branch": "auto-builder/bidfast-complete-visual-system",
+      "pr": 2,
+      "commit": "584767bbd75aad1c7b9459bbc710cd225e51ec53",
+      "state": "open_draft_unmerged_nonmergeable",
+      "application_change_this_cycle": false
+    },
+    "browserworker": {
+      "repository": "Strategic-Minds/BROWSERWORKER",
+      "branch": "auto-builder/bidfast-proof-20260728",
+      "pr": 9,
+      "endpoint_commit": "4e479c928774014f60f61eb2e3285b0c6c509776",
+      "workflow_commit": "4ebc4759454adf679d2b1cd5b12674a41d811d55",
+      "files_added": [
+        "app/api/bidfast-dashboard-regions/route.ts",
+        ".github/workflows/bidfast-dashboard-region-diagnostic.yml"
+      ]
+    }
+  },
+  "deployment": {
+    "bidfast": {
+      "id": "dpl_An8sgdXqVACfAMfu7w1RzKzwTZQ8",
+      "url": "bidfast-dstdflt6y-strategic-minds-advisory.vercel.app",
+      "commit_sha": "584767bbd75aad1c7b9459bbc710cd225e51ec53",
+      "commit_ref": "auto-builder/bidfast-complete-visual-system"
+    },
+    "browserworker": {
+      "preview_alias": "browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app",
+      "vercel_status": "success",
+      "deployment_id_verified": false
+    }
+  },
+  "reference": {
+    "route": "/dashboard",
+    "drive_file_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+    "title": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+    "theme": "light",
+    "viewport": "390x844",
+    "crop": { "x": 178, "y": 150, "width": 570, "height": 1387 },
+    "sha256": "f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb",
+    "integrity_pass": true
+  },
+  "validation": {
+    "validator_version": "dashboard-regions-v1-single-capture",
+    "workflow_run_id": 30776036301,
+    "workflow_job_id": 91571630324,
+    "conclusion": "success",
+    "artifact": {
+      "id": 8842071273,
+      "name": "bidfast-dashboard-region-diagnostic-584767bb",
+      "digest": "sha256:9674e419d2f623f4b564b62e61fc87c0195e40586a563ead3d87734053e8b7a2"
+    },
+    "live_screenshot_sha256": "d32cf8745580ecb4d53189ff5b0f808feab9e56d61c1f4051cd83b6c69b160e5",
+    "page_height": 948,
+    "official_metrics": {
+      "composite_score": 0.810876,
+      "pixel_similarity": 0.935980,
+      "structure_similarity": 0.970456,
+      "edge_similarity": 0.226313,
+      "color_similarity": 0.967731,
+      "retained_baseline": 0.810876,
+      "release_threshold": 0.99,
+      "non_regression_pass": true,
+      "release_threshold_pass": false
+    },
+    "overall_diagnostic_score": 0.726400,
+    "weakest_regions": [
+      {
+        "name": "quick_actions",
+        "diagnostic_score": 0.677388,
+        "edge_similarity": 0.078722
+      },
+      {
+        "name": "header_logo",
+        "diagnostic_score": 0.679593,
+        "edge_similarity": 0.127895
+      },
+      {
+        "name": "proposal_alert_2",
+        "diagnostic_score": 0.680906,
+        "edge_similarity": 0.084363
+      },
+      {
+        "name": "active_bid_3",
+        "diagnostic_score": 0.695150,
+        "edge_similarity": 0.196745
+      },
+      {
+        "name": "proposal_alert_1",
+        "diagnostic_score": 0.697612,
+        "edge_similarity": 0.135916
+      }
+    ],
+    "strongest_region": {
+      "name": "quick_actions_heading",
+      "diagnostic_score": 0.877343,
+      "edge_similarity": 0.654368
+    },
+    "geometry": {
+      "document": { "width": 390, "height": 948 },
+      "header": { "x": 15, "y": 18, "width": 360, "height": 46 },
+      "logo": { "x": 15, "y": 21.5, "width": 172, "height": 39 },
+      "search": { "x": 15, "y": 74, "width": 360, "height": 41 },
+      "quick_actions": { "x": 15, "y": 420, "width": 360, "height": 68 },
+      "active_bids_section": { "x": 15, "y": 506, "width": 360, "height": 242 },
+      "proposal_alerts_section": { "x": 15, "y": 761, "width": 360, "height": 123 },
+      "bottom_navigation": { "x": 0, "y": 884, "width": 390, "height": 64 }
+    },
+    "provenance_pass": true,
+    "technical_pass": true,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0
+  },
+  "supabase": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "public_bidfast_table_count": 0,
+    "read_only_query_performed": true,
+    "mutation_performed": false
+  },
+  "decision": {
+    "diagnostic_retained": true,
+    "application_candidate_created": false,
+    "next_bounded_target": "dashboard_quick_actions_component_geometry",
+    "frozen_regions": [
+      "quick_actions_heading",
+      "search",
+      "metrics_row_1"
+    ],
+    "production_status": "LOCKED"
+  },
+  "remaining_blockers": [
+    "The dashboard remains below the 0.99 visual release threshold at 0.810876.",
+    "Supabase contains zero public.bidfast_* tables, so the real workflow and tenant authorization tests cannot execute.",
+    "Complete approved dark, tablet, desktop, and large-desktop reference pairs remain unavailable.",
+    "BIDFAST PR #2 remains draft, unmerged, and non-mergeable.",
+    "The BrowserWorker Vercel deployment ID could not be resolved through the connected team scope."
+  ]
+}

@@ -1,0 +1,241 @@
+name: BIDFAST Governed Parity Proof
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/bidfast-governed-parity.yml'
+      - 'app/api/bidfast-*/**'
+      - 'app/api/validation/bidfast-parity-v3/**'
+      - 'config/bidfast-approved-references.json'
+      - 'lib/browser.ts'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-governed-parity-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: 8099ee3cf19a05bf95df8718f0534479e279b8ef
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  VISUAL_THRESHOLD: '0.99'
+  BROWSERWORKER_BURST_COOLDOWN_SECONDS: '65'
+
+jobs:
+  parity:
+    name: Exact approved route parity
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        route:
+          - /dashboard
+          - /analytics
+          - /approvals
+          - /opportunities
+          - /estimates/new
+          - /proposals
+          - /projects/demo-riverside
+          - /takeoffs/demo-riverside
+          - /settings/company
+          - /assistant
+    steps:
+      - name: Check out BrowserWorker proof branch
+        uses: actions/checkout@v4
+
+      - name: Wait for BrowserWorker health without launching Chromium
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint="${BROWSERWORKER_PREVIEW}/api/health"
+          for attempt in $(seq 1 20); do
+            status="$(curl -sS -o /tmp/readiness.json -w '%{http_code}' --max-time 30 "$endpoint" || true)"
+            if [[ "$status" == "200" ]]; then
+              echo "Health endpoint responded on attempt $attempt."
+              cat /tmp/readiness.json
+              exit 0
+            fi
+            echo "Attempt $attempt returned ${status:-no-status}; waiting for preview readiness."
+            sleep 15
+          done
+          echo 'BrowserWorker health endpoint did not become reachable.' >&2
+          exit 1
+
+      - name: Execute revision-pinned measured parity proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          route_slug="$(printf '%s' '${{ matrix.route }}' | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
+          encoded_route="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "${{ matrix.route }}")"
+          endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-parity-v3?route=${encoded_route}&expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          for attempt in $(seq 1 8); do
+            http_status="$(curl -sS --max-time 210 -D "evidence/${route_slug}.headers.txt" -o "evidence/${route_slug}.json" -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$http_status" > "evidence/${route_slug}.http-status.txt"
+            rate_limited="$(node - "evidence/${route_slug}.json" <<'NODE'
+          const fs = require('node:fs')
+          const file = process.argv[2]
+          try {
+            const body = JSON.parse(fs.readFileSync(file, 'utf8'))
+            const text = String(body?.error || body?.message || '')
+            process.stdout.write(/429|too many requests|burst rate limit/i.test(text) ? 'true' : 'false')
+          } catch {
+            process.stdout.write('false')
+          }
+          NODE
+            )"
+            echo "Attempt ${attempt}: HTTP ${http_status}; rate_limited=${rate_limited}"
+            if [[ "$rate_limited" != "true" ]]; then
+              break
+            fi
+            if [[ "$attempt" != "8" ]]; then
+              sleep "$BROWSERWORKER_BURST_COOLDOWN_SECONDS"
+            fi
+          done
+          cat "evidence/${route_slug}.json"
+
+      - name: Capture implemented-component screenshot
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          route_slug="$(printf '%s' '${{ matrix.route }}' | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
+          encoded_route="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "${{ matrix.route }}")"
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=${encoded_route}&theme=light&viewport=mobile&format=image"
+          sleep "$BROWSERWORKER_BURST_COOLDOWN_SECONDS"
+          for attempt in $(seq 1 8); do
+            screenshot_status="$(curl -sS --max-time 180 -D "evidence/${route_slug}.live.headers.txt" -o "evidence/${route_slug}.live.png" -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$screenshot_status" > "evidence/${route_slug}.live.http-status.txt"
+            if [[ "$screenshot_status" == "200" ]] && grep -qi '^content-type: image/' "evidence/${route_slug}.live.headers.txt"; then
+              break
+            fi
+            rate_limited="$(node - "evidence/${route_slug}.live.png" <<'NODE'
+          const fs = require('node:fs')
+          const file = process.argv[2]
+          try {
+            const body = JSON.parse(fs.readFileSync(file, 'utf8'))
+            const text = String(body?.error || body?.message || '')
+            process.stdout.write(/429|too many requests|burst rate limit/i.test(text) ? 'true' : 'false')
+          } catch {
+            process.stdout.write('false')
+          }
+          NODE
+            )"
+            echo "Screenshot attempt ${attempt}: HTTP ${screenshot_status}; rate_limited=${rate_limited}"
+            if [[ "$rate_limited" != "true" || "$attempt" == "8" ]]; then
+              break
+            fi
+            sleep "$BROWSERWORKER_BURST_COOLDOWN_SECONDS"
+          done
+          if [[ -s "evidence/${route_slug}.live.png" ]]; then
+            file "evidence/${route_slug}.live.png" | tee "evidence/${route_slug}.live.file.txt"
+            sha256sum "evidence/${route_slug}.live.png" | tee "evidence/${route_slug}.live.sha256.txt"
+          else
+            printf '%s\n' 'Screenshot response was empty.' > "evidence/${route_slug}.live.file.txt"
+          fi
+
+      - name: Enforce provenance, technical, integrity, screenshot, and visual gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          route_slug="$(printf '%s' '${{ matrix.route }}' | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
+          node - "evidence/${route_slug}.json" "evidence/${route_slug}.live.png" '${{ matrix.route }}' "$VISUAL_THRESHOLD" "$BIDFAST_EXPECTED_COMMIT" "$BIDFAST_EXPECTED_REF" <<'NODE'
+          const crypto = require('node:crypto')
+          const fs = require('node:fs')
+          const [file, screenshotFile, expectedRoute, thresholdText, expectedCommit, expectedRef] = process.argv.slice(2)
+          const threshold = Number(thresholdText)
+          const body = JSON.parse(fs.readFileSync(file, 'utf8'))
+          const failures = []
+          if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
+          if (body.route !== expectedRoute) failures.push(`route=${String(body.route)}`)
+          if (body.provenance_pass !== true) failures.push(`provenance_pass=${String(body.provenance_pass)}`)
+          if (body?.source_revision?.commit_sha !== expectedCommit) failures.push(`commit_sha=${String(body?.source_revision?.commit_sha)}`)
+          if (body?.source_revision?.commit_ref !== expectedRef) failures.push(`commit_ref=${String(body?.source_revision?.commit_ref)}`)
+          if (body.integrity_pass !== true) failures.push(`integrity_pass=${String(body.integrity_pass)}`)
+          if (body.technical_pass !== true) failures.push(`technical_pass=${String(body.technical_pass)}`)
+          const score = body?.metrics?.composite_score
+          if (typeof score !== 'number' || !Number.isFinite(score)) failures.push('measured composite score missing')
+          else if (score < threshold) failures.push(`composite_score=${score} below ${threshold}`)
+          for (const [name, value] of [
+            ['console_errors', body.console_errors],
+            ['app_network_errors', body.app_network_errors],
+            ['http_errors', body.http_errors],
+          ]) {
+            if (!Array.isArray(value)) failures.push(`${name} missing`)
+            else if (value.length !== 0) failures.push(`${name}=${JSON.stringify(value)}`)
+          }
+          if (!fs.existsSync(screenshotFile)) failures.push('implemented-component screenshot missing')
+          else {
+            const screenshotSha = crypto.createHash('sha256').update(fs.readFileSync(screenshotFile)).digest('hex')
+            if (screenshotSha !== body?.live?.sha256) failures.push(`screenshot_sha=${screenshotSha} expected=${String(body?.live?.sha256)}`)
+          }
+          if (body.visual_pass !== true) failures.push(`visual_pass=${String(body.visual_pass)}`)
+          if (body.evidence_pass !== true) failures.push(`evidence_pass=${String(body.evidence_pass)}`)
+          console.log(JSON.stringify({ route: expectedRoute, score: score ?? null, threshold, source_revision: body.source_revision ?? null, failures }, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable parity evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-parity-${{ strategy.job-index }}
+          path: evidence/
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Cool down Browserbase burst window
+        if: always()
+        shell: bash
+        run: sleep "$BROWSERWORKER_BURST_COOLDOWN_SECONDS"
+
+  dashboard-screenshot:
+    name: Dashboard implemented-component screenshot
+    if: always()
+    needs: parity
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Wait for lightweight health endpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 20); do
+            status="$(curl -sS -o /tmp/health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            if [[ "$status" == "200" ]]; then
+              cat /tmp/health.json
+              exit 0
+            fi
+            sleep 15
+          done
+          exit 1
+
+      - name: Capture dashboard screenshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=%2Fdashboard&theme=light&viewport=mobile&format=image"
+          sleep "$BROWSERWORKER_BURST_COOLDOWN_SECONDS"
+          status="$(curl -sS --max-time 180 -D evidence/dashboard.headers.txt -o evidence/dashboard.live.png -w '%{http_code}' "$endpoint")"
+          printf '%s\n' "$status" > evidence/dashboard.status.txt
+          test "$status" = "200"
+          grep -qi '^content-type: image/' evidence/dashboard.headers.txt
+          file evidence/dashboard.live.png
+
+      - name: Upload immutable dashboard screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-dashboard-screenshot
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30

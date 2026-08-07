@@ -1,0 +1,160 @@
+name: BIDFAST Approvals Geometry Proof
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/bidfast-approvals-repair-proof.yml'
+      - 'app/api/bidfast-parity-v2/**'
+      - 'app/api/bidfast-proof/**'
+      - 'app/api/validation/bidfast-parity-v3/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-approvals-geometry-8db9cb7
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: 8db9cb761944b0bddd713c43564721916e39d1c5
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  RETAINED_BASELINE: '0.836456'
+  VISUAL_THRESHOLD: '0.99'
+
+jobs:
+  approvals:
+    name: Approval queue revision-pinned geometry proof
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out BrowserWorker proof branch
+        uses: actions/checkout@v4
+
+      - name: Wait for BrowserWorker health
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint="${BROWSERWORKER_PREVIEW}/api/health"
+          for attempt in $(seq 1 24); do
+            status="$(curl -sS -o /tmp/health.json -w '%{http_code}' --max-time 30 "$endpoint" || true)"
+            if [[ "$status" == "200" ]]; then
+              cat /tmp/health.json
+              exit 0
+            fi
+            echo "Attempt $attempt returned ${status:-no-status}; waiting."
+            sleep 15
+          done
+          exit 1
+
+      - name: Wait for exact BIDFAST candidate revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint="https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app/api/build-info"
+          for attempt in $(seq 1 36); do
+            status="$(curl -sS -o /tmp/build-info.json -w '%{http_code}' --max-time 30 "$endpoint" || true)"
+            commit="$(node -e "try{const j=require('/tmp/build-info.json');process.stdout.write(j.source_revision?.commit_sha||'')}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" ]]; then
+              cat /tmp/build-info.json
+              exit 0
+            fi
+            echo "Attempt $attempt returned status=${status:-no-status} commit=${commit:-unknown}; waiting for ${BIDFAST_EXPECTED_COMMIT}."
+            sleep 15
+          done
+          cat /tmp/build-info.json || true
+          exit 1
+
+      - name: Allow remote browser burst window to clear
+        shell: bash
+        run: sleep 120
+
+      - name: Execute exact approvals parity proof with bounded burst retries
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-parity-v3?route=%2Fapprovals&expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          for attempt in $(seq 1 6); do
+            status="$(curl -sS --max-time 210 -o evidence/approvals.json -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/approvals.http-status.txt
+            if [[ "$status" == "200" ]] && node -e "const j=require('./evidence/approvals.json');process.exit(j.ok===true?0:1)"; then
+              cat evidence/approvals.json
+              exit 0
+            fi
+            echo "Parity attempt $attempt returned ${status:-no-status}; preserving response and waiting for the next burst window."
+            cat evidence/approvals.json || true
+            if [[ "$attempt" != "6" ]]; then sleep 70; fi
+          done
+          exit 1
+
+      - name: Separate parity and screenshot sessions
+        shell: bash
+        run: sleep 70
+
+      - name: Capture implemented-component screenshot with bounded burst retries
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=%2Fapprovals&theme=light&viewport=mobile&format=image"
+          for attempt in $(seq 1 6); do
+            status="$(curl -sS --max-time 180 -D evidence/approvals.live.headers.txt -o evidence/approvals.live.png -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/approvals.live.http-status.txt
+            content_type="$(awk 'BEGIN{IGNORECASE=1} /^content-type:/{print $2}' evidence/approvals.live.headers.txt | tail -1 | tr -d '\r')"
+            if [[ "$status" == "200" && "$content_type" == image/png* ]]; then
+              file evidence/approvals.live.png | tee evidence/approvals.live.file.txt
+              sha256sum evidence/approvals.live.png | tee evidence/approvals.live.sha256.txt
+              exit 0
+            fi
+            echo "Screenshot attempt $attempt returned status=${status:-no-status} content-type=${content_type:-unknown}; waiting for the next burst window."
+            if [[ "$attempt" != "6" ]]; then sleep 70; fi
+          done
+          exit 1
+
+      - name: Enforce provenance, technical, integrity, and strict improvement gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - evidence/approvals.json evidence/approvals.live.png "$BIDFAST_EXPECTED_COMMIT" "$BIDFAST_EXPECTED_REF" "$RETAINED_BASELINE" <<'NODE'
+          const crypto = require('node:crypto')
+          const fs = require('node:fs')
+          const [jsonFile, screenshotFile, expectedCommit, expectedRef, baselineText] = process.argv.slice(2)
+          const body = JSON.parse(fs.readFileSync(jsonFile, 'utf8'))
+          const baseline = Number(baselineText)
+          const score = body?.metrics?.composite_score
+          const failures = []
+          if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
+          if (body.route !== '/approvals') failures.push(`route=${String(body.route)}`)
+          if (body.provenance_pass !== true) failures.push(`provenance_pass=${String(body.provenance_pass)}`)
+          if (body?.source_revision?.commit_sha !== expectedCommit) failures.push(`commit_sha=${String(body?.source_revision?.commit_sha)}`)
+          if (body?.source_revision?.commit_ref !== expectedRef) failures.push(`commit_ref=${String(body?.source_revision?.commit_ref)}`)
+          if (body.integrity_pass !== true) failures.push(`integrity_pass=${String(body.integrity_pass)}`)
+          if (body.technical_pass !== true) failures.push(`technical_pass=${String(body.technical_pass)}`)
+          if (typeof score !== 'number' || !Number.isFinite(score)) failures.push('composite score missing')
+          else if (score <= baseline) failures.push(`composite_score=${score} did not exceed retained baseline ${baseline}`)
+          for (const [name, value] of [['console_errors', body.console_errors], ['app_network_errors', body.app_network_errors], ['http_errors', body.http_errors]]) {
+            if (!Array.isArray(value)) failures.push(`${name} missing`)
+            else if (value.length !== 0) failures.push(`${name}=${JSON.stringify(value)}`)
+          }
+          if (!fs.existsSync(screenshotFile)) failures.push('implemented-component screenshot missing')
+          else {
+            const screenshotSha = crypto.createHash('sha256').update(fs.readFileSync(screenshotFile)).digest('hex')
+            if (screenshotSha !== body?.live?.sha256) failures.push(`screenshot_sha=${screenshotSha} expected=${String(body?.live?.sha256)}`)
+          }
+          if (score < Number(process.env.VISUAL_THRESHOLD)) failures.push(`release_threshold composite_score=${score} below ${process.env.VISUAL_THRESHOLD}`)
+          console.log(JSON.stringify({ route: '/approvals', baseline, score: score ?? null, threshold: Number(process.env.VISUAL_THRESHOLD), strict_improvement: failures.filter(item => !item.startsWith('release_threshold')).length === 0, source_revision: body.source_revision ?? null, failures }, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable approvals geometry evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-approvals-geometry-proof-8db9cb7
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30

@@ -1,0 +1,105 @@
+{
+  "receipt_type": "BIDFAST_DASHBOARD_HEADER_CANDIDATE_REJECTED_REVERTED",
+  "created_at": "2026-08-03T14:08:00Z",
+  "phase": "VALIDATE",
+  "release_authorized": false,
+  "production_status": "LOCKED",
+  "repositories": {
+    "application": {
+      "repository": "XTREME-SYSTEMS/bidfast",
+      "branch": "auto-builder/bidfast-complete-visual-system",
+      "pull_request": 2,
+      "failed_candidate_commit": "2d1c56cfdc9c09bdb0348613a2c722425caf9378",
+      "revert_commit": "4c46ca76e96ca3477fd40c5b219c8f3c28e7b76a",
+      "retained_baseline_commit": "cf1067bf2e7b63340ce82f16e33ac1d39dafa2fe"
+    },
+    "validator": {
+      "repository": "Strategic-Minds/BROWSERWORKER",
+      "branch": "auto-builder/bidfast-proof-20260728",
+      "pull_request": 9,
+      "validator_commit": "937656aa1c8509989c8bdbe879fcf7481af53e4c"
+    }
+  },
+  "source_truth": {
+    "drive_file_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+    "title": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+    "expected_sha256": "f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb"
+  },
+  "failed_candidate_change": {
+    "file": "app/dashboard-quick-actions-candidate.css",
+    "scope": "mobile dashboard logo width and vertical transform plus notification button chrome",
+    "component_level_implementation": true,
+    "screenshot_background_used": false,
+    "overlay_used": false,
+    "real_ui_hidden": false,
+    "test_threshold_weakened": false,
+    "database_mutated": false,
+    "secrets_exposed": false
+  },
+  "failed_candidate_deployment": {
+    "id": "dpl_8S4VQRbChmsBHm1svKu9vSFmKDuk",
+    "url": "bidfast-iv3sfhmti-strategic-minds-advisory.vercel.app",
+    "commit": "2d1c56cfdc9c09bdb0348613a2c722425caf9378"
+  },
+  "validation": {
+    "workflow_run": 30816812183,
+    "workflow_job": 91696482830,
+    "artifact_id": 8857206791,
+    "artifact_digest": "sha256:7b69f4b5dbe492f22e1667d0bbca74b5cc6bc7f44c8d852262a10ded39aa940f",
+    "live_screenshot_sha256": "a8a388aa8a4160670bf6629a1c59e934af2d8fbc1e0c60356fb64289fffc0159",
+    "retained_dashboard_score": 0.836091,
+    "candidate_dashboard_score": 0.832782,
+    "delta": -0.003309,
+    "metrics": {
+      "pixel_similarity": 0.945827,
+      "structure_similarity": 0.976547,
+      "edge_similarity": 0.307856,
+      "color_similarity": 0.971142,
+      "composite_score": 0.832782
+    },
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "provenance_pass": true,
+    "reference_integrity_pass": true,
+    "technical_pass": true,
+    "non_regression_pass": false,
+    "release_threshold_pass": false,
+    "validator_geometry_fields_missing": ["geometry.logo.width", "geometry.logo.y"]
+  },
+  "revert": {
+    "commit": "4c46ca76e96ca3477fd40c5b219c8f3c28e7b76a",
+    "method": "restore app/dashboard-quick-actions-candidate.css byte-for-byte to retained commit cf1067bf2e7b63340ce82f16e33ac1d39dafa2fe",
+    "compare_to_retained_baseline": {
+      "files_changed": 0,
+      "ahead_by_commits": 2
+    },
+    "vercel_status": "success",
+    "vercel_status_reference": "3yL59d2gN4zRuSxjVSopNqHxKLTs",
+    "exact_dpl_id_retrievable_from_connected_scope": false,
+    "merge_performed": false,
+    "production_promoted": false
+  },
+  "supabase_read_only_check": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "public_bidfast_table_count": 0,
+    "database_mutated": false
+  },
+  "decision": {
+    "retain_failed_candidate": false,
+    "revert_required": true,
+    "revert_completed": true,
+    "run_full_matrix_for_failed_candidate": false,
+    "reason": "The candidate reduced measured dashboard composite parity by 0.003309 below the retained 0.836091 baseline. Governance requires immediate reversal before any full-matrix retention attempt."
+  },
+  "remaining_release_gates": [
+    "minimum 0.99 measured visual parity for every approved route and viewport",
+    "complete light and dark reference coverage",
+    "1.00 real Account -> Organization -> Opportunity -> Project -> Document -> Takeoff -> Estimate -> Proposal -> Approval -> Audit pass rate",
+    "zero dead controls across the application",
+    "zero tenant leaks",
+    "zero authorization bypasses",
+    "deployed public.bidfast_* entities with reviewed RLS",
+    "production deployment, smoke-test, and rollback receipts"
+  ]
+}

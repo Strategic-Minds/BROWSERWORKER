@@ -1,0 +1,108 @@
+{
+  "receipt_type": "BIDFAST_OPPORTUNITIES_STAGE_TABS_FULL_MATRIX_RETENTION",
+  "created_at": "2026-08-03T00:04:38Z",
+  "governance": {
+    "phase": "VALIDATE",
+    "production_locked": true,
+    "database_mutated": false,
+    "application_mutated_this_cycle": false,
+    "tests_weakened": false,
+    "release_threshold_changed": false,
+    "reference_image_substitution_detected": false,
+    "hidden_ui_for_parity_detected": false,
+    "release_authorized": false
+  },
+  "repositories": {
+    "bidfast": {
+      "repository": "XTREME-SYSTEMS/bidfast",
+      "requested_alias": "XTREME-AI-SYSTEMS/bidfast",
+      "branch": "auto-builder/bidfast-complete-visual-system",
+      "pr": 2,
+      "baseline_commit": "65bd7345221c96915fba1f4c7704977c7d072e07",
+      "retained_commit": "584767bbd75aad1c7b9459bbc710cd225e51ec53",
+      "retained_diff": {
+        "path": "app/opportunities-parity-adjustments.css",
+        "files_changed": 1,
+        "additions": 8,
+        "deletions": 0
+      },
+      "pr_state": "open_draft_unmerged_nonmergeable"
+    },
+    "browserworker": {
+      "repository": "Strategic-Minds/BROWSERWORKER",
+      "branch": "auto-builder/bidfast-proof-20260728",
+      "pr": 9,
+      "evidence_head_before_receipt": "8391002b98a7cccd577cc8b6a29279bbd13c086c"
+    }
+  },
+  "deployment": {
+    "id": "dpl_An8sgdXqVACfAMfu7w1RzKzwTZQ8",
+    "url": "bidfast-dstdflt6y-strategic-minds-advisory.vercel.app",
+    "commit_sha": "584767bbd75aad1c7b9459bbc710cd225e51ec53",
+    "commit_ref": "auto-builder/bidfast-complete-visual-system"
+  },
+  "validation": {
+    "superseded_run": {
+      "workflow_run_id": 30771794141,
+      "conclusion": "failure",
+      "reason": "all ten matrix jobs cancelled before evidence; no artifacts"
+    },
+    "successful_run": {
+      "workflow_run_id": 30771917623,
+      "workflow_name": "BIDFAST Stage Tabs Candidate Full Matrix",
+      "conclusion": "success",
+      "route_jobs_passed": 10,
+      "route_jobs_required": 10,
+      "summary_job_passed": true,
+      "summary_artifact": {
+        "id": 8840927677,
+        "digest": "sha256:6563aa60afff058f2054235c6816aa9ed4ee5c559eef8638fce53e98ddcfce35"
+      }
+    },
+    "routes": [
+      {"route":"/dashboard","composite":0.810876,"pixel":0.935980,"structure":0.970456,"edge":0.226313,"color":0.967731,"artifact_id":8840797607,"artifact_digest":"sha256:c50d9cb5d0e13d40cc7e40b5a4e5859bf32ed9fa30c60a5809b9f049b0f234dc"},
+      {"route":"/analytics","composite":0.830446,"pixel":0.949692,"structure":0.982749,"edge":0.272893,"color":0.979986,"artifact_id":8840837124,"artifact_digest":"sha256:a90f1fda095ba3517eb9d8287fb4a10b8bde47accf32c8eb553543fab3e748c2"},
+      {"route":"/approvals","composite":0.859067,"pixel":0.959883,"structure":0.984550,"edge":0.395262,"color":0.983046,"artifact_id":8840882565,"artifact_digest":"sha256:a98f8009d7e7d3ec467b46b6ff7763844ba37846a8de316f54cfe82c476b3e45"},
+      {"route":"/opportunities","composite":0.859699,"pixel":0.959065,"structure":0.986528,"edge":0.401330,"color":0.976191,"artifact_id":8840907117,"artifact_digest":"sha256:1936304377b8125da02061a44308d22676566875bef3e2a0695afc0952d04281"},
+      {"route":"/estimates/new","composite":0.813012,"pixel":0.933564,"structure":0.950868,"edge":0.303646,"color":0.929397,"artifact_id":8840910930,"artifact_digest":"sha256:87309b7e329038bdfc66c304c1ba122ee5d573cae0863a3bd482080802a7ab60"},
+      {"route":"/proposals","composite":0.819855,"pixel":0.943717,"structure":0.980840,"edge":0.238278,"color":0.971933,"artifact_id":8840914564,"artifact_digest":"sha256:66401dbb42434c87fb9bb40380d197e8de07ff90090b97ae040856f80bc51b61"},
+      {"route":"/projects/demo-riverside","composite":0.818791,"pixel":0.922003,"structure":0.957211,"edge":0.307048,"color":0.971714,"artifact_id":8840917568,"artifact_digest":"sha256:064d031b23d1f832ae064b15d4f8db8b99ca57baf8860c24ceb8d86014125e68"},
+      {"route":"/takeoffs/demo-riverside","composite":0.818538,"pixel":0.943534,"structure":0.980197,"edge":0.231955,"color":0.973452,"artifact_id":8840920767,"artifact_digest":"sha256:d1337f335749845f46e7506bc75a18aa7bfe5084f8336204b42bada819d8b38b"},
+      {"route":"/settings/company","composite":0.825706,"pixel":0.949240,"structure":0.978038,"edge":0.261309,"color":0.975730,"artifact_id":8840923526,"artifact_digest":"sha256:a83dcb74eb754ee99147caa1d9194907877802f26e0a5b935a099f5572cf644f"},
+      {"route":"/assistant","composite":0.823121,"pixel":0.942599,"structure":0.978979,"edge":0.263616,"color":0.966503,"artifact_id":8840926269,"artifact_digest":"sha256:db3521ec5215f2d20ace600e7eec80b8e275990b456511d71cecc2a3e18f6f7e"}
+    ],
+    "aggregate": {
+      "provenance_pass": true,
+      "reference_integrity_pass": true,
+      "technical_pass": true,
+      "non_regression_pass": true,
+      "console_errors": 0,
+      "application_network_errors": 0,
+      "http_errors": 0,
+      "release_threshold": 0.99,
+      "routes_meeting_release_threshold": 0,
+      "routes_required": 10
+    }
+  },
+  "supabase": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "public_bidfast_table_count": 0,
+    "read_only_query_performed": true,
+    "mutation_performed": false
+  },
+  "decision": {
+    "candidate_retained_as_validated_baseline": true,
+    "candidate_reverted": false,
+    "release_authorized": false,
+    "production_status": "LOCKED",
+    "rollback_commit": "65bd7345221c96915fba1f4c7704977c7d072e07"
+  },
+  "remaining_blockers": [
+    "No approved route reaches 0.99 measured visual parity.",
+    "Complete dark, tablet, desktop, and large-desktop reference pairs are unavailable.",
+    "Supabase contains zero public.bidfast_* tables.",
+    "The real Account -> Organization -> Opportunity -> Project -> Document -> Takeoff -> Estimate -> Proposal -> Approval -> Audit workflow has not achieved a 1.00 operational pass rate.",
+    "Zero-dead-control, tenant-isolation, and authorization-bypass acceptance remain unverified.",
+    "BIDFAST PR #2 remains draft, unmerged, and non-mergeable."
+  ]
+}

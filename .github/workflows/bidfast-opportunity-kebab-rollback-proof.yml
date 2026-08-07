@@ -1,0 +1,177 @@
+name: BIDFAST Opportunity Kebab Rollback Proof
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/bidfast-opportunity-kebab-rollback-proof.yml'
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-opportunity-kebab-rollback-proof.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-opportunity-kebab-rollback-65bd7345
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: 65bd7345221c96915fba1f4c7704977c7d072e07
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  ROUTE: /opportunities
+  RETAINED_BASELINE: '0.858978'
+  REQUIRED_THRESHOLD: '0.99'
+  REFERENCE_SHA256: c3cd0b2ed394491128784384e19561457bfe800f4b0182a391b78b888db389ef
+  RETAINED_SCREENSHOT_SHA256: 1a94ea4eae5cb271921c691d955cf2b8141f3f04e7c42ccb293d2cd0f245d632
+  RETAINED_REGION_SCORE: '0.791098'
+  RETAINED_OPPORTUNITY_3_SCORE: '0.756879'
+
+jobs:
+  proof:
+    name: Revision-pinned opportunity rollback proof
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - name: Wait for BrowserWorker health
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 30); do
+            status="$(curl -sS -o /tmp/health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            if [[ "$status" == "200" ]]; then
+              cat /tmp/health.json
+              exit 0
+            fi
+            echo "BrowserWorker health attempt ${attempt}: ${status:-no-status}"
+            sleep 15
+          done
+          exit 1
+
+      - name: Wait for exact BIDFAST rollback revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 60); do
+            status="$(curl -sS -o /tmp/build-info.json -w '%{http_code}' --max-time 30 "${BIDFAST_ORIGIN}/api/build-info" || true)"
+            commit="$(node -e "try{const b=require('/tmp/build-info.json');process.stdout.write(String(b?.source_revision?.commit_sha||''))}catch{}")"
+            ref="$(node -e "try{const b=require('/tmp/build-info.json');process.stdout.write(String(b?.source_revision?.commit_ref||''))}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" && "$ref" == "$BIDFAST_EXPECTED_REF" ]]; then
+              cat /tmp/build-info.json
+              exit 0
+            fi
+            echo "Rollback provenance attempt ${attempt}: status=${status:-no-status} commit=${commit:-unknown} ref=${ref:-unknown}"
+            sleep 15
+          done
+          cat /tmp/build-info.json || true
+          exit 1
+
+      - name: Warm exact rollback route
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -sS --max-time 60 -o /tmp/opportunities.html -w '%{http_code}\n' "${BIDFAST_ORIGIN}/opportunities"
+          sleep 70
+
+      - name: Execute rollback regional diagnostic
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-opportunities-regions?expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          status="$(curl -sS --retry 2 --retry-all-errors --max-time 210 -o evidence/opportunities-regions.json -w '%{http_code}' "$endpoint")"
+          printf '%s\n' "$status" > evidence/opportunities-regions.http-status.txt
+          cat evidence/opportunities-regions.json
+
+      - name: Separate browser sessions before official parity
+        shell: bash
+        run: sleep 70
+
+      - name: Execute rollback official parity proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-parity-v3?route=%2Fopportunities&expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          status="$(curl -sS --retry 2 --retry-all-errors --max-time 210 -o evidence/opportunities.json -w '%{http_code}' "$endpoint")"
+          printf '%s\n' "$status" > evidence/opportunities.http-status.txt
+          cat evidence/opportunities.json
+
+      - name: Separate browser sessions before screenshot
+        shell: bash
+        run: sleep 70
+
+      - name: Capture rollback implemented-component screenshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=%2Fopportunities&theme=light&viewport=mobile&format=image"
+          status="$(curl -sS --retry 2 --retry-all-errors --max-time 180 -D evidence/opportunities.live.headers.txt -o evidence/opportunities.live.png -w '%{http_code}' "$endpoint")"
+          printf '%s\n' "$status" > evidence/opportunities.live.http-status.txt
+          file evidence/opportunities.live.png | tee evidence/opportunities.live.file.txt
+          sha256sum evidence/opportunities.live.png | tee evidence/opportunities.live.sha256.txt
+
+      - name: Enforce rollback coherence, non-regression, technical, and release gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const crypto = require('node:crypto')
+          const fs = require('node:fs')
+          const body = JSON.parse(fs.readFileSync('evidence/opportunities.json', 'utf8'))
+          const regions = JSON.parse(fs.readFileSync('evidence/opportunities-regions.json', 'utf8'))
+          const screenshot = fs.readFileSync('evidence/opportunities.live.png')
+          const screenshotSha = crypto.createHash('sha256').update(screenshot).digest('hex')
+          const score = body?.metrics?.composite_score
+          const regionScore = regions?.analysis?.overall?.diagnostic_score
+          const opportunity3 = regions?.analysis?.regions?.find?.(region => region.name === 'opportunity_3')
+          const failures = []
+          if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
+          if (body.provenance_pass !== true || body.integrity_pass !== true || body.technical_pass !== true) failures.push('official technical or provenance gate failed')
+          if (regions.ok !== true || regions.provenance_pass !== true || regions.technical_pass !== true) failures.push('regional technical or provenance gate failed')
+          if (body?.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`commit_sha=${String(body?.source_revision?.commit_sha)}`)
+          if (regions?.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`regional_commit_sha=${String(regions?.source_revision?.commit_sha)}`)
+          if (body?.reference?.sha256 !== process.env.REFERENCE_SHA256 || regions?.reference?.sha256 !== process.env.REFERENCE_SHA256) failures.push('reference hash mismatch')
+          if (!Number.isFinite(score) || score < Number(process.env.RETAINED_BASELINE)) failures.push(`REGRESSION composite_score=${String(score)} below ${process.env.RETAINED_BASELINE}`)
+          if (!Number.isFinite(regionScore) || regionScore < Number(process.env.RETAINED_REGION_SCORE)) failures.push(`REGRESSION regional_score=${String(regionScore)} below ${process.env.RETAINED_REGION_SCORE}`)
+          if (!opportunity3 || opportunity3.diagnostic_score < Number(process.env.RETAINED_OPPORTUNITY_3_SCORE)) failures.push(`REGRESSION opportunity_3=${String(opportunity3?.diagnostic_score)} below ${process.env.RETAINED_OPPORTUNITY_3_SCORE}`)
+          for (const source of [body, regions]) {
+            for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
+              if (!Array.isArray(source[name]) || source[name].length !== 0) failures.push(`${name}=${JSON.stringify(source[name])}`)
+            }
+          }
+          if (screenshotSha !== body?.live?.sha256) failures.push(`official screenshot hash mismatch ${screenshotSha} != ${String(body?.live?.sha256)}`)
+          if (screenshotSha !== regions?.live?.sha256) failures.push(`regional screenshot hash mismatch ${screenshotSha} != ${String(regions?.live?.sha256)}`)
+          if (screenshotSha !== process.env.RETAINED_SCREENSHOT_SHA256) failures.push(`rollback screenshot ${screenshotSha} != retained ${process.env.RETAINED_SCREENSHOT_SHA256}`)
+          if (score < Number(process.env.REQUIRED_THRESHOLD)) failures.push(`release_threshold composite_score=${score} below ${process.env.REQUIRED_THRESHOLD}`)
+          const summary = {
+            route: body.route,
+            score,
+            retained_baseline: Number(process.env.RETAINED_BASELINE),
+            regional_score: regionScore,
+            retained_regional_score: Number(process.env.RETAINED_REGION_SCORE),
+            opportunity_3: opportunity3 || null,
+            source_revision: body.source_revision,
+            screenshot_sha256: screenshotSha,
+            failures,
+          }
+          fs.writeFileSync('evidence/gate.json', JSON.stringify(summary, null, 2))
+          console.log(JSON.stringify(summary, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable rollback evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-opportunity-kebab-rollback-65bd7345
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30

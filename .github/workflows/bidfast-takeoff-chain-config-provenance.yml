@@ -1,0 +1,106 @@
+name: BIDFAST Takeoff Chain Config Provenance
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/bidfast-takeoff-chain-config-provenance.yml'
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-takeoff-chain-config-provenance.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-takeoff-chain-config-provenance-9ea40af
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: 9ea40afc8cb67b76849d0f75f02c8baf37c05340
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  BIDFAST_EXPECTED_SUPABASE_PROJECT_REF: mhaovpyegtysfgualplu
+
+jobs:
+  provenance:
+    name: Exact takeoff-chain revision and Supabase project provenance
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    steps:
+      - name: Capture exact preview configuration provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/config
+          endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-config-provenance?expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          revision_observed=false
+          for attempt in $(seq 1 15); do
+            status="$(curl -sS --max-time 120 -o evidence/config/provenance.json -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/config/provenance.http-status.txt
+            commit="$(node -e "try{const j=require('./evidence/config/provenance.json');process.stdout.write(String(j.source_revision?.commit_sha||''))}catch{}")"
+            echo "attempt=${attempt} status=${status:-none} commit=${commit:-unknown}"
+            if [[ "$commit" == "$BIDFAST_EXPECTED_COMMIT" ]]; then
+              revision_observed=true
+              break
+            fi
+            if [[ "$attempt" != "15" ]]; then sleep 20; fi
+          done
+          test "$revision_observed" = true
+
+      - name: Enforce governed project and sanitized provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const body = JSON.parse(fs.readFileSync('evidence/config/provenance.json', 'utf8'))
+          const expectedCommit = process.env.BIDFAST_EXPECTED_COMMIT
+          const expectedRef = process.env.BIDFAST_EXPECTED_REF
+          const expectedProject = process.env.BIDFAST_EXPECTED_SUPABASE_PROJECT_REF
+          const failures = []
+
+          if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
+          if (body.provenance_pass !== true) failures.push(`provenance_pass=${String(body.provenance_pass)}`)
+          if (body.configuration_pass !== true) failures.push(`configuration_pass=${String(body.configuration_pass)}`)
+          if (body.source_revision?.commit_sha !== expectedCommit) failures.push(`commit=${String(body.source_revision?.commit_sha)}`)
+          if (body.source_revision?.commit_ref !== expectedRef) failures.push(`ref=${String(body.source_revision?.commit_ref)}`)
+          if (body.health?.configuration?.project_ref !== expectedProject) failures.push(`project_ref=${String(body.health?.configuration?.project_ref)}`)
+          if (body.health?.configuration?.expected_project_ref !== expectedProject) failures.push(`expected_project_ref=${String(body.health?.configuration?.expected_project_ref)}`)
+          if (body.health?.source?.supabase_url !== 'environment') failures.push(`url_source=${String(body.health?.source?.supabase_url)}`)
+          if (body.health?.source?.supabase_publishable_key !== 'environment') failures.push(`key_source=${String(body.health?.source?.supabase_publishable_key)}`)
+
+          const summary = {
+            application_commit: expectedCommit,
+            application_ref: expectedRef,
+            rollback_commit: 'abe2659c04c4e4ef4c51aaa2db9c8985b4aafb10',
+            candidate_change: 'tenant-bound Document -> Takeoff chain validation plus same-transaction project advancement and no-regression guard; no rendered UI or CSS change',
+            expected_supabase_project_ref: expectedProject,
+            actual_supabase_project_ref: body.health?.configuration?.project_ref || null,
+            configuration_source: body.health?.source || null,
+            failures,
+            provenance_pass: failures.length === 0,
+            route_matrix_executed: false,
+            operational_matrix_executed: false,
+            release_authorized: false,
+            production_promotion_authorized: false
+          }
+
+          fs.writeFileSync('evidence/config/summary.json', JSON.stringify(summary, null, 2) + '\n')
+          console.log(JSON.stringify(summary, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-takeoff-chain-config-provenance-9ea40af
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30
