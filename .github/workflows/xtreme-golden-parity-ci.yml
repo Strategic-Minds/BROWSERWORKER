@@ -11,6 +11,8 @@ on:
       - 'lib/visual.ts'
       - 'lib/audits.ts'
       - 'tests/visual-parity-schema.test.ts'
+      - 'package.json'
+      - 'package-lock.json'
       - '.github/workflows/xtreme-golden-parity-ci.yml'
 
 permissions:
@@ -24,9 +26,17 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
-      - run: npm ci
+      - name: Resolve dependencies and refresh candidate lockfile
+        run: npm install --no-audit --no-fund
       - run: npm run type-check
       - run: npm test -- --runInBand
       - run: npm run build
+      - name: Upload refreshed lockfile
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browserworker-golden-package-lock
+          path: package-lock.json
+          retention-days: 1
