@@ -1,0 +1,104 @@
+name: BIDFAST Supabase Config Provenance Current Head cffc151
+
+on:
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-supabase-config-provenance-current-head-cffc151.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-supabase-config-provenance-current-head-cffc151
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: cffc151bd0b9bf18a216d324781cf97c0896324c
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  BIDFAST_EXPECTED_SUPABASE_PROJECT_REF: mhaovpyegtysfgualplu
+
+jobs:
+  governed-config-proof:
+    name: Current-head governed Supabase configuration provenance
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Capture exact current-head configuration provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/config
+          endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-config-provenance?expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          accepted=false
+          for attempt in $(seq 1 12); do
+            status="$(curl -sS --max-time 120 -o evidence/config/provenance.json -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/config/provenance.http-status.txt
+            commit="$(node -e "try{const j=require('./evidence/config/provenance.json');process.stdout.write(String(j.source_revision?.commit_sha||''))}catch{}")"
+            if { [[ "$status" == "200" ]] || [[ "$status" == "409" ]]; } && [[ "$commit" == "$BIDFAST_EXPECTED_COMMIT" ]]; then
+              accepted=true
+              break
+            fi
+            echo "config attempt=${attempt} status=${status:-none} commit=${commit:-unknown}"
+            if [[ "$attempt" != "12" ]]; then sleep 15; fi
+          done
+          test "$accepted" = true
+
+      - name: Enforce provenance and governed Supabase configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const expectedCommit = process.env.BIDFAST_EXPECTED_COMMIT
+          const expectedRef = process.env.BIDFAST_EXPECTED_REF
+          const expectedProjectRef = process.env.BIDFAST_EXPECTED_SUPABASE_PROJECT_REF
+          const body = JSON.parse(fs.readFileSync('evidence/config/provenance.json', 'utf8'))
+          const failures = []
+
+          if (body.provenance_pass !== true) failures.push(`provenance_pass=${String(body.provenance_pass)}`)
+          if (body.source_revision?.commit_sha !== expectedCommit) failures.push(`commit=${String(body.source_revision?.commit_sha)}`)
+          if (body.source_revision?.commit_ref !== expectedRef) failures.push(`ref=${String(body.source_revision?.commit_ref)}`)
+          if (body.expected?.commit_sha !== expectedCommit) failures.push(`expected_commit=${String(body.expected?.commit_sha)}`)
+          if (body.expected?.commit_ref !== expectedRef) failures.push(`expected_ref=${String(body.expected?.commit_ref)}`)
+          if (body.expected?.supabase_project_ref !== expectedProjectRef) failures.push(`expected_supabase_project_ref=${String(body.expected?.supabase_project_ref)}`)
+          if (body.health?.configuration?.expected_project_ref !== expectedProjectRef) failures.push(`health_expected_project_ref=${String(body.health?.configuration?.expected_project_ref)}`)
+          if (body.health?.source?.supabase_url !== 'environment') failures.push(`supabase_url_source=${String(body.health?.source?.supabase_url)}`)
+          if (body.health?.source?.supabase_publishable_key !== 'environment') failures.push(`supabase_publishable_key_source=${String(body.health?.source?.supabase_publishable_key)}`)
+          if (body.health?.configuration?.project_ref !== expectedProjectRef) failures.push(`project_ref=${String(body.health?.configuration?.project_ref)}`)
+          if (body.configuration_pass !== true) failures.push(`configuration_pass=${String(body.configuration_pass)}`)
+          if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
+
+          const summary = {
+            application_commit: expectedCommit,
+            application_ref: expectedRef,
+            deployment_id: body.source_revision?.deployment_id || null,
+            deployment_url: body.source_revision?.deployment_url || null,
+            provenance_pass: body.provenance_pass === true,
+            configuration_pass: body.configuration_pass === true,
+            expected_supabase_project_ref: expectedProjectRef,
+            actual_supabase_project_ref: body.health?.configuration?.project_ref || null,
+            supabase_url_source: body.health?.source?.supabase_url || null,
+            supabase_publishable_key_source: body.health?.source?.supabase_publishable_key || null,
+            endpoint_failures: Array.isArray(body.failures) ? body.failures : [],
+            enforcement_failures: failures,
+            release_authorized: false,
+            production_promotion_authorized: false,
+          }
+          fs.writeFileSync('evidence/bidfast-supabase-config-provenance-current-head-cffc151-summary.json', JSON.stringify(summary, null, 2) + '\n')
+          console.log(JSON.stringify(summary, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-supabase-config-provenance-current-head-cffc151
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30
