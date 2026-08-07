@@ -52,6 +52,47 @@ export const StepSchema = z.discriminatedUnion('action', [
 
 export type Step = z.infer<typeof StepSchema>;
 
+export const VisualRegionSchema = z.object({
+  name: z.string().min(1).max(80),
+  selector: z.string().min(1).max(500).optional(),
+  x: z.number().min(0).optional(),
+  y: z.number().min(0).optional(),
+  width: z.number().positive().optional(),
+  height: z.number().positive().optional(),
+  normalized: z.boolean().default(false),
+  threshold_percent: z.number().min(0).max(100).default(0.5),
+  critical: z.boolean().default(true),
+}).superRefine((value, ctx) => {
+  const hasBox = value.x !== undefined && value.y !== undefined && value.width !== undefined && value.height !== undefined;
+  if (!value.selector && !hasBox) ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Visual region requires selector or complete x/y/width/height box' });
+  if (value.normalized && hasBox && ((value.x ?? 0) > 1 || (value.y ?? 0) > 1 || (value.width ?? 0) > 1 || (value.height ?? 0) > 1)) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Normalized region coordinates must be between 0 and 1' });
+  }
+});
+
+export const VisualParitySchema = z.object({
+  reference_id: z.string().min(1).max(200),
+  reference_url: z.string().url(),
+  mode: z.enum(['exact', 'scale-reference']).default('exact'),
+  mismatch_threshold_percent: z.number().min(0).max(100).default(0.5),
+  pixel_threshold: z.number().int().min(0).max(255).default(24),
+  full_page: z.boolean().default(false),
+  wait_ms: z.number().int().min(0).max(10000).default(500),
+  wait_for_fonts: z.boolean().default(true),
+  disable_animations: z.boolean().default(true),
+  mask_selectors: z.array(z.string().min(1).max(500)).max(20).default([]),
+  regions: z.array(VisualRegionSchema).max(20).default([]),
+});
+
+export type VisualParitySpec = z.infer<typeof VisualParitySchema>;
+
+export const OperationalParitySchema = z.object({
+  contract_id: z.string().min(1).max(200),
+  case_id: z.string().min(1).max(200),
+  require_console_zero: z.boolean().default(true),
+  require_network_zero: z.boolean().default(true),
+}).optional();
+
 const MAX_STEPS = parseInt(process.env.BROWSER_MAX_STEPS || '25', 10);
 const MAX_RUNTIME_MS = parseInt(process.env.BROWSER_MAX_RUNTIME_MS || '120000', 10);
 
@@ -65,7 +106,19 @@ export const JobRequestSchema = z.object({
   timeout_ms: z.number().int().min(1000).max(MAX_RUNTIME_MS).default(60000),
   capture: CaptureSchema,
   steps: z.array(StepSchema).max(MAX_STEPS).optional().default([]),
-  type: z.enum(['launch-check', 'website-generator-proof', 'generated-site-validation']).optional(),
+  type: z.enum(['launch-check', 'website-generator-proof', 'generated-site-validation', 'visual-parity', 'operational-parity']).optional(),
+  visual: VisualParitySchema.optional(),
+  operational: OperationalParitySchema,
+}).superRefine((job, ctx) => {
+  if (job.type === 'visual-parity' && !job.visual) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['visual'], message: 'visual-parity job requires visual contract' });
+  }
+  if (job.type === 'operational-parity' && !job.operational) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['operational'], message: 'operational-parity job requires operational contract' });
+  }
+  if (job.type !== 'launch-check' && !job.url) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['url'], message: 'url is required for this job type' });
+  }
 });
 
 export type JobRequest = z.infer<typeof JobRequestSchema>;
@@ -99,7 +152,10 @@ export const ReceiptSchema = z.object({
     screenshots: z.array(z.string()),
     console_errors: z.array(z.string()),
     network_errors: z.array(z.string()),
+    diff_images: z.array(z.string()).optional(),
   }),
+  visual: z.unknown().optional(),
+  operational: z.unknown().optional(),
   errors: z.array(z.string()),
   warnings: z.array(z.string()),
   receipt_id: z.string(),
