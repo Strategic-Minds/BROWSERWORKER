@@ -5,9 +5,11 @@ import { JobRequestSchema } from '@/lib/schemas';
 import { launchBrowser, closeBrowser, WORKER_VERSION } from '@/lib/browser';
 import { executeStep } from '@/lib/actions';
 import { runVisualParity } from '@/lib/visual';
+import { runAccessibilityAudit, runResponsiveAudit } from '@/lib/audits';
 import { acquireSlot, releaseSlot } from '@/lib/concurrency';
 import type { Captures } from '@/lib/actions';
 import type { VisualParityResult } from '@/lib/visual';
+import type { AccessibilityAudit, ResponsiveAudit } from '@/lib/audits';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -92,6 +94,8 @@ export async function POST(request: Request) {
   let browserVersion = 'unknown';
   let finalUrl = job.url ?? '';
   let visualResult: VisualParityResult | undefined;
+  let accessibilityAudit: AccessibilityAudit | undefined;
+  let responsiveAudit: ResponsiveAudit | undefined;
   let operationalResult: Record<string, unknown> | undefined;
   type JobStatus = 'pass' | 'warn' | 'fail' | 'blocked';
   let overallStatus: JobStatus = 'pass';
@@ -193,16 +197,31 @@ export async function POST(request: Request) {
       }
     }
 
+    if (!stepFailed && (job.type === 'visual-parity' || job.type === 'operational-parity')) {
+      accessibilityAudit = await runAccessibilityAudit(page);
+      responsiveAudit = await runResponsiveAudit(page);
+      if (!accessibilityAudit.pass) {
+        stepFailed = true;
+        errors.push(`Accessibility parity failed: ${accessibilityAudit.violations.join('; ')}`);
+      }
+      if (!responsiveAudit.pass) {
+        stepFailed = true;
+        errors.push(`Responsive parity failed: overflow=${responsiveAudit.horizontal_overflow_px}px small_touch_targets=${responsiveAudit.small_touch_target_count}`);
+      }
+    }
+
     if (job.type === 'operational-parity' && job.operational) {
       const consolePass = !job.operational.require_console_zero || captures.consoleErrors.length === 0;
       const networkPass = !job.operational.require_network_zero || captures.networkErrors.length === 0;
-      const pass = !stepFailed && consolePass && networkPass;
+      const pass = !stepFailed && consolePass && networkPass && Boolean(accessibilityAudit?.pass) && Boolean(responsiveAudit?.pass);
       operationalResult = {
         contract_id: job.operational.contract_id,
         case_id: job.operational.case_id,
         steps_pass: !stepFailed,
         console_pass: consolePass,
         network_pass: networkPass,
+        accessibility_pass: Boolean(accessibilityAudit?.pass),
+        responsive_pass: Boolean(responsiveAudit?.pass),
         console_error_count: captures.consoleErrors.length,
         network_error_count: captures.networkErrors.length,
         pass,
@@ -266,6 +285,7 @@ export async function POST(request: Request) {
       regions: visualResult.regions,
     } : undefined,
     operational: operationalResult,
+    audits: { accessibility: accessibilityAudit, responsive: responsiveAudit },
     errors,
     warnings,
     rollback: [],
