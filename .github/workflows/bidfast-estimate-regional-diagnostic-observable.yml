@@ -63,14 +63,29 @@ jobs:
           test "$parity_status" = "200" -o "$parity_status" = "409"
           test "$regions_status" = "200"
 
+      - name: Capture implemented live screenshot evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          screenshot_url="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=%2Festimates%2Fnew&theme=light&viewport=mobile&format=image"
+          screenshot_status="$(curl -sS --retry 2 --retry-all-errors --max-time 180 -D evidence/estimate-live.headers.txt -o evidence/estimate-live.png -w '%{http_code}' "$screenshot_url" || true)"
+          printf '%s\n' "$screenshot_status" > evidence/estimate-live.http-status.txt
+          test "$screenshot_status" = "200"
+          test -s evidence/estimate-live.png
+          file evidence/estimate-live.png | tee evidence/estimate-live.file.txt
+          sha256sum evidence/estimate-live.png | tee evidence/estimate-live.sha256.txt
+
       - name: Enforce retained floor, exact provenance, integrity, and zero-error gates
         shell: bash
         run: |
           set -euo pipefail
           node - <<'NODE'
+          const crypto = require('node:crypto')
           const fs = require('node:fs')
           const parity = JSON.parse(fs.readFileSync('evidence/estimate-parity.json', 'utf8'))
           const regions = JSON.parse(fs.readFileSync('evidence/estimate-regions.json', 'utf8'))
+          const liveBytes = fs.readFileSync('evidence/estimate-live.png')
+          const liveSha = crypto.createHash('sha256').update(liveBytes).digest('hex')
           const failures = []
           const score = Number(parity?.metrics?.composite_score)
           const floor = Number(process.env.RETAINED_ROUTE_FLOOR)
@@ -84,6 +99,7 @@ jobs:
           if (parity?.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`parity commit=${String(parity?.source_revision?.commit_sha)}`)
           if (parity?.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`parity ref=${String(parity?.source_revision?.commit_ref)}`)
           if (parity?.reference?.sha256 !== process.env.REFERENCE_SHA256) failures.push(`parity reference=${String(parity?.reference?.sha256)}`)
+          if (liveSha !== parity?.live?.sha256) failures.push(`live screenshot sha=${liveSha} expected=${String(parity?.live?.sha256)}`)
           for (const key of ['console_errors','app_network_errors','http_errors']) if (!Array.isArray(parity[key]) || parity[key].length) failures.push(`parity ${key}=${JSON.stringify(parity[key])}`)
           if (regions.ok !== true || regions.diagnostic_pass !== true || regions.diagnostic_only !== true || regions.release_authorized !== false) failures.push('regional diagnostic state invalid')
           if (regions.validator_version !== 'estimate-regions-v1') failures.push(`validator=${String(regions.validator_version)}`)
@@ -104,6 +120,7 @@ jobs:
             release_threshold_pass: Number.isFinite(score) && score >= release,
             reference: parity.reference,
             source_revision: parity.source_revision,
+            live_screenshot_sha256: liveSha,
             parity_metrics: parity.metrics,
             regional_overall: regions?.analysis?.overall,
             regions: ordered,
