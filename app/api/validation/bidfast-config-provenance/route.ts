@@ -103,7 +103,17 @@ export async function GET(request: Request) {
     if (health.body.source?.supabase_url !== 'environment') failures.push(`supabase_url_source=${String(health.body.source?.supabase_url)}`)
     if (health.body.source?.supabase_publishable_key !== 'environment') failures.push(`supabase_publishable_key_source=${String(health.body.source?.supabase_publishable_key)}`)
 
-    const provenancePass = failures.filter(failure => failure.includes('commit') || failure.includes('ref=') || failure.includes('deployment') || failure.includes('build_info')).length === 0
+    const provenancePass = failures.filter(failure =>
+      failure.startsWith('before_build_info_status=') ||
+      failure.startsWith('after_build_info_status=') ||
+      failure.startsWith('before_commit=') ||
+      failure.startsWith('before_ref=') ||
+      failure.startsWith('after_commit=') ||
+      failure.startsWith('after_ref=') ||
+      failure === 'commit_changed_during_validation' ||
+      failure === 'deployment_changed_during_validation' ||
+      failure === 'deployment_url_changed_during_validation'
+    ).length === 0
     const configurationPass = failures.length === 0
 
     return Response.json({
