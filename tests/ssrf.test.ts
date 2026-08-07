@@ -1,68 +1,80 @@
-import { validateUrl } from '../lib/ssrf';
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { validateUrl } from '../lib/ssrf.ts';
 
-describe('SSRF Protection', () => {
-  test('allows public HTTPS URLs', () => {
-    expect(validateUrl('https://www.autobuilderos.com').ok).toBe(true);
-    expect(validateUrl('https://example.com').ok).toBe(true);
-  });
+function clearAllowlist() {
+  delete process.env.BROWSER_ALLOWED_HOSTS;
+  delete process.env.BROWSER_STRICT_ALLOWLIST;
+}
 
-  test('blocks localhost', () => {
-    expect(validateUrl('http://localhost').ok).toBe(false);
-    expect(validateUrl('http://localhost:3000').ok).toBe(false);
-  });
+test('allows public HTTPS URLs', () => {
+  assert.equal(validateUrl('https://www.autobuilderos.com').ok, true);
+  assert.equal(validateUrl('https://example.com').ok, true);
+});
 
-  test('blocks 127.x.x.x', () => {
-    expect(validateUrl('http://127.0.0.1').ok).toBe(false);
-    expect(validateUrl('http://127.1.2.3:8080/api').ok).toBe(false);
-  });
+test('blocks localhost', () => {
+  assert.equal(validateUrl('http://localhost').ok, false);
+  assert.equal(validateUrl('http://localhost:3000').ok, false);
+});
 
-  test('blocks cloud metadata IP', () => {
-    expect(validateUrl('http://169.254.169.254').ok).toBe(false);
-    expect(validateUrl('http://169.254.169.254/latest/meta-data/').ok).toBe(false);
-  });
+test('blocks 127.x.x.x', () => {
+  assert.equal(validateUrl('http://127.0.0.1').ok, false);
+  assert.equal(validateUrl('http://127.1.2.3:8080/api').ok, false);
+});
 
-  test('blocks metadata.google.internal', () => {
-    expect(validateUrl('http://metadata.google.internal').ok).toBe(false);
-  });
+test('blocks cloud metadata IP', () => {
+  assert.equal(validateUrl('http://169.254.169.254').ok, false);
+  assert.equal(validateUrl('http://169.254.169.254/latest/meta-data/').ok, false);
+});
 
-  test('blocks private ranges', () => {
-    expect(validateUrl('http://10.0.0.1').ok).toBe(false);
-    expect(validateUrl('http://192.168.1.1').ok).toBe(false);
-    expect(validateUrl('http://172.16.0.1').ok).toBe(false);
-  });
+test('blocks metadata.google.internal', () => {
+  assert.equal(validateUrl('http://metadata.google.internal').ok, false);
+});
 
-  test('blocks bad schemes', () => {
-    expect(validateUrl('file:///etc/passwd').ok).toBe(false);
-    expect(validateUrl('javascript:alert(1)').ok).toBe(false);
-    expect(validateUrl('data:text/html,<h1>hi</h1>').ok).toBe(false);
-  });
+test('blocks private ranges', () => {
+  assert.equal(validateUrl('http://10.0.0.1').ok, false);
+  assert.equal(validateUrl('http://192.168.1.1').ok, false);
+  assert.equal(validateUrl('http://172.16.0.1').ok, false);
+});
 
-  test('blocks embedded credentials', () => {
-    expect(validateUrl('https://user:pass@example.com').ok).toBe(false);
-  });
+test('blocks bad schemes', () => {
+  assert.equal(validateUrl('file:///etc/passwd').ok, false);
+  assert.equal(validateUrl('javascript:alert(1)').ok, false);
+  assert.equal(validateUrl('data:text/html,<h1>hi</h1>').ok, false);
+});
 
-  test('returns SSRF_BLOCKED code for blocked IPs', () => {
-    const result = validateUrl('http://127.0.0.1');
-    expect(result.code).toBe('SSRF_BLOCKED');
-  });
+test('blocks embedded credentials', () => {
+  assert.equal(validateUrl('https://user:pass@example.com').ok, false);
+});
 
-  test('rejects invalid URL format', () => {
-    expect(validateUrl('not-a-url').ok).toBe(false);
-    expect(validateUrl('').ok).toBe(false);
-  });
-  test('ignores a configured allowlist unless strict mode is enabled', () => {
-    process.env.BROWSER_ALLOWED_HOSTS = 'www.autobuilderos.com';
-    delete process.env.BROWSER_STRICT_ALLOWLIST;
-    expect(validateUrl('https://example.com').ok).toBe(true);
-    delete process.env.BROWSER_ALLOWED_HOSTS;
-  });
+test('returns SSRF_BLOCKED code for blocked IPs', () => {
+  const result = validateUrl('http://127.0.0.1');
+  assert.equal(result.code, 'SSRF_BLOCKED');
+});
 
-  test('enforces the allowlist only in explicit strict mode', () => {
-    process.env.BROWSER_ALLOWED_HOSTS = 'www.autobuilderos.com';
-    process.env.BROWSER_STRICT_ALLOWLIST = 'true';
-    expect(validateUrl('https://example.com').ok).toBe(false);
-    expect(validateUrl('https://www.autobuilderos.com').ok).toBe(true);
-    delete process.env.BROWSER_ALLOWED_HOSTS;
-    delete process.env.BROWSER_STRICT_ALLOWLIST;
-  });
+test('rejects invalid URL format', () => {
+  assert.equal(validateUrl('not-a-url').ok, false);
+  assert.equal(validateUrl('').ok, false);
+});
+
+test('ignores a configured allowlist unless strict mode is enabled', () => {
+  clearAllowlist();
+  Reflect.set(process.env, 'BROWSER_ALLOWED_HOSTS', 'www.autobuilderos.com');
+  try {
+    assert.equal(validateUrl('https://example.com').ok, true);
+  } finally {
+    clearAllowlist();
+  }
+});
+
+test('enforces the allowlist only in explicit strict mode', () => {
+  clearAllowlist();
+  Reflect.set(process.env, 'BROWSER_ALLOWED_HOSTS', 'www.autobuilderos.com');
+  Reflect.set(process.env, 'BROWSER_STRICT_ALLOWLIST', 'true');
+  try {
+    assert.equal(validateUrl('https://example.com').ok, false);
+    assert.equal(validateUrl('https://www.autobuilderos.com').ok, true);
+  } finally {
+    clearAllowlist();
+  }
 });

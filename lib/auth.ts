@@ -1,25 +1,27 @@
 import { timingSafeEqual } from 'node:crypto';
 
-const AUTHORIZED_SECRETS = [
-  process.env.BROWSER_WORKER_SECRET,
-  process.env.AUTO_BUILDER_OPERATOR_TOKEN,
-].filter((value): value is string => Boolean(value));
+function configuredSecrets(): string[] {
+  return [
+    process.env.BROWSER_WORKER_SECRET,
+    process.env.AUTO_BUILDER_OPERATOR_TOKEN,
+  ]
+    .map((value) => value?.trim() || '')
+    .filter((value, index, values) => Boolean(value) && values.indexOf(value) === index);
+}
 
-function safeEqual(candidate: string, expected: string) {
-  try {
-    const length = Math.max(candidate.length, expected.length);
-    const a = Buffer.alloc(length, 0);
-    const b = Buffer.alloc(length, 0);
-    Buffer.from(candidate).copy(a);
-    Buffer.from(expected).copy(b);
-    return timingSafeEqual(a, b) && candidate.length === expected.length;
-  } catch {
-    return false;
-  }
+function safeEquals(candidate: string, expected: string): boolean {
+  const size = Math.max(Buffer.byteLength(candidate), Buffer.byteLength(expected), 1);
+  const candidateBuffer = Buffer.alloc(size);
+  const expectedBuffer = Buffer.alloc(size);
+  Buffer.from(candidate).copy(candidateBuffer);
+  Buffer.from(expected).copy(expectedBuffer);
+  return timingSafeEqual(candidateBuffer, expectedBuffer)
+    && Buffer.byteLength(candidate) === Buffer.byteLength(expected);
 }
 
 export function verifyAuth(request: Request): { ok: boolean; error?: string; code?: string } {
-  if (!AUTHORIZED_SECRETS.length) {
+  const secrets = configuredSecrets();
+  if (secrets.length === 0) {
     return { ok: false, error: 'Worker authorization is not configured', code: 'AUTHENTICATION_FAILED' };
   }
 
@@ -40,11 +42,14 @@ export function verifyAuth(request: Request): { ok: boolean; error?: string; cod
     return { ok: false, error: 'Missing authorization', code: 'AUTHENTICATION_FAILED' };
   }
 
-  if (!AUTHORIZED_SECRETS.some((secret) => safeEqual(candidate, secret))) {
-    return { ok: false, error: 'Invalid credentials', code: 'AUTHENTICATION_FAILED' };
+  try {
+    if (!secrets.some((secret) => safeEquals(candidate, secret))) {
+      return { ok: false, error: 'Invalid credentials', code: 'AUTHENTICATION_FAILED' };
+    }
+    return { ok: true };
+  } catch {
+    return { ok: false, error: 'Auth error', code: 'AUTHENTICATION_FAILED' };
   }
-
-  return { ok: true };
 }
 
 export function authResponse(): Response {
