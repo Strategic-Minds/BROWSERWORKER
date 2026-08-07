@@ -1,0 +1,32 @@
+name: Xtreme Golden Parity CI
+
+on:
+  push:
+    branches:
+      - auto-builder/xtreme-golden-parity-20260807
+  pull_request:
+    paths:
+      - 'app/api/run/**'
+      - 'lib/schemas.ts'
+      - 'lib/visual.ts'
+      - 'lib/audits.ts'
+      - 'tests/visual-parity-schema.test.ts'
+      - '.github/workflows/xtreme-golden-parity-ci.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run type-check
+      - run: npm test -- --runInBand
+      - run: npm run build
