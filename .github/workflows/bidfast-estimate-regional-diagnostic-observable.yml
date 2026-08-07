@@ -1,0 +1,140 @@
+name: BIDFAST Estimate Regional Diagnostic Observable
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/bidfast-estimate-regional-diagnostic-observable.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-estimate-regional-diagnostic-observable
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: cffc151bd0b9bf18a216d324781cf97c0896324c
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  ROUTE: /estimates/new
+  RETAINED_ROUTE_FLOOR: '0.805620'
+  RELEASE_THRESHOLD: '0.990000'
+  REFERENCE_SHA256: 3b50c10978f4e4ba111eba5cdd5dc15bf76c73a653920955cca894ee07e5854b
+
+jobs:
+  diagnostic:
+    name: Observable revision-pinned estimate regional diagnostic
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Verify BrowserWorker and BIDFAST provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 20); do
+            worker_status="$(curl -sS -o /tmp/worker-health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            build_status="$(curl -sS -o /tmp/build-info.json -w '%{http_code}' --max-time 30 "${BIDFAST_ORIGIN}/api/build-info" || true)"
+            commit="$(node -e "try{const j=require('/tmp/build-info.json');process.stdout.write(String(j?.source_revision?.commit_sha||''))}catch{}")"
+            ref="$(node -e "try{const j=require('/tmp/build-info.json');process.stdout.write(String(j?.source_revision?.commit_ref||''))}catch{}")"
+            if [[ "$worker_status" == "200" && "$build_status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" && "$ref" == "$BIDFAST_EXPECTED_REF" ]]; then
+              exit 0
+            fi
+            echo "attempt=${attempt} worker=${worker_status:-none} build=${build_status:-none} commit=${commit:-unknown} ref=${ref:-unknown}"
+            sleep 15
+          done
+          cat /tmp/worker-health.json || true
+          cat /tmp/build-info.json || true
+          exit 1
+
+      - name: Execute exact-reference parity and regional diagnostics
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          parity_url="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-parity-v3?route=%2Festimates%2Fnew&expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          regions_url="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-estimate-regions?expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          parity_status="$(curl -sS --retry 2 --retry-all-errors --max-time 210 -o evidence/estimate-parity.json -w '%{http_code}' "$parity_url" || true)"
+          regions_status="$(curl -sS --retry 2 --retry-all-errors --max-time 210 -o evidence/estimate-regions.json -w '%{http_code}' "$regions_url" || true)"
+          printf '%s\n' "$parity_status" > evidence/estimate-parity.http-status.txt
+          printf '%s\n' "$regions_status" > evidence/estimate-regions.http-status.txt
+          test "$parity_status" = "200" -o "$parity_status" = "409"
+          test "$regions_status" = "200"
+
+      - name: Enforce retained floor, exact provenance, integrity, and zero-error gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const parity = JSON.parse(fs.readFileSync('evidence/estimate-parity.json', 'utf8'))
+          const regions = JSON.parse(fs.readFileSync('evidence/estimate-regions.json', 'utf8'))
+          const failures = []
+          const score = Number(parity?.metrics?.composite_score)
+          const floor = Number(process.env.RETAINED_ROUTE_FLOOR)
+          const release = Number(process.env.RELEASE_THRESHOLD)
+          if (!Number.isFinite(score)) failures.push('missing composite score')
+          else if (score < floor) failures.push(`REGRESSION composite=${score} floor=${floor}`)
+          if (parity.route !== process.env.ROUTE) failures.push(`parity route=${String(parity.route)}`)
+          if (parity.provenance_pass !== true) failures.push(`parity provenance=${String(parity.provenance_pass)}`)
+          if (parity.integrity_pass !== true) failures.push(`parity integrity=${String(parity.integrity_pass)}`)
+          if (parity.technical_pass !== true) failures.push(`parity technical=${String(parity.technical_pass)}`)
+          if (parity?.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`parity commit=${String(parity?.source_revision?.commit_sha)}`)
+          if (parity?.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`parity ref=${String(parity?.source_revision?.commit_ref)}`)
+          if (parity?.reference?.sha256 !== process.env.REFERENCE_SHA256) failures.push(`parity reference=${String(parity?.reference?.sha256)}`)
+          for (const key of ['console_errors','app_network_errors','http_errors']) if (!Array.isArray(parity[key]) || parity[key].length) failures.push(`parity ${key}=${JSON.stringify(parity[key])}`)
+          if (regions.ok !== true || regions.diagnostic_pass !== true || regions.diagnostic_only !== true || regions.release_authorized !== false) failures.push('regional diagnostic state invalid')
+          if (regions.validator_version !== 'estimate-regions-v1') failures.push(`validator=${String(regions.validator_version)}`)
+          if (regions.route !== process.env.ROUTE) failures.push(`regions route=${String(regions.route)}`)
+          if (regions.technical_pass !== true || regions.provenance_pass !== true) failures.push('regional technical/provenance failure')
+          if (regions?.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`regions commit=${String(regions?.source_revision?.commit_sha)}`)
+          if (regions?.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`regions ref=${String(regions?.source_revision?.commit_ref)}`)
+          if (regions?.reference?.sha256 !== process.env.REFERENCE_SHA256) failures.push(`regions reference=${String(regions?.reference?.sha256)}`)
+          if (!Array.isArray(regions?.analysis?.regions) || regions.analysis.regions.length !== 7) failures.push('expected seven regions')
+          for (const key of ['console_errors','app_network_errors','http_errors']) if (!Array.isArray(regions[key]) || regions[key].length) failures.push(`regions ${key}=${JSON.stringify(regions[key])}`)
+          const ordered = Array.isArray(regions?.analysis?.regions) ? regions.analysis.regions : []
+          const gate = {
+            route: process.env.ROUTE,
+            bidfast_commit: process.env.BIDFAST_EXPECTED_COMMIT,
+            retained_route_floor: floor,
+            release_threshold: release,
+            composite_score: score,
+            release_threshold_pass: Number.isFinite(score) && score >= release,
+            reference: parity.reference,
+            source_revision: parity.source_revision,
+            parity_metrics: parity.metrics,
+            regional_overall: regions?.analysis?.overall,
+            regions: ordered,
+            lowest_region: ordered[0] || null,
+            geometry: regions.geometry,
+            technical_pass: parity.technical_pass === true && regions.technical_pass === true,
+            provenance_pass: parity.provenance_pass === true && regions.provenance_pass === true,
+            integrity_pass: parity.integrity_pass === true,
+            console_error_count: (parity.console_errors || []).length + (regions.console_errors || []).length,
+            application_network_error_count: (parity.app_network_errors || []).length + (regions.app_network_errors || []).length,
+            http_error_count: (parity.http_errors || []).length + (regions.http_errors || []).length,
+            failures,
+            release_authorized: false,
+            production_promotion_authorized: false
+          }
+          fs.writeFileSync('evidence/gate.json', JSON.stringify(gate, null, 2))
+          console.log(JSON.stringify(gate, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable estimate diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-estimate-regional-diagnostic-observable-cffc151
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Keep release gate closed below 0.99
+        shell: bash
+        run: |
+          set -euo pipefail
+          node -e "const g=require('./evidence/gate.json'); if(g.release_threshold_pass!==true){console.error('release threshold not met'); process.exit(1)}"
