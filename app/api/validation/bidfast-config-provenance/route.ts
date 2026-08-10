@@ -4,7 +4,7 @@ export const maxDuration = 60
 
 const BIDFAST_ORIGIN = 'https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app'
 const EXPECTED_REF = 'auto-builder/bidfast-complete-visual-system'
-const EXPECTED_SUPABASE_PROJECT_REF = 'mhaovpyegtysfgualplu'
+const EXPECTED_SUPABASE_PROJECT_REF = 'azajysheebfhyzoyplpf'
 
 type SourceRevision = {
   commit_sha: string | null
