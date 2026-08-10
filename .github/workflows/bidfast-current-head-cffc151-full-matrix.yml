@@ -1,4 +1,4 @@
-name: BIDFAST Current Head cffc151 Full Matrix
+name: BIDFAST Current Head ba44a0a Full Matrix
 
 on:
   pull_request:
@@ -12,13 +12,13 @@ permissions:
   contents: read
 
 concurrency:
-  group: bidfast-current-head-cffc151-full-matrix
+  group: bidfast-current-head-ba44a0a-full-matrix
   cancel-in-progress: true
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
   BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: cffc151bd0b9bf18a216d324781cf97c0896324c
+  BIDFAST_EXPECTED_COMMIT: ba44a0a96bfebc0b4d812fa14c50f5679e3b7452
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   RELEASE_THRESHOLD: '0.99'
 
@@ -206,7 +206,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-current-head-cffc151-${{ strategy.job-index }}
+          name: bidfast-current-head-ba44a0a-${{ strategy.job-index }}
           path: evidence/
           if-no-files-found: error
           retention-days: 30
