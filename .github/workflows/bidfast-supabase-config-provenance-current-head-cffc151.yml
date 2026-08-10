@@ -19,7 +19,7 @@ env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
   BIDFAST_EXPECTED_COMMIT: cffc151bd0b9bf18a216d324781cf97c0896324c
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
-  BIDFAST_EXPECTED_SUPABASE_PROJECT_REF: mhaovpyegtysfgualplu
+  BIDFAST_EXPECTED_SUPABASE_PROJECT_REF: azajysheebfhyzoyplpf
 
 jobs:
   governed-config-proof:
