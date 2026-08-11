@@ -1,4 +1,4 @@
-name: BIDFAST Supabase Config Provenance Current Head ba44a0a
+name: BIDFAST Supabase Config Provenance Current Head 2bb97b7
 
 on:
   pull_request:
@@ -12,12 +12,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: bidfast-supabase-config-provenance-current-head-ba44a0a
+  group: bidfast-supabase-config-provenance-current-head-2bb97b7
   cancel-in-progress: true
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: ba44a0a96bfebc0b4d812fa14c50f5679e3b7452
+  BIDFAST_EXPECTED_COMMIT: 2bb97b7db98a858963b5f1b040a8e8f2448308a3
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
   BIDFAST_EXPECTED_SUPABASE_PROJECT_REF: azajysheebfhyzoyplpf
 
@@ -89,7 +89,7 @@ jobs:
             release_authorized: false,
             production_promotion_authorized: false,
           }
-          fs.writeFileSync('evidence/bidfast-supabase-config-provenance-current-head-ba44a0a-summary.json', JSON.stringify(summary, null, 2) + '\n')
+          fs.writeFileSync('evidence/bidfast-supabase-config-provenance-current-head-2bb97b7-summary.json', JSON.stringify(summary, null, 2) + '\n')
           console.log(JSON.stringify(summary, null, 2))
           if (failures.length) process.exit(1)
           NODE
@@ -98,7 +98,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-supabase-config-provenance-current-head-ba44a0a
+          name: bidfast-supabase-config-provenance-current-head-2bb97b7
           path: evidence/
           if-no-files-found: error
           retention-days: 30
