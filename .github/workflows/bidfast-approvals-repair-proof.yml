@@ -15,14 +15,14 @@ permissions:
   contents: read
 
 concurrency:
-  group: bidfast-approvals-geometry-8db9cb7
+  group: bidfast-approvals-geometry-2bb97b7
   cancel-in-progress: true
 
 env:
   BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
-  BIDFAST_EXPECTED_COMMIT: 8db9cb761944b0bddd713c43564721916e39d1c5
+  BIDFAST_EXPECTED_COMMIT: 2bb97b7db98a858963b5f1b040a8e8f2448308a3
   BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
-  RETAINED_BASELINE: '0.836456'
+  RETAINED_BASELINE: '0.859067'
   VISUAL_THRESHOLD: '0.99'
 
 jobs:
@@ -154,7 +154,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bidfast-approvals-geometry-proof-8db9cb7
+          name: bidfast-approvals-geometry-proof-2bb97b7
           path: evidence/
           if-no-files-found: error
           retention-days: 30
