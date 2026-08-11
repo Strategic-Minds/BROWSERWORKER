@@ -1,0 +1,21 @@
+{
+  "schema_version": "bidfast-blocker-receipt-v1",
+  "timestamp_utc": "2026-08-01T02:20:00Z",
+  "phase": "VALIDATION",
+  "repository": "XTREME-SYSTEMS/bidfast",
+  "branch": "auto-builder/bidfast-complete-visual-system",
+  "supabase_project_id": "azajysheebfhyzoyplpf",
+  "operation": "read-only aggregate counts across public.bidfast_organizations, public.bidfast_memberships, public.bidfast_opportunities, public.bidfast_projects, public.bidfast_documents, public.bidfast_takeoffs, public.bidfast_estimates, public.bidfast_proposals, public.bidfast_approvals, and public.bidfast_audit_logs",
+  "result": "BLOCKED_PERMISSION_DENIED",
+  "error_code": -32600,
+  "error_message": "You do not have permission to perform this action",
+  "database_mutation_performed": false,
+  "secrets_exposed": false,
+  "impact": [
+    "Account to Audit operational pass rate cannot be measured.",
+    "Cross-tenant denial cannot be tested.",
+    "Role authorization boundaries cannot be tested.",
+    "Trusted trigger-generated Audit evidence cannot be verified."
+  ],
+  "production_promotion": "LOCKED"
+}

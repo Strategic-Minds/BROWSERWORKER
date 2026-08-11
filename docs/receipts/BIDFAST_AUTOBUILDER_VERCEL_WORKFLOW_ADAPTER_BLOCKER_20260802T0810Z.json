@@ -1,0 +1,100 @@
+{
+  "receipt_type": "BIDFAST_AUTOBUILDER_VERCEL_WORKFLOW_ADAPTER_BLOCKER",
+  "captured_at_utc": "2026-08-02T08:10:31.940Z",
+  "status": "VALIDATION_DISPATCH_BLOCKED_NO_APPLICATION_MUTATION",
+  "governance": {
+    "production_locked": true,
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "production_mutated": false,
+    "database_mutated": false,
+    "application_code_mutated": false,
+    "full_screen_reference_substitution": false,
+    "hidden_real_ui": false,
+    "component_level_implementation_required": true
+  },
+  "repository_resolution": {
+    "requested_repository": "XTREME-AI-SYSTEMS/bidfast",
+    "canonical_repository": "XTREME-SYSTEMS/bidfast",
+    "github_repository_id": 1314440804,
+    "pull_request": 2,
+    "branch": "auto-builder/bidfast-complete-visual-system",
+    "head_commit": "a262d1aa6c5abcd9aff98fe6de259a87a7d4c1fd",
+    "pull_request_state": "open_draft_unmerged_non_mergeable"
+  },
+  "browserworker": {
+    "repository": "Strategic-Minds/BROWSERWORKER",
+    "pull_request": 9,
+    "branch": "auto-builder/bidfast-proof-20260728",
+    "prior_head_commit": "2469a1731f6cf719a74c689713098218c367e707",
+    "pull_request_state": "open_draft_unmerged_mergeable"
+  },
+  "retained_validation": {
+    "bidfast_commit": "a262d1aa6c5abcd9aff98fe6de259a87a7d4c1fd",
+    "deployment_id": "dpl_J9iMdn72pj2BVXUtKjqATT8fwEo3",
+    "deployment_url": "bidfast-6xgtsfq47-strategic-minds-advisory.vercel.app",
+    "latest_repeated_matrix_run": 30737211665,
+    "routes_total": 10,
+    "routes_at_release_threshold": 0,
+    "analytics_score": 0.830446,
+    "analytics_pixel_similarity": 0.949692,
+    "analytics_structure_similarity": 0.982749,
+    "analytics_edge_similarity": 0.272893,
+    "analytics_color_similarity": 0.979986,
+    "provenance_pass": true,
+    "integrity_pass": true,
+    "technical_pass": true,
+    "non_regression_pass": true,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "release_threshold": 0.99
+  },
+  "source_truth": {
+    "drive_file_id": "1MWcZn7eUYBHpy99t3Mtwwcg85xtOS5j0",
+    "title": "02_BIDFAST_MOBILE_ANALYTICS_KPI.png",
+    "reference_sha256": "5f8cba804e775ff9e774acdc8a9c92c2532dacd587fe3590c80fd8c24a42aef8",
+    "live_sha256": "9e568b80e048e42884a89420cde379383415da7baa80afd32e179e7e4fb504d5"
+  },
+  "supabase": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "public_bidfast_table_count": 0,
+    "account_to_audit_workflow_status": "BLOCKED_BY_MISSING_PUBLIC_BIDFAST_SCHEMA",
+    "mutation_performed": false
+  },
+  "autobuilder_dispatch": {
+    "job_id": "bidfast-analytics-header-microgeometry-20260802T0808Z",
+    "mode": "execute",
+    "target_system": "Vercel Workflow",
+    "action": "dispatch_bounded_feature_branch_repair",
+    "status": "accepted_but_validation_blocked",
+    "command_folder_id": "13uLhv0NRhmdCdJCCLrroLzyRRttoXtpr",
+    "receipt_id": "receipt_1785658231938",
+    "provider": "vercel workflow",
+    "provider_adapter_status": "NOT_IMPLEMENTED",
+    "routed_to": "manual_receipt",
+    "blocked_operations": [
+      {
+        "action": "deploy_preview",
+        "status": "blocked_by_policy"
+      }
+    ],
+    "planned_operations_executed": false,
+    "external_mutation_performed": false
+  },
+  "new_blockers": [
+    "AUTO BUILDER Vercel Workflow provider adapter is not implemented",
+    "The universal runner routed the bounded repair to manual-receipt fallback instead of executing it",
+    "deploy_preview is blocked by the current universal-runner policy",
+    "The canonical BIDFAST repository owner has changed from XTREME-AI-SYSTEMS to XTREME-SYSTEMS and future automation must use the canonical repository name"
+  ],
+  "remaining_blockers": [
+    "No approved route reaches 0.99 measured visual parity",
+    "The approved registry lacks complete light/dark multi-viewport pairs",
+    "public.bidfast_* table count is 0",
+    "Native BIDFAST workflow runs remain absent for a262d1aa",
+    "BIDFAST PR #2 remains draft and non-mergeable",
+    "Direct Vercel connector access cannot resolve deployment dpl_J9iMdn72pj2BVXUtKjqATT8fwEo3 in the connected Xtreme-AI-Systems team scope"
+  ],
+  "next_action": "Implement or authorize the Vercel Workflow provider adapter for governed feature-branch preview dispatch. Do not mutate BIDFAST application code until the adapter can emit execution, deployment, validation and rollback receipts."
+}

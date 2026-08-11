@@ -1,0 +1,148 @@
+{
+  "receipt_type": "BIDFAST_MEMBERSHIP_AUTHORITY_CONFIG_PROVENANCE_MISMATCH_BLOCKED",
+  "created_at": "2026-08-05T23:07:25Z",
+  "phase": "VALIDATE",
+  "step": "consume exact-revision membership-authority provenance evidence, preserve its immutable digest, and keep schema, route, operational, merge, and production gates closed",
+  "inspection": {
+    "latest_receipt": "docs/receipts/BIDFAST_ACCOUNT_STATUS_CONFIG_PROVENANCE_MISMATCH_BLOCKED_20260805T2001Z.json",
+    "latest_receipt_inspected": true,
+    "bidfast_repository_requested": "XTREME-AI-SYSTEMS/bidfast",
+    "bidfast_repository_resolved": "XTREME-SYSTEMS/bidfast",
+    "bidfast_pull_request": 2,
+    "bidfast_branch": "auto-builder/bidfast-complete-visual-system",
+    "bidfast_head": "be2ac0328c4e903aed05f4a4b075e3e197bac123",
+    "bidfast_diff_inspected_before_change": true,
+    "bidfast_delta_base": "5b60dac9ee64537ab62dad519aa11a3e64b09191",
+    "bidfast_delta_commits": 5,
+    "bidfast_delta_files": [
+      "package.json",
+      "scripts/check-bidfast-membership-authority-governance.mjs",
+      "supabase/migrations/202608051805_harden_bidfast_membership_authority.sql"
+    ],
+    "browserworker_repository": "Strategic-Minds/BROWSERWORKER",
+    "browserworker_pull_request": 9,
+    "browserworker_branch": "auto-builder/bidfast-proof-20260728",
+    "browserworker_head_before_receipt": "53c697cdb8b902107fe27d41e57febd6f36435c2",
+    "browserworker_diff_inspected_before_change": true,
+    "browserworker_delta_base": "ed5dcb93cea231a0413b6c3f138fd451e8e4d5cd",
+    "browserworker_delta_commits": 2,
+    "browserworker_delta_files": [
+      ".github/workflows/bidfast-workflow-role-config-provenance.yml"
+    ],
+    "approved_drive_reference": {
+      "name": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+      "drive_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+      "mime_type": "image/png"
+    }
+  },
+  "application_preview": {
+    "commit": "be2ac0328c4e903aed05f4a4b075e3e197bac123",
+    "commit_ref": "auto-builder/bidfast-complete-visual-system",
+    "deployment_reference": "G29b7FdHMn2a7qYvaaGk49oiaAFj",
+    "deployment_id": "dpl_G29b7FdHMn2a7qYvaaGk49oiaAFj",
+    "deployment_url": "bidfast-jfkj30a0g-strategic-minds-advisory.vercel.app",
+    "vercel_check": "success",
+    "exact_revision_observed": true
+  },
+  "browserworker_preview": {
+    "commit": "53c697cdb8b902107fe27d41e57febd6f36435c2",
+    "deployment_reference": "DLiTqz1vuBuiQXRx2wAdeYZLNvgh",
+    "vercel_check": "success"
+  },
+  "provenance_execution": {
+    "workflow_run_id": 31051697068,
+    "workflow_job_id": 92460099377,
+    "workflow_conclusion": "failure",
+    "failed_step": "Verify exact Supabase configuration provenance",
+    "route_matrix_executed": false,
+    "operational_matrix_executed": false,
+    "http_status": 409,
+    "configuration_pass": false,
+    "provenance_pass": false,
+    "attempts": 15,
+    "artifact": {
+      "id": 8948758251,
+      "name": "bidfast-membership-authority-config-provenance-be2ac03",
+      "sha256": "8aa637f5a95502617fc9029f76b0baea412d2a029f53ef00ae4f7aa189bb1ec8",
+      "size_bytes": 758,
+      "download_verified": true,
+      "expires_at": "2026-09-04T22:15:32Z"
+    }
+  },
+  "configuration_evidence": {
+    "expected_supabase_project_ref": "mhaovpyegtysfgualplu",
+    "observed_supabase_project_ref": "prhppuuwcnmfdhwsagug",
+    "supabase_url_configured": true,
+    "supabase_publishable_key_configured": true,
+    "supabase_project_ref_detected": true,
+    "supabase_project_ref_matches_expected": false,
+    "health_status": 503,
+    "failures": [
+      "health_status=503",
+      "health_ok=false",
+      "supabase_project_ref_mismatch",
+      "project_ref=prhppuuwcnmfdhwsagug"
+    ]
+  },
+  "governed_supabase_catalog": {
+    "project_ref": "mhaovpyegtysfgualplu",
+    "fresh_inspection_attempted": true,
+    "fresh_inspection_result": "permission_denied",
+    "retained_last_verified_state_from_latest_receipt": {
+      "public_bidfast_table_count": 0,
+      "public_bidfast_function_count": 0,
+      "public_autobid_table_count": 44,
+      "takeoff_documents_bucket_count": 0,
+      "related_storage_policy_count": 0
+    },
+    "database_mutated": false
+  },
+  "retained_visual_evidence": {
+    "new_score_claimed": false,
+    "dashboard_score": 0.837024,
+    "routes_technically_passed": 10,
+    "routes_total": 10,
+    "routes_reaching_0_99": 0,
+    "console_error_count": 0,
+    "application_network_error_count": 0,
+    "http_error_count": 0,
+    "operational_pass_rate": null
+  },
+  "constraints": {
+    "application_code_changed": false,
+    "validation_thresholds_changed": false,
+    "tests_weakened": false,
+    "screenshot_substitution_used": false,
+    "real_components_hidden": false,
+    "approved_reference_modified": false,
+    "secrets_changed": false,
+    "vercel_environment_changed": false,
+    "database_mutated": false,
+    "merged": false,
+    "production_changed": false
+  },
+  "decision": {
+    "candidate_retained": true,
+    "configuration_gate_passed": false,
+    "schema_gate_passed": false,
+    "visual_acceptance_complete": false,
+    "operational_acceptance_complete": false,
+    "release_authorized": false,
+    "production_promotion_authorized": false
+  },
+  "remaining_blockers": [
+    "The exact BIDFAST preview is configured for Supabase project prhppuuwcnmfdhwsagug instead of governed project mhaovpyegtysfgualplu.",
+    "Fresh governed Supabase catalog inspection is blocked by connector permission denial; the last verified catalog remains zero public.bidfast_* entities and zero required document-storage controls.",
+    "The membership-authority migration remains unapplied, unrolled back, and untested in an isolated Supabase environment.",
+    "The owner, admin, member, inactive-account, self-promotion, tenant-transfer, tenant-isolation, audit, and rollback matrices remain unexecuted.",
+    "The complete Account to Organization to Opportunity to Project to Document to Takeoff to Estimate to Proposal to Approval to Audit workflow remains unverified.",
+    "No approved route reaches measured parity 0.99 and complete approved light and dark multi-viewport reference coverage remains incomplete."
+  ],
+  "rollback": {
+    "browserworker_receipt": "Revert the commit that introduced this receipt file.",
+    "bidfast": "Return the BIDFAST branch to 5b60dac9ee64537ab62dad519aa11a3e64b09191 if the membership-authority candidate must be removed.",
+    "database": "No rollback required because no database mutation occurred.",
+    "environment": "No rollback required because no environment value changed.",
+    "production": "No rollback required because production was not changed."
+  }
+}

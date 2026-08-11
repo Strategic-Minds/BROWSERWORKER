@@ -1,0 +1,133 @@
+{
+  "receipt_type": "BIDFAST_APPROVALS_MICROGEOMETRY_CANDIDATE",
+  "captured_at_utc": "2026-08-02T14:13:00Z",
+  "status": "SINGLE_ROUTE_STRICT_IMPROVEMENT_PASS_FULL_MATRIX_PENDING_RELEASE_BLOCKED",
+  "governance": {
+    "production_locked": true,
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "production_mutated": false,
+    "database_mutated": false,
+    "full_screen_reference_substitution": false,
+    "hidden_real_ui": false,
+    "component_level_implementation_preserved": true,
+    "candidate_retention": "PROVISIONAL_PENDING_FULL_TEN_ROUTE_NON_REGRESSION_MATRIX"
+  },
+  "bidfast": {
+    "repository_requested": "XTREME-AI-SYSTEMS/bidfast",
+    "repository_resolved": "XTREME-SYSTEMS/bidfast",
+    "pull_request": 2,
+    "branch": "auto-builder/bidfast-complete-visual-system",
+    "prior_head": "eeb4a0d495b81bb28b7fcebd9c3fd069bd5d2b9c",
+    "candidate_commits": [
+      {
+        "sha": "dc90fd3067dd1b5e0b877c88fd4ea019a3d3c340",
+        "message": "style(bidfast): align approval card microgeometry",
+        "files": ["app/approvals-parity-adjustments.css"]
+      },
+      {
+        "sha": "8db9cb761944b0bddd713c43564721916e39d1c5",
+        "message": "style(bidfast): load approval parity adjustments",
+        "files": ["app/layout.tsx"]
+      }
+    ],
+    "candidate_head": "8db9cb761944b0bddd713c43564721916e39d1c5",
+    "change_scope": {
+      "classification": "COMPONENT_LEVEL_CSS_MICROGEOMETRY",
+      "route": "/approvals",
+      "selectors": [
+        ".bfap-card-topline > span:nth-child(2)",
+        ".bfap-priority",
+        ".bfap-assignee",
+        ".bfap-actions"
+      ]
+    }
+  },
+  "source_truth": {
+    "drive_file_id": "17f9b8t1VnHRQ8sOl7y1of_4uws3KgoUr",
+    "title": "03_BIDFAST_MOBILE_APPROVAL_QUEUE.png",
+    "reference_sha256": "555db1b73a207833fdce0f08572af263dc11a8105dab50af1c79f83f535fca1c",
+    "theme": "light",
+    "viewport": {"name": "mobile", "width": 390, "height": 844},
+    "crop": {"x": 178, "y": 150, "width": 570, "height": 1387}
+  },
+  "deployment": {
+    "id": "dpl_8wHZB8fCCQaRtdjHTpErkCNPfHhj",
+    "url": "bidfast-5ogt0k57e-strategic-minds-advisory.vercel.app",
+    "branch_origin": "bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app",
+    "source_commit": "8db9cb761944b0bddd713c43564721916e39d1c5",
+    "source_ref": "auto-builder/bidfast-complete-visual-system"
+  },
+  "browserworker": {
+    "repository": "Strategic-Minds/BROWSERWORKER",
+    "pull_request": 9,
+    "branch": "auto-builder/bidfast-proof-20260728",
+    "workflow_commits": [
+      "0a098338f057593fb31bdab3c069a3f70e484347",
+      "e16f43a9528f304e006e38af3aba5243f855efbb",
+      "294de4ca4d070b087a9e3c759f88b4d518d2fa3b"
+    ],
+    "workflow_run": 30751472735,
+    "workflow_job": 91506162459,
+    "workflow_conclusion": "failure",
+    "failure_classification": "VISUAL_RELEASE_THRESHOLD_NOT_MET",
+    "strict_improvement_pass": true,
+    "artifact_id": 8834613672,
+    "artifact_digest": "sha256:ce4af8ba0327fdcba103ba45cc132f1ca9bad1e9819da4891c3fa670477d56f6",
+    "live_screenshot_sha256": "9e9a54431df6e2c37628ffcbc7a2e3fc14ae0651f86288144fce08047d24273b"
+  },
+  "measurement": {
+    "route": "/approvals",
+    "page_height": 949,
+    "baseline": {
+      "composite_score": 0.836456,
+      "pixel_similarity": 0.946854,
+      "structure_similarity": 0.977711,
+      "edge_similarity": 0.313801,
+      "color_similarity": 0.982935
+    },
+    "candidate": {
+      "composite_score": 0.859067,
+      "pixel_similarity": 0.959883,
+      "structure_similarity": 0.98455,
+      "edge_similarity": 0.395262,
+      "color_similarity": 0.983046
+    },
+    "delta": {
+      "composite_score": 0.022611,
+      "pixel_similarity": 0.013029,
+      "structure_similarity": 0.006839,
+      "edge_similarity": 0.081461,
+      "color_similarity": 0.000111
+    },
+    "provenance_pass": true,
+    "reference_integrity_pass": true,
+    "technical_pass": true,
+    "screenshot_hash_match": true,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "release_threshold": 0.99,
+    "release_threshold_pass": false
+  },
+  "acceptance": {
+    "single_route_non_regression": "PASS",
+    "full_ten_route_non_regression": "PENDING",
+    "visual_parity_0_99": "FAIL",
+    "operational_pass_rate_1_00": "NOT_VERIFIED",
+    "complete_light_dark_coverage": "FAIL",
+    "zero_dead_controls": "NOT_VERIFIED",
+    "zero_tenant_leaks": "NOT_VERIFIED",
+    "zero_authorization_bypasses": "NOT_VERIFIED",
+    "production_promotion": "LOCKED"
+  },
+  "remaining_blockers": [
+    "The candidate has not completed the full ten-route non-regression matrix.",
+    "Approvals remains below the required 0.99 threshold at 0.859067.",
+    "The approved registry still lacks complete light/dark and multi-viewport reference pairs.",
+    "The latest inspected database receipt records zero public.bidfast_* entities, so Account-to-Audit operational and security validation remains blocked.",
+    "BIDFAST PR #2 remains draft and non-mergeable.",
+    "Legacy BrowserWorker workflows remain noisy because the long-lived PR contains many historical workflow paths."
+  ],
+  "next_action": "Run the complete ten-route matrix pinned to 8db9cb761944b0bddd713c43564721916e39d1c5. Retain the candidate only if every approved route preserves its current baseline with zero provenance, integrity, technical, console, application-network, HTTP, and screenshot-hash failures."
+}

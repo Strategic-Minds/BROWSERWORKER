@@ -1,0 +1,75 @@
+{
+  "schema_version": "bidfast-browserworker-validation-receipt-v1",
+  "timestamp_utc": "2026-08-01T06:42:00Z",
+  "phase": "VALIDATION",
+  "step": "component-level mobile proposal repair regression rejection",
+  "repositories": {
+    "bidfast": {
+      "repository": "XTREME-SYSTEMS/bidfast",
+      "branch": "auto-builder/bidfast-complete-visual-system",
+      "pull_request": 2,
+      "candidate_head": "350bb4f606368d1bf338702b73f4e2e4313bb83a",
+      "rollback_head": "42b8601a6dee4e7455b867f55cebe7c872f0ef7b"
+    },
+    "browserworker": {
+      "repository": "Strategic-Minds/BROWSERWORKER",
+      "branch": "auto-builder/bidfast-proof-20260728",
+      "pull_request": 9,
+      "proof_source_commit": "c2fc45113cccda227056379f87f27e3a4e0d9b65"
+    }
+  },
+  "approved_reference": {
+    "route": "/proposals",
+    "drive_file_id": "1LkVtoUMfnOK690_4BJHcrdpHax_ta_pj",
+    "title": "06_BIDFAST_MOBILE_PROPOSAL_BUILDER.png",
+    "theme": "light",
+    "viewport": "390x844",
+    "bytes": 1277270,
+    "sha256": "30cd512acf82876e2213094ceb84332ec048f006b2ab6f0e23adf5802ef16c9a"
+  },
+  "candidate_deployment": {
+    "deployment_id": "dpl_BJTWEp6AjrGZ5f5NcUQ44i1E4RhC",
+    "deployment_url": "bidfast-1cybwx7kc-strategic-minds-advisory.vercel.app",
+    "state": "READY"
+  },
+  "proof": {
+    "workflow_run_id": 30688212822,
+    "job_id": 91338068049,
+    "artifact_id": 8814701886,
+    "artifact_sha256": "61ee9216ee995aebdb500d603fe8ca65b75287b067523c1dc0aadd15819d5d81",
+    "live_sha256": "d252f16e77504d4a59e1ea8f5f46bf329029ebc33f1600ec8d690350622ddce0",
+    "page_height": 954,
+    "prior_composite": 0.795438,
+    "candidate_composite": 0.764407,
+    "absolute_change": -0.031031,
+    "metrics": {
+      "pixel_similarity": 0.909130,
+      "structure_similarity": 0.945920,
+      "edge_similarity": 0.081095,
+      "color_similarity": 0.962515
+    },
+    "technical_pass": true,
+    "provenance_pass": true,
+    "reference_integrity_pass": true,
+    "screenshot_integrity_pass": true,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "non_regression": false,
+    "release_threshold_0_99": false
+  },
+  "decision": {
+    "candidate_retained": false,
+    "required_action": "revert proposal repair cycle to the validated 42b8601a baseline",
+    "reason": "The measured composite score regressed below the retained 0.795438 baseline."
+  },
+  "safety": {
+    "approved_full_screen_reference_used_as_page_background_overlay_hidden_layer_or_component_substitute": false,
+    "real_components_hidden_to_manufacture_parity": false,
+    "isolated_approved_assets_only": true,
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "production_mutated": false
+  },
+  "production_promotion": "LOCKED"
+}

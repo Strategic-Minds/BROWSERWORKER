@@ -1,0 +1,155 @@
+name: BIDFAST Dashboard Notification Chrome Full Matrix
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/bidfast-dashboard-notification-chrome-full-matrix.yml'
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-dashboard-notification-chrome-full-matrix.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-dashboard-notification-chrome-b58a4e29-full-matrix
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: b58a4e293e3d5b8fad5a6c0fd2d521ce96489d31
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  RELEASE_THRESHOLD: '0.99'
+
+jobs:
+  sequential-matrix:
+    name: Ten-route revision-pinned non-regression matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Execute and enforce all ten routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          cat > /tmp/routes.tsv <<'ROUTES'
+          /dashboard	0.836926
+          /analytics	0.830446
+          /approvals	0.859067
+          /opportunities	0.859699
+          /estimates/new	0.813012
+          /proposals	0.819855
+          /projects/demo-riverside	0.818791
+          /takeoffs/demo-riverside	0.818538
+          /settings/company	0.825706
+          /assistant	0.823121
+          ROUTES
+
+          : > evidence/matrix-results.ndjson
+          while IFS=$'\t' read -r route baseline; do
+            route_slug="$(printf '%s' "$route" | sed 's#^/##; s#[^A-Za-z0-9._-]#_#g')"
+            encoded_route="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "$route")"
+            if [[ "$route" == "/opportunities" ]]; then
+              endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-opportunities-single-capture?expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+            else
+              endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-parity-v3?route=${encoded_route}&expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+            fi
+
+            accepted=false
+            for attempt in $(seq 1 8); do
+              status="$(curl -sS --max-time 210 -o "evidence/${route_slug}.json" -w '%{http_code}' "$endpoint" || true)"
+              commit="$(node -e "try{const j=require('./evidence/${route_slug}.json');process.stdout.write(String(j.source_revision?.commit_sha||''))}catch{}")"
+              if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" ]]; then
+                accepted=true
+                break
+              fi
+              echo "route=${route} attempt=${attempt} status=${status:-none} commit=${commit:-unknown}"
+              if [[ "$attempt" != "8" ]]; then sleep 20; fi
+            done
+            test "$accepted" = true
+
+            ROUTE="$route" BASELINE="$baseline" SLUG="$route_slug" node - <<'NODE'
+          const fs = require('node:fs')
+          const route = process.env.ROUTE
+          const baseline = Number(process.env.BASELINE)
+          const slug = process.env.SLUG
+          const body = JSON.parse(fs.readFileSync(`evidence/${slug}.json`, 'utf8'))
+          const metrics = route === '/opportunities' ? body?.official_metrics : body?.metrics
+          const failures = []
+          if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
+          if (body.route !== route) failures.push(`route=${String(body.route)}`)
+          if (body.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`commit_sha=${String(body.source_revision?.commit_sha)}`)
+          if (body.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`commit_ref=${String(body.source_revision?.commit_ref)}`)
+          if (body.provenance_pass !== true) failures.push(`provenance_pass=${String(body.provenance_pass)}`)
+          if (body.integrity_pass !== true) failures.push(`integrity_pass=${String(body.integrity_pass)}`)
+          if (body.technical_pass !== true) failures.push(`technical_pass=${String(body.technical_pass)}`)
+          if (route === '/opportunities' && body.screenshot_coherence_pass !== true) failures.push(`screenshot_coherence_pass=${String(body.screenshot_coherence_pass)}`)
+          if (!body.live?.sha256 || !/^[0-9a-f]{64}$/.test(body.live.sha256)) failures.push(`live_sha256=${String(body.live?.sha256)}`)
+          if (!body.reference?.sha256 || !/^[0-9a-f]{64}$/.test(body.reference.sha256)) failures.push(`reference_sha256=${String(body.reference?.sha256)}`)
+          if (!Number.isFinite(metrics?.composite_score) || metrics.composite_score < baseline) failures.push(`composite_score=${String(metrics?.composite_score)} baseline=${baseline}`)
+          for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
+            if (!Array.isArray(body[name]) || body[name].length !== 0) failures.push(`${name}=${JSON.stringify(body[name])}`)
+          }
+          if (body.release_authorized === true) failures.push('unexpected_release_authorization')
+          const summary = {
+            route,
+            score: metrics?.composite_score,
+            baseline,
+            delta: Number.isFinite(metrics?.composite_score) ? Number((metrics.composite_score - baseline).toFixed(6)) : null,
+            metrics,
+            source_revision: body.source_revision,
+            reference: body.reference,
+            live_sha256: body.live?.sha256,
+            console_error_count: Array.isArray(body.console_errors) ? body.console_errors.length : null,
+            app_network_error_count: Array.isArray(body.app_network_errors) ? body.app_network_errors.length : null,
+            http_error_count: Array.isArray(body.http_errors) ? body.http_errors.length : null,
+            failures,
+          }
+          fs.writeFileSync(`evidence/${slug}-summary.json`, JSON.stringify(summary, null, 2) + '\n')
+          fs.appendFileSync('evidence/matrix-results.ndjson', JSON.stringify(summary) + '\n')
+          console.log(JSON.stringify(summary, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+          done < /tmp/routes.tsv
+
+      - name: Create immutable retention decision
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const rows = fs.readFileSync('evidence/matrix-results.ndjson', 'utf8').trim().split('\n').filter(Boolean).map(line => JSON.parse(line))
+          const failures = rows.flatMap(row => row.failures.map(failure => `${row.route}: ${failure}`))
+          const decision = {
+            candidate_commit: process.env.BIDFAST_EXPECTED_COMMIT,
+            expected_ref: process.env.BIDFAST_EXPECTED_REF,
+            candidate_scope: 'notification button border and background only',
+            route_count: rows.length,
+            passed_routes: rows.filter(row => row.failures.length === 0).length,
+            visual_matrix_pass_rate: rows.length ? rows.filter(row => row.failures.length === 0).length / rows.length : 0,
+            routes: rows,
+            failures,
+            retain_candidate: rows.length === 10 && failures.length === 0,
+            release_threshold: Number(process.env.RELEASE_THRESHOLD),
+            routes_reaching_release_threshold: rows.filter(row => Number(row.score) >= Number(process.env.RELEASE_THRESHOLD)).length,
+            release_authorized: false,
+          }
+          fs.writeFileSync('evidence/full-matrix-retention-decision.json', JSON.stringify(decision, null, 2) + '\n')
+          console.log(JSON.stringify(decision, null, 2))
+          if (!decision.retain_candidate) process.exit(1)
+          NODE
+
+      - name: Upload immutable sequential matrix evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-dashboard-notification-chrome-full-matrix-b58a4e29
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30

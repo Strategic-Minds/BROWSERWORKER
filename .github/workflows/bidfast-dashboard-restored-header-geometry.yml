@@ -1,0 +1,159 @@
+name: BIDFAST Restored Dashboard Header Geometry
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/bidfast-dashboard-restored-header-geometry.yml'
+      - 'app/api/validation/bidfast-dashboard-header-geometry/route.ts'
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-dashboard-restored-header-geometry.yml'
+      - 'app/api/validation/bidfast-dashboard-header-geometry/route.ts'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-dashboard-restored-header-geometry-4c46ca76
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: 4c46ca76e96ca3477fd40c5b219c8f3c28e7b76a
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  ROUTE: /dashboard
+  RETAINED_BASELINE: '0.836091'
+  RELEASE_THRESHOLD: '0.99'
+
+jobs:
+  restored-header-geometry:
+    name: Revision-pinned restored header geometry
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Wait for BrowserWorker deployment
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          for attempt in $(seq 1 32); do
+            health_status="$(curl -sS -o evidence/health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            geometry_status="$(curl -sS -o evidence/dashboard-restored-header-geometry.json -w '%{http_code}' --max-time 180 "${BROWSERWORKER_PREVIEW}/api/validation/bidfast-dashboard-header-geometry?expected_commit=${BIDFAST_EXPECTED_COMMIT}" || true)"
+            printf '%s\n' "$health_status" > evidence/health.http-status.txt
+            printf '%s\n' "$geometry_status" > evidence/dashboard-restored-header-geometry.http-status.txt
+            commit="$(node -e "try{const j=require('./evidence/dashboard-restored-header-geometry.json');process.stdout.write(String(j.source_revision?.commit_sha||''))}catch{}")"
+            if [[ "$health_status" == "200" && "$geometry_status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" ]]; then
+              exit 0
+            fi
+            echo "attempt=${attempt} health=${health_status:-none} geometry=${geometry_status:-none} commit=${commit:-unknown}"
+            if [[ "$attempt" != "32" ]]; then sleep 20; fi
+          done
+          exit 1
+
+      - name: Execute exact dashboard parity proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-parity-v3?route=%2Fdashboard&expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          accepted=false
+          for attempt in $(seq 1 12); do
+            status="$(curl -sS --max-time 210 -o evidence/dashboard-restored-parity.json -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/dashboard-restored-parity.http-status.txt
+            commit="$(node -e "try{const j=require('./evidence/dashboard-restored-parity.json');process.stdout.write(String(j.source_revision?.commit_sha||''))}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" ]]; then
+              accepted=true
+              break
+            fi
+            echo "attempt=${attempt} status=${status:-none} commit=${commit:-unknown}"
+            if [[ "$attempt" != "12" ]]; then sleep 25; fi
+          done
+          test "$accepted" = true
+
+      - name: Enforce restored baseline, provenance, geometry, and technical gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const geometryBody = JSON.parse(fs.readFileSync('evidence/dashboard-restored-header-geometry.json', 'utf8'))
+          const parityBody = JSON.parse(fs.readFileSync('evidence/dashboard-restored-parity.json', 'utf8'))
+          const failures = []
+          const score = parityBody?.metrics?.composite_score
+          const expectedCommit = process.env.BIDFAST_EXPECTED_COMMIT
+          const expectedRef = process.env.BIDFAST_EXPECTED_REF
+
+          if (geometryBody.ok !== true) failures.push(`geometry_ok=${String(geometryBody.ok)}`)
+          if (geometryBody.provenance_pass !== true) failures.push(`geometry_provenance_pass=${String(geometryBody.provenance_pass)}`)
+          if (geometryBody.route !== process.env.ROUTE) failures.push(`geometry_route=${String(geometryBody.route)}`)
+          if (geometryBody.source_revision?.commit_sha !== expectedCommit) failures.push(`geometry_commit=${String(geometryBody.source_revision?.commit_sha)}`)
+          if (geometryBody.source_revision?.commit_ref !== expectedRef) failures.push(`geometry_ref=${String(geometryBody.source_revision?.commit_ref)}`)
+          if (geometryBody.main_document_status !== 200) failures.push(`geometry_main_document_status=${String(geometryBody.main_document_status)}`)
+          if (Array.isArray(geometryBody.failures) && geometryBody.failures.length) failures.push(`geometry_failures=${JSON.stringify(geometryBody.failures)}`)
+
+          const requiredRects = ['dashboard', 'header', 'logo', 'header_actions', 'notification_button', 'avatar', 'search']
+          for (const name of requiredRects) {
+            const rect = geometryBody?.geometry?.[name]
+            if (!rect) {
+              failures.push(`${name}=missing`)
+              continue
+            }
+            for (const field of ['x', 'y', 'width', 'height', 'right', 'bottom']) {
+              if (!Number.isFinite(Number(rect[field]))) failures.push(`${name}.${field}=${String(rect[field])}`)
+            }
+            if (Number(rect.width) <= 0 || Number(rect.height) <= 0) failures.push(`${name}=non_positive_geometry`)
+            if (rect.display === 'none' || rect.visibility === 'hidden' || Number(rect.opacity) <= 0) failures.push(`${name}=not_visible`)
+          }
+          const logo = geometryBody?.geometry?.logo
+          if (logo?.complete !== true || Number(logo?.natural_width) <= 0 || Number(logo?.natural_height) <= 0) failures.push('logo_asset_not_loaded')
+          if (Number(logo?.x) < 0 || Number(logo?.right) > Number(geometryBody?.geometry?.viewport?.inner_width)) failures.push('logo_outside_mobile_viewport')
+
+          if (parityBody.ok !== true) failures.push(`parity_ok=${String(parityBody.ok)}`)
+          if (parityBody.route !== process.env.ROUTE) failures.push(`parity_route=${String(parityBody.route)}`)
+          if (parityBody.source_revision?.commit_sha !== expectedCommit) failures.push(`parity_commit=${String(parityBody.source_revision?.commit_sha)}`)
+          if (parityBody.source_revision?.commit_ref !== expectedRef) failures.push(`parity_ref=${String(parityBody.source_revision?.commit_ref)}`)
+          if (parityBody.provenance_pass !== true) failures.push(`parity_provenance_pass=${String(parityBody.provenance_pass)}`)
+          if (parityBody.integrity_pass !== true) failures.push(`integrity_pass=${String(parityBody.integrity_pass)}`)
+          if (parityBody.technical_pass !== true) failures.push(`technical_pass=${String(parityBody.technical_pass)}`)
+          if (!Number.isFinite(score) || score < Number(process.env.RETAINED_BASELINE)) failures.push(`composite_score=${String(score)} baseline=${process.env.RETAINED_BASELINE}`)
+          for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
+            if (!Array.isArray(parityBody[name]) || parityBody[name].length !== 0) failures.push(`${name}=${JSON.stringify(parityBody[name])}`)
+          }
+
+          const summary = {
+            application_commit: expectedCommit,
+            application_ref: expectedRef,
+            route: process.env.ROUTE,
+            score,
+            retained_baseline: Number(process.env.RETAINED_BASELINE),
+            baseline_reconfirmed: Number.isFinite(score) && score >= Number(process.env.RETAINED_BASELINE),
+            release_threshold: Number(process.env.RELEASE_THRESHOLD),
+            release_threshold_pass: Number.isFinite(score) && score >= Number(process.env.RELEASE_THRESHOLD),
+            metrics: parityBody.metrics,
+            geometry: geometryBody.geometry,
+            source_revision: parityBody.source_revision,
+            reference: parityBody.reference,
+            console_error_count: parityBody.console_errors?.length,
+            application_network_error_count: parityBody.app_network_errors?.length,
+            http_error_count: parityBody.http_errors?.length,
+            failures,
+            release_authorized: false,
+          }
+          fs.writeFileSync('evidence/dashboard-restored-header-geometry-summary.json', JSON.stringify(summary, null, 2) + '\n')
+          console.log(JSON.stringify(summary, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable restored-baseline evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-dashboard-restored-header-geometry-4c46ca76
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30

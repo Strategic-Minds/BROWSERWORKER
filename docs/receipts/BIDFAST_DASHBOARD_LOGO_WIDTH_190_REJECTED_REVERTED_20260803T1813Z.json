@@ -1,0 +1,117 @@
+{
+  "receipt_type": "BIDFAST_VISUAL_CANDIDATE_REJECTION_AND_ROLLBACK",
+  "created_at": "2026-08-03T18:13:00Z",
+  "phase": "VALIDATION",
+  "step": "dashboard logo width 190 candidate isolated proof and governed rollback",
+  "inspection_before_mutation": {
+    "bidfast_repository": "XTREME-SYSTEMS/bidfast",
+    "bidfast_branch": "auto-builder/bidfast-complete-visual-system",
+    "bidfast_pull_request": 2,
+    "retained_commit": "b58a4e293e3d5b8fad5a6c0fd2d521ce96489d31",
+    "retained_dashboard_baseline": 0.836926,
+    "browserworker_repository": "Strategic-Minds/BROWSERWORKER",
+    "browserworker_branch": "auto-builder/bidfast-proof-20260728",
+    "browserworker_pull_request": 9,
+    "prior_retention_receipt": "docs/receipts/BIDFAST_DASHBOARD_NOTIFICATION_CHROME_FULL_MATRIX_RETENTION_20260803T1715Z.json"
+  },
+  "candidate": {
+    "commit": "dab20a5d9d1ae18ac88a5c6aabb6325da2df85c2",
+    "scope": "dashboard mobile logo width changed from 172px to 190px only",
+    "changed_file": "app/dashboard-quick-actions-candidate.css",
+    "commit_count_above_retained": 1,
+    "component_level_implementation": true,
+    "approved_screenshot_used_as_background": false,
+    "approved_screenshot_used_as_overlay": false,
+    "approved_screenshot_used_as_hidden_replacement": false,
+    "real_components_hidden_for_parity": false,
+    "test_thresholds_weakened": false,
+    "secrets_exposed": false
+  },
+  "candidate_deployment": {
+    "deployment_id": "dpl_7eotLG8MX6icst1qz9Squss6nGdT",
+    "deployment_url": "bidfast-603fpvcw3-strategic-minds-advisory.vercel.app",
+    "source_commit": "dab20a5d9d1ae18ac88a5c6aabb6325da2df85c2",
+    "source_ref": "auto-builder/bidfast-complete-visual-system",
+    "vercel_check": "success"
+  },
+  "approved_reference": {
+    "route": "/dashboard",
+    "drive_file_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+    "title": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+    "sha256": "f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb",
+    "bytes": 1087711
+  },
+  "isolated_proof": {
+    "validator_creation_commit": "0f88dc1f12b33e9d823d4ff05a5ed0928c3fe8ee",
+    "validator_observability_commit": "c7287ef62af8d0b3f49f314570f0334dcae90ce6",
+    "workflow_run_id": 30840018631,
+    "workflow_job_id": 91774516077,
+    "artifact_id": 8866402853,
+    "artifact_sha256": "b0af32bf7d6ab6abd023a6d2756b674ee63917e48ac75223a9983b5484f7d78d",
+    "retained_baseline": 0.836926,
+    "candidate_score": 0.836439,
+    "delta": -0.000487,
+    "metrics": {
+      "pixel_similarity": 0.94819,
+      "structure_similarity": 0.976323,
+      "edge_similarity": 0.324986,
+      "color_similarity": 0.968477,
+      "composite_score": 0.836439
+    },
+    "geometry": {
+      "logo": {"x": 2, "y": 20, "width": 190, "height": 42, "natural_width": 366, "natural_height": 83, "complete": true},
+      "notification_button": {"x": 306, "y": 23, "width": 36, "height": 36},
+      "avatar": {"x": 352, "y": 23, "width": 36, "height": 36},
+      "search": {"x": 2, "y": 74, "width": 386, "height": 41}
+    },
+    "screenshot_sha256": "8513fb6e944752dc2ee09167a528be69a2cc84ac2e99b4c40d54f11a46e7712a",
+    "console_error_count": 0,
+    "application_network_error_count": 0,
+    "http_error_count": 0,
+    "provenance_pass": true,
+    "reference_integrity_pass": true,
+    "technical_pass": true,
+    "non_regression_pass": false,
+    "failure": "REGRESSION composite_score=0.836439 below retained baseline 0.836926"
+  },
+  "rollback": {
+    "revert_commit": "e9cbd64bddf3a71e4a852aa29cd5b6041d16af5d",
+    "restored_retained_commit_tree": "b58a4e293e3d5b8fad5a6c0fd2d521ce96489d31",
+    "files_differing_from_retained_tree": 0,
+    "revert_preview_reference": "HGtmnguMCR5RsgmWJ5vg49KjfQ7p",
+    "revert_preview_vercel_check": "success",
+    "production_rollback_required": false
+  },
+  "supabase": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "public_bidfast_entity_count": 0,
+    "database_mutation_performed": false,
+    "operational_workflow_tested": false,
+    "tenant_isolation_tested": false,
+    "authorization_bypass_tested": false
+  },
+  "decision": {
+    "retain_candidate": false,
+    "candidate_reverted": true,
+    "dashboard_baseline_remains": 0.836926,
+    "full_matrix_required_for_rejected_candidate": false,
+    "release_authorized": false,
+    "production_promotion_authorized": false
+  },
+  "remaining_gates": {
+    "visual_parity_0_99_every_route_and_viewport": false,
+    "operational_pass_rate_1_00": false,
+    "complete_light_dark_coverage": false,
+    "zero_dead_controls_application_wide": false,
+    "zero_tenant_leaks": false,
+    "zero_authorization_bypasses": false,
+    "production_smoke_receipt": false,
+    "production_rollback_receipt": false
+  },
+  "blockers": [
+    "The BrowserWorker pull request still triggers numerous historical validation workflows during synchronization, causing avoidable queue congestion.",
+    "The connected Supabase project contains zero public.bidfast_* entities.",
+    "The connected Vercel team cannot directly inspect Strategic Minds Advisory deployments; deployment provenance is obtained from revision-pinned evidence and GitHub Vercel checks.",
+    "No approved route currently reaches the 0.99 release threshold."
+  ]
+}

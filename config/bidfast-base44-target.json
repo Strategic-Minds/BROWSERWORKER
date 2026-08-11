@@ -1,0 +1,75 @@
+{
+  "version": "2026-07-29",
+  "status": "full-light-reference-library-installed-preview-url-and-live-proof-pending",
+  "base44": {
+    "app_id": "6a69978f9454039c6021d362",
+    "app_name_at_discovery": "BidMaster AI",
+    "canonical_product": "BIDFAST",
+    "pre_change_rollback_checkpoint_id": "6a6a787023a1c7193aadf789",
+    "pre_change_rollback_commit": "a79c791d480ff938fb482ce490334e53a6cf84f1",
+    "post_core_brand_checkpoint_id": "6a6a7d7c2cd267f72025f681",
+    "post_core_brand_commit": "83f358f23ec54f019cf0be0ba0b67d972e79c6bf",
+    "build_status": "pass",
+    "preview_url": null,
+    "preview_url_required": true
+  },
+  "visual_source": {
+    "drive_folder_id": "1-QD449jtVs_tAArFmCdMYZiy_BdzkMvX",
+    "approved_brand_board_file_id": "1n8tlZ4EJcV8TUHRjM0BO0qCw-ALcZs73",
+    "source_image_record_count": 99,
+    "approved_brand_board_count": 1,
+    "exact_duplicate_group_count": 18,
+    "checksum_unique_image_count": 81,
+    "eligible_checksum_unique_ui_reference_count": 80,
+    "transformed_light_reference_count": 80,
+    "dimension_preservation_pass_count": 80,
+    "validation_error_count": 0,
+    "light_reference_pack_file_ids": [
+      "17FgxtHo2EK7wKxBfLWYUgew2xR6b9PfJ",
+      "1vyYN8z8i2-6obho62j4iihaAt_5Ugvvw",
+      "1oOdOBcg6s9lQl1vawOTbFCMC5fSohA_s",
+      "1Yef_vGSVB21PtE56isPo2M38L64RzGQL"
+    ],
+    "full_manifest_json_file_id": "1wkSVtnUREMYVT1mZyXmJgfLRhJrN6YJu",
+    "full_manifest_csv_file_id": "18TLuak5xMdQDgHgqc2ox0Mjzi6ZJx82s",
+    "full_contact_sheet_file_id": "12JQXAFm1S5XFIm8WxjhAIIxQ0QhORKsQ",
+    "validation_report_json_file_id": "1T6qfqtdDxurYqN1A3WSyNmQr1DBFCX9H",
+    "validation_report_md_file_id": "1mJ3-iuPmkqMvQa6HMgzSiDiXSoyg0hR_",
+    "inventory_status": "complete-for-99-source-image-records",
+    "deduplication_status": "complete-18-exact-duplicate-groups-81-unique-images",
+    "transformation_status": "80-of-80-eligible-light-references-transformed-and-file-validated",
+    "known_limitations": [
+      "Dense small-format text still requires route-level BrowserWorker review at native resolution.",
+      "Dark-mode counterparts are incomplete.",
+      "The transformed reference library is not a live-application parity receipt.",
+      "A published Base44 preview URL has not been verified."
+    ]
+  },
+  "requirements": {
+    "visual_parity_per_scenario": 0.99,
+    "operational_parity": 1.0,
+    "max_repair_cycles": 5,
+    "required_viewports": [
+      {"name":"mobile-small","width":390,"height":844},
+      {"name":"mobile-large","width":430,"height":932},
+      {"name":"tablet","width":834,"height":1194},
+      {"name":"desktop","width":1440,"height":1200}
+    ],
+    "require_zero_dead_controls": true,
+    "require_zero_active_legacy_branding": true,
+    "require_zero_unexpected_console_errors": true,
+    "require_zero_unexpected_network_errors": true,
+    "require_tenant_isolation": true,
+    "require_rollback_receipt": true
+  },
+  "release": {
+    "production_approved": false,
+    "light_reference_library_complete": true,
+    "dark_reference_library_complete": false,
+    "reference_library_is_not_release_proof": true,
+    "missing_reference_is_failure": true,
+    "missing_preview_url_is_failure": true,
+    "browserworker_live_proof_required": true,
+    "operator_approval_required": true
+  }
+}

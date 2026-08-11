@@ -1,0 +1,150 @@
+name: BIDFAST Dashboard Alert Cadence Candidate
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/bidfast-dashboard-alert-cadence-candidate.yml'
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-dashboard-alert-cadence-candidate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-dashboard-alert-cadence-cf1067bf
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: cf1067bf2e7b63340ce82f16e33ac1d39dafa2fe
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  DASHBOARD_REFERENCE_ID: 1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr
+  DASHBOARD_REFERENCE_SHA256: f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb
+  RETAINED_BASELINE: '0.822699'
+  RELEASE_THRESHOLD: '0.99'
+  PREVIOUS_ALERT_2: '0.679762'
+  PREVIOUS_ALERT_HEADING: '0.698072'
+  PREVIOUS_ALERT_1: '0.698714'
+
+jobs:
+  dashboard-alert-cadence-candidate:
+    name: Revision-pinned dashboard alert cadence candidate
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Wait for BrowserWorker health
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 32); do
+            status="$(curl -sS -o /tmp/browserworker-health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            if [[ "$status" == "200" ]]; then exit 0; fi
+            echo "BrowserWorker health attempt ${attempt}: ${status:-no-status}"
+            sleep 15
+          done
+          exit 1
+
+      - name: Wait for exact BIDFAST preview revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 48); do
+            status="$(curl -sS -o /tmp/bidfast-build-info.json -w '%{http_code}' --max-time 30 "${BIDFAST_ORIGIN}/api/build-info" || true)"
+            commit="$(node -e "try{const j=require('/tmp/bidfast-build-info.json');process.stdout.write(String(j?.source_revision?.commit_sha||''))}catch{}")"
+            ref="$(node -e "try{const j=require('/tmp/bidfast-build-info.json');process.stdout.write(String(j?.source_revision?.commit_ref||''))}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" && "$ref" == "$BIDFAST_EXPECTED_REF" ]]; then
+              cat /tmp/bidfast-build-info.json
+              exit 0
+            fi
+            echo "BIDFAST provenance attempt ${attempt}: status=${status:-no-status} commit=${commit:-unknown} ref=${ref:-unknown}"
+            sleep 15
+          done
+          cat /tmp/bidfast-build-info.json || true
+          exit 1
+
+      - name: Execute single-capture candidate diagnostic
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-dashboard-regions?expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          for attempt in $(seq 1 8); do
+            status="$(curl -sS --max-time 240 -o evidence/dashboard-alert-candidate.json -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/dashboard-alert-candidate.http-status.txt
+            if [[ "$status" == "200" ]] && node -e "const j=require('./evidence/dashboard-alert-candidate.json');process.exit(j.ok===true&&j.diagnostic_pass===true?0:1)"; then
+              exit 0
+            fi
+            echo "Candidate diagnostic attempt ${attempt}: ${status:-no-status}"
+            if [[ "$attempt" != "8" ]]; then sleep 60; fi
+          done
+          exit 1
+
+      - name: Enforce improvement, provenance, integrity, and technical gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const body = JSON.parse(fs.readFileSync('evidence/dashboard-alert-candidate.json', 'utf8'))
+          const score = body?.metrics?.composite_score
+          const regions = new Map((body?.analysis?.regions || []).map(region => [region.name, region]))
+          const alert2 = regions.get('proposal_alert_2')?.diagnostic_score
+          const heading = regions.get('proposal_alerts_heading')?.diagnostic_score
+          const alert1 = regions.get('proposal_alert_1')?.diagnostic_score
+          const failures = []
+          if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
+          if (body.diagnostic_pass !== true) failures.push(`diagnostic_pass=${String(body.diagnostic_pass)}`)
+          if (body.diagnostic_only !== true) failures.push(`diagnostic_only=${String(body.diagnostic_only)}`)
+          if (body.release_authorized !== false) failures.push(`release_authorized=${String(body.release_authorized)}`)
+          if (body.route !== '/dashboard') failures.push(`route=${String(body.route)}`)
+          if (body.provenance_pass !== true) failures.push(`provenance_pass=${String(body.provenance_pass)}`)
+          if (body.integrity_pass !== true) failures.push(`integrity_pass=${String(body.integrity_pass)}`)
+          if (body.technical_pass !== true) failures.push(`technical_pass=${String(body.technical_pass)}`)
+          if (body?.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`commit_sha=${String(body?.source_revision?.commit_sha)}`)
+          if (body?.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`commit_ref=${String(body?.source_revision?.commit_ref)}`)
+          if (body?.reference?.drive_file_id !== process.env.DASHBOARD_REFERENCE_ID) failures.push(`reference_id=${String(body?.reference?.drive_file_id)}`)
+          if (body?.reference?.sha256 !== process.env.DASHBOARD_REFERENCE_SHA256) failures.push(`reference_sha256=${String(body?.reference?.sha256)}`)
+          if (!Number.isFinite(score)) failures.push('composite_score missing')
+          else if (score <= Number(process.env.RETAINED_BASELINE)) failures.push(`NO_IMPROVEMENT composite_score=${score} retained=${process.env.RETAINED_BASELINE}`)
+          if (!Number.isFinite(alert2) || alert2 <= Number(process.env.PREVIOUS_ALERT_2)) failures.push(`proposal_alert_2=${String(alert2)} previous=${process.env.PREVIOUS_ALERT_2}`)
+          if (!Number.isFinite(heading) || heading <= Number(process.env.PREVIOUS_ALERT_HEADING)) failures.push(`proposal_alerts_heading=${String(heading)} previous=${process.env.PREVIOUS_ALERT_HEADING}`)
+          if (!Number.isFinite(alert1) || alert1 <= Number(process.env.PREVIOUS_ALERT_1)) failures.push(`proposal_alert_1=${String(alert1)} previous=${process.env.PREVIOUS_ALERT_1}`)
+          for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
+            if (!Array.isArray(body[name]) || body[name].length !== 0) failures.push(`${name}=${JSON.stringify(body[name])}`)
+          }
+          const summary = {
+            route: body.route,
+            score,
+            retained_baseline: Number(process.env.RETAINED_BASELINE),
+            delta: Number.isFinite(score) ? Number((score - Number(process.env.RETAINED_BASELINE)).toFixed(6)) : null,
+            release_threshold: Number(process.env.RELEASE_THRESHOLD),
+            proposal_alert_2: alert2,
+            proposal_alerts_heading: heading,
+            proposal_alert_1: alert1,
+            page_height: body.page_height,
+            geometry: body.geometry,
+            source_revision: body.source_revision,
+            live_sha256: body?.live?.sha256 || null,
+            failures,
+          }
+          fs.writeFileSync('evidence/dashboard-alert-candidate-summary.json', JSON.stringify(summary, null, 2))
+          console.log(JSON.stringify(summary, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable candidate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-dashboard-alert-cadence-cf1067bf
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30

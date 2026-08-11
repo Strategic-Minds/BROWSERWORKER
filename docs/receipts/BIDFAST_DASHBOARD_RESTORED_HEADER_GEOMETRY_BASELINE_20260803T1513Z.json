@@ -1,0 +1,136 @@
+{
+  "receipt_type": "BIDFAST_DASHBOARD_RESTORED_HEADER_GEOMETRY_BASELINE",
+  "created_at": "2026-08-03T15:13:44Z",
+  "phase": "VALIDATE",
+  "release_authorized": false,
+  "production_status": "LOCKED",
+  "repositories": {
+    "application": {
+      "repository": "XTREME-SYSTEMS/bidfast",
+      "branch": "auto-builder/bidfast-complete-visual-system",
+      "pull_request": 2,
+      "head_commit": "4c46ca76e96ca3477fd40c5b219c8f3c28e7b76a",
+      "retained_baseline_commit": "cf1067bf2e7b63340ce82f16e33ac1d39dafa2fe",
+      "compare_to_retained_baseline": {
+        "ahead_by_commits": 2,
+        "files_changed": 0
+      }
+    },
+    "validator": {
+      "repository": "Strategic-Minds/BROWSERWORKER",
+      "branch": "auto-builder/bidfast-proof-20260728",
+      "pull_request": 9,
+      "geometry_route_commit": "77a45832af6d85c2d6211044cd871ba4857f0b8f",
+      "workflow_commit": "b1076e214e826b9ad9659c0e4401a67075f8579f",
+      "type_safety_repair_commit": "b40508d11623a186f59afec200391be22642b965"
+    }
+  },
+  "source_truth": {
+    "drive_file_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+    "title": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+    "mime_type": "image/png",
+    "width": 941,
+    "height": 1672,
+    "expected_sha256": "f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb",
+    "verified_sha256": "f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb",
+    "bytes": 1087711
+  },
+  "validator_deployment": {
+    "failed_commit": "b1076e214e826b9ad9659c0e4401a67075f8579f",
+    "failed_vercel_reference": "CqmRVvWNCbYL8GhUVE8cyxLSTHAz",
+    "repair_commit": "b40508d11623a186f59afec200391be22642b965",
+    "successful_vercel_reference": "FetiTrpjv47AHu6gr7sV11nrTgYS",
+    "exact_dpl_id_retrievable_from_connected_scope": false,
+    "failure_diagnosis": "The first geometry route used an object spread from a nullable rectangle result. The repair stored and narrowed the rectangle before spreading it. The repaired commit passed the Vercel status check."
+  },
+  "application_preview": {
+    "deployment_id": "dpl_3yL59d2gN4zRuSxjVSopNqHxKLTs",
+    "deployment_url": "bidfast-ab1ki2aos-strategic-minds-advisory.vercel.app",
+    "commit": "4c46ca76e96ca3477fd40c5b219c8f3c28e7b76a"
+  },
+  "validation": {
+    "workflow_run": 30826411175,
+    "workflow_job": 91729142171,
+    "conclusion": "success",
+    "artifact_id": 8861042488,
+    "artifact_name": "bidfast-dashboard-restored-header-geometry-4c46ca76",
+    "artifact_digest": "sha256:2f6516479269da9fc00cd1f85f3931f05bbee0a3df9ae8707e29a875cea5b528",
+    "route": "/dashboard",
+    "theme": "light",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "page_height": 948,
+    "retained_dashboard_score": 0.836091,
+    "measured_dashboard_score": 0.836091,
+    "baseline_reconfirmed": true,
+    "release_threshold": 0.99,
+    "release_threshold_pass": false,
+    "metrics": {
+      "pixel_similarity": 0.947927,
+      "structure_similarity": 0.975801,
+      "edge_similarity": 0.32462,
+      "color_similarity": 0.96839,
+      "composite_score": 0.836091
+    },
+    "geometry": {
+      "dashboard": { "x": 0, "y": 0, "width": 390, "height": 948 },
+      "header": { "x": 2, "y": 18, "width": 386, "height": 46 },
+      "logo": {
+        "x": 2,
+        "y": 21.5,
+        "width": 172,
+        "height": 39,
+        "right": 174,
+        "bottom": 60.5,
+        "natural_width": 366,
+        "natural_height": 83,
+        "current_src_path": "/api/assets/bidfast-logo"
+      },
+      "header_actions": { "x": 306, "y": 23, "width": 82, "height": 36 },
+      "notification_button": { "x": 306, "y": 23, "width": 36, "height": 36 },
+      "avatar": { "x": 352, "y": 23, "width": 36, "height": 36 },
+      "search": { "x": 2, "y": 74, "width": 386, "height": 41 }
+    },
+    "provenance_pass": true,
+    "reference_integrity_pass": true,
+    "technical_pass": true,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "failures": []
+  },
+  "component_governance": {
+    "application_code_changed": false,
+    "screenshot_background_used": false,
+    "overlay_used": false,
+    "real_ui_hidden": false,
+    "test_threshold_weakened": false,
+    "database_mutated": false,
+    "secrets_exposed": false
+  },
+  "supabase_read_only_check": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "public_bidfast_table_count": 0,
+    "tables": [],
+    "database_mutated": false
+  },
+  "decision": {
+    "restored_baseline_confirmed": true,
+    "header_geometry_observable": true,
+    "new_application_candidate_authorized": false,
+    "full_matrix_required_for_future_candidate": true,
+    "production_promotion_authorized": false
+  },
+  "remaining_release_gates": [
+    "minimum 0.99 measured visual parity for every approved route and viewport",
+    "complete light and dark reference coverage",
+    "1.00 real Account -> Organization -> Opportunity -> Project -> Document -> Takeoff -> Estimate -> Proposal -> Approval -> Audit pass rate",
+    "zero dead controls across the application",
+    "zero tenant leaks",
+    "zero authorization bypasses",
+    "deployed public.bidfast_* entities with reviewed RLS",
+    "production deployment, smoke-test, and rollback receipts"
+  ]
+}

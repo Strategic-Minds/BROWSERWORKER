@@ -1,0 +1,171 @@
+name: BIDFAST Dashboard Logo Candidate Rollback Proof
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/bidfast-dashboard-active-bids-rollback-proof.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-dashboard-logo-rollback-1039d80
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: 1039d807e4d63db03013d3a5786e087a5196669f
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  BIDFAST_ROLLED_BACK_COMMIT: a6eec0820c7eea1866e8e093bfb449f37e7497d3
+  DASHBOARD_REFERENCE_ID: 1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr
+  DASHBOARD_REFERENCE_SHA256: f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb
+  RETAINED_BASELINE: '0.837024'
+  RELEASE_THRESHOLD: '0.99'
+
+jobs:
+  dashboard-logo-rollback-proof:
+    name: Exact dashboard logo rollback regional proof
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+
+    steps:
+      - name: Wait for BrowserWorker health
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 32); do
+            status="$(curl -sS -o /tmp/browserworker-health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            if [[ "$status" == "200" ]]; then
+              cat /tmp/browserworker-health.json
+              exit 0
+            fi
+            echo "BrowserWorker health attempt ${attempt}: ${status:-no-status}"
+            sleep 15
+          done
+          exit 1
+
+      - name: Verify exact BIDFAST rollback preview provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 40); do
+            status="$(curl -sS -o /tmp/bidfast-build-info.json -w '%{http_code}' --max-time 30 "${BIDFAST_ORIGIN}/api/build-info" || true)"
+            commit="$(node -e "try{const j=require('/tmp/bidfast-build-info.json');process.stdout.write(String(j?.source_revision?.commit_sha||''))}catch{}")"
+            ref="$(node -e "try{const j=require('/tmp/bidfast-build-info.json');process.stdout.write(String(j?.source_revision?.commit_ref||''))}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" && "$ref" == "$BIDFAST_EXPECTED_REF" ]]; then
+              cat /tmp/bidfast-build-info.json
+              exit 0
+            fi
+            echo "BIDFAST provenance attempt ${attempt}: status=${status:-no-status} commit=${commit:-unknown} ref=${ref:-unknown}"
+            sleep 15
+          done
+          cat /tmp/bidfast-build-info.json || true
+          exit 1
+
+      - name: Execute bounded rollback dashboard diagnostic
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-dashboard-regions?expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          for attempt in $(seq 1 8); do
+            status="$(curl -sS --max-time 240 -D evidence/dashboard-regions.headers.txt -o evidence/dashboard-regions.json -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/dashboard-regions.http-status.txt
+            if [[ "$status" == "200" ]] && node -e "const j=require('./evidence/dashboard-regions.json');process.exit(j.ok===true&&j.diagnostic_pass===true?0:1)"; then
+              cat evidence/dashboard-regions.json
+              exit 0
+            fi
+            retryable=false
+            if [[ "$status" == "409" || "$status" == "429" || "$status" == "500" ]]; then retryable=true; fi
+            if grep -Eqi 'Too Many Requests|burst limit|Browser proof failed with HTTP 500|Browser proof failed with HTTP 409' evidence/dashboard-regions.json 2>/dev/null; then retryable=true; fi
+            echo "Dashboard rollback diagnostic attempt ${attempt}: status=${status:-no-status} retryable=${retryable}"
+            cat evidence/dashboard-regions.json || true
+            if [[ "$attempt" == "8" || "$retryable" != "true" ]]; then exit 1; fi
+            sleep 65
+          done
+          exit 1
+
+      - name: Enforce exact rollback, regional non-regression, and technical gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const body = JSON.parse(fs.readFileSync('evidence/dashboard-regions.json', 'utf8'))
+          const score = body?.metrics?.composite_score
+          const failures = []
+          const baselineRegions = {
+            active_bid_3: 0.704336,
+            active_bid_2: 0.714608,
+            active_bid_1: 0.722198,
+            header_logo: 0.722688,
+            metrics_row_2: 0.729406,
+            bottom_navigation: 0.753053,
+            quick_actions: 0.761245,
+            overview_heading: 0.777489,
+            metrics_row_1: 0.783647,
+            active_bids_heading: 0.795158,
+            proposal_alert_2: 0.816409,
+            search: 0.822644,
+            proposal_alert_1: 0.829816,
+            proposal_alerts_heading: 0.834863,
+            quick_actions_heading: 0.877763,
+          }
+          if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
+          if (body.diagnostic_pass !== true) failures.push(`diagnostic_pass=${String(body.diagnostic_pass)}`)
+          if (body.diagnostic_only !== true) failures.push(`diagnostic_only=${String(body.diagnostic_only)}`)
+          if (body.release_authorized !== false) failures.push(`release_authorized=${String(body.release_authorized)}`)
+          if (body.route !== '/dashboard') failures.push(`route=${String(body.route)}`)
+          if (body.validator_version !== 'dashboard-regions-v1-single-capture') failures.push(`validator_version=${String(body.validator_version)}`)
+          if (body.provenance_pass !== true) failures.push(`provenance_pass=${String(body.provenance_pass)}`)
+          if (body.integrity_pass !== true) failures.push(`integrity_pass=${String(body.integrity_pass)}`)
+          if (body.technical_pass !== true) failures.push(`technical_pass=${String(body.technical_pass)}`)
+          if (body?.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`commit_sha=${String(body?.source_revision?.commit_sha)}`)
+          if (body?.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`commit_ref=${String(body?.source_revision?.commit_ref)}`)
+          if (body?.reference?.drive_file_id !== process.env.DASHBOARD_REFERENCE_ID) failures.push(`reference_id=${String(body?.reference?.drive_file_id)}`)
+          if (body?.reference?.sha256 !== process.env.DASHBOARD_REFERENCE_SHA256) failures.push(`reference_sha256=${String(body?.reference?.sha256)}`)
+          if (!Number.isFinite(score)) failures.push('composite_score missing')
+          else if (score + 0.000001 < Number(process.env.RETAINED_BASELINE)) failures.push(`REGRESSION composite_score=${score} baseline=${process.env.RETAINED_BASELINE}`)
+          for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
+            if (!Array.isArray(body[name]) || body[name].length !== 0) failures.push(`${name}=${JSON.stringify(body[name])}`)
+          }
+          const regions = Array.isArray(body?.analysis?.regions) ? body.analysis.regions : []
+          if (regions.length !== 15) failures.push(`regional evidence count=${regions.length}`)
+          const observedRegions = Object.fromEntries(regions.map(region => [region.name, region.diagnostic_score]))
+          for (const [name, baseline] of Object.entries(baselineRegions)) {
+            const observed = observedRegions[name]
+            if (!Number.isFinite(observed)) failures.push(`region_missing=${name}`)
+            else if (observed + 0.000001 < baseline) failures.push(`REGRESSION region=${name} score=${observed} baseline=${baseline}`)
+          }
+          const summary = {
+            route: body.route,
+            score,
+            retained_baseline: Number(process.env.RETAINED_BASELINE),
+            release_threshold: Number(process.env.RELEASE_THRESHOLD),
+            release_threshold_pass: Number.isFinite(score) && score >= Number(process.env.RELEASE_THRESHOLD),
+            rolled_back_commit: process.env.BIDFAST_ROLLED_BACK_COMMIT,
+            live_sha256: body?.live?.sha256 || null,
+            source_revision: body.source_revision,
+            page_height: body.page_height,
+            regional_baselines: baselineRegions,
+            observed_regions: observedRegions,
+            geometry: body.geometry,
+            failures,
+          }
+          fs.writeFileSync('evidence/dashboard-regions-summary.json', JSON.stringify(summary, null, 2))
+          console.log(JSON.stringify(summary, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable rollback evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-dashboard-logo-rollback-1039d80
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30

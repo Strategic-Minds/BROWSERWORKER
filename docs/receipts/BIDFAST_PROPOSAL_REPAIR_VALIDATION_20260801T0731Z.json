@@ -1,0 +1,70 @@
+{
+  "receipt_type": "BIDFAST_PROPOSAL_REPAIR_VALIDATION",
+  "captured_at_utc": "2026-08-01T07:31:00Z",
+  "status": "RETAINED_BELOW_RELEASE_THRESHOLD",
+  "bidfast": {
+    "repository": "XTREME-SYSTEMS/bidfast",
+    "branch": "auto-builder/bidfast-complete-visual-system",
+    "pull_request": 2,
+    "commit": "106579c02ab6da9af87d1747b9645e348509883e",
+    "deployment_id": "dpl_8U1N8jDaUWSJRY2F3qsmrYXHxaVL",
+    "deployment_url": "bidfast-pv1nldnru-strategic-minds-advisory.vercel.app"
+  },
+  "browserworker": {
+    "repository": "Strategic-Minds/BROWSERWORKER",
+    "branch": "auto-builder/bidfast-proof-20260728",
+    "pull_request": 9,
+    "workflow_run": 30689779625,
+    "job": 91342587406,
+    "artifact": 8815279929,
+    "artifact_sha256": "7c279da57288e0798312bcfcbaa96e6567722a6350d9d4aa9647095cbf178065"
+  },
+  "route": "/proposals",
+  "theme": "light",
+  "viewport": {
+    "name": "mobile",
+    "width": 390,
+    "height": 844
+  },
+  "reference": {
+    "drive_file_id": "1LkVtoUMfnOK690_4BJHcrdpHax_ta_pj",
+    "title": "06_BIDFAST_MOBILE_PROPOSAL_BUILDER.png",
+    "sha256": "30cd512acf82876e2213094ceb84332ec048f006b2ab6f0e23adf5802ef16c9a"
+  },
+  "measurement": {
+    "retained_baseline": 0.795438,
+    "composite_score": 0.819855,
+    "absolute_change": 0.024417,
+    "relative_change_percent": 3.0695,
+    "pixel_similarity": 0.943717,
+    "structure_similarity": 0.98084,
+    "edge_similarity": 0.238278,
+    "color_similarity": 0.971933,
+    "page_height": 954,
+    "release_threshold": 0.99,
+    "release_pass": false
+  },
+  "integrity": {
+    "provenance_pass": true,
+    "reference_integrity_pass": true,
+    "screenshot_sha256": "250f43556dae44a0f48e07bca66ee466ab12efacea1b4efd82c3a1e48f9533a6",
+    "technical_pass": true,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0
+  },
+  "supabase": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "project_name": "Xtreme AI Systems",
+    "read_access": true,
+    "public_bidfast_table_count": 0,
+    "workflow_validation_status": "BLOCKED_NO_BIDFAST_ENTITIES"
+  },
+  "governance": {
+    "component_level_implementation_required": true,
+    "full_screen_reference_substitution": false,
+    "hidden_ui_substitution": false,
+    "production_promotion": "LOCKED",
+    "full_current_head_matrix_required_before_release": true
+  }
+}

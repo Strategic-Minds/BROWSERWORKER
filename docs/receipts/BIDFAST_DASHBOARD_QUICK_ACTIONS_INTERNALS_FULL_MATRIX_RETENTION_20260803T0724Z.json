@@ -1,0 +1,151 @@
+{
+  "receipt_type": "bidfast_dashboard_quick_actions_internals_full_matrix_retention",
+  "created_at": "2026-08-03T07:24:12Z",
+  "production_authorized": false,
+  "release_authorized": false,
+  "scope": {
+    "application_repository": "XTREME-SYSTEMS/bidfast",
+    "application_branch": "auto-builder/bidfast-complete-visual-system",
+    "application_pr": 2,
+    "validator_repository": "Strategic-Minds/BROWSERWORKER",
+    "validator_branch": "auto-builder/bidfast-proof-20260728",
+    "validator_pr": 9,
+    "route": "/dashboard",
+    "theme": "light",
+    "viewport": "390x844"
+  },
+  "pre_change_inspection": {
+    "starting_application_head": "e61d2b2886b237ad0197c3b1b428a948e8e10b22",
+    "candidate_application_head": "1bc566b89a16af6ca180bc0a2069070e6630192b",
+    "application_commits_ahead": 2,
+    "application_changed_files": [
+      "app/dashboard-quick-actions-candidate.css",
+      "app/layout.tsx"
+    ],
+    "application_pr_state": "open_draft_unmerged_non_mergeable",
+    "validator_head_used": "d59a5804e3fa4280442a3b676db434fc6a854acd",
+    "validator_pr_state": "open_draft_unmerged_mergeable"
+  },
+  "candidate_change": {
+    "component_level_only": true,
+    "css": {
+      "card_alignment": "align-content: start",
+      "card_padding_top_px": 14,
+      "icon_size_px": 27,
+      "icon_label_gap_px": 8,
+      "label_font_size_px": 7.5,
+      "label_line_height_px": 11.25,
+      "label_font_weight": 550
+    },
+    "card_boundaries_changed": false,
+    "reference_image_used_as_background_or_overlay": false,
+    "real_ui_hidden": false
+  },
+  "deployment": {
+    "bidfast_deployment_id": "dpl_HSD86KLrGm5nuAcfYsdt4KtTqWdH",
+    "bidfast_deployment_url": "bidfast-aucd65eej-strategic-minds-advisory.vercel.app",
+    "bidfast_vercel_check": "success",
+    "browserworker_vercel_check": "success",
+    "browserworker_vercel_deployment_reference": "3PdvNSfJ8uqo8N3msWETwD9nTbJq"
+  },
+  "reference": {
+    "drive_file_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+    "title": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+    "crop": {
+      "x": 178,
+      "y": 150,
+      "width": 570,
+      "height": 1387
+    },
+    "sha256": "f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb"
+  },
+  "target_validation": {
+    "workflow_run_id": 30793247980,
+    "workflow_job_id": 91621092086,
+    "workflow_conclusion": "success",
+    "artifact_id": 8847902979,
+    "artifact_digest": "sha256:c205a136edf2e9822c03ecb4fecb20fde2f1ab0b027de9c82ca1125f38117008",
+    "live_screenshot_sha256": "cf697e505721702fcbb11c47e4a8249137c1662ad570d02dd6713ec30620a3af",
+    "main_document_status": 200,
+    "provenance_pass": true,
+    "reference_integrity_pass": true,
+    "technical_pass": true,
+    "console_error_count": 0,
+    "application_network_error_count": 0,
+    "http_error_count": 0,
+    "baseline": {
+      "composite_score": 0.810876,
+      "pixel_similarity": 0.93598,
+      "structure_similarity": 0.970456,
+      "edge_similarity": 0.226313,
+      "color_similarity": 0.967731,
+      "quick_actions_diagnostic_score": 0.677388,
+      "quick_actions_edge_similarity": 0.078722
+    },
+    "candidate": {
+      "composite_score": 0.814804,
+      "pixel_similarity": 0.936754,
+      "structure_similarity": 0.971686,
+      "edge_similarity": 0.241522,
+      "color_similarity": 0.969224,
+      "quick_actions_diagnostic_score": 0.72982,
+      "quick_actions_edge_similarity": 0.23447
+    },
+    "delta": {
+      "composite_score": 0.003928,
+      "pixel_similarity": 0.000774,
+      "structure_similarity": 0.00123,
+      "edge_similarity": 0.015209,
+      "color_similarity": 0.001493,
+      "quick_actions_diagnostic_score": 0.052432,
+      "quick_actions_edge_similarity": 0.155748
+    },
+    "candidate_retained": true
+  },
+  "full_matrix": {
+    "route_count": 10,
+    "pass_count": 10,
+    "pass_rate": 1.0,
+    "technical_error_count": 0,
+    "routes": [
+      {"route": "/dashboard", "score": 0.814804, "baseline": 0.810876},
+      {"route": "/analytics", "score": 0.830446, "baseline": 0.830446},
+      {"route": "/approvals", "score": 0.859067, "baseline": 0.859067},
+      {"route": "/opportunities", "score": 0.859699, "baseline": 0.859699},
+      {"route": "/estimates/new", "score": 0.813012, "baseline": 0.813012},
+      {"route": "/proposals", "score": 0.819855, "baseline": 0.819855},
+      {"route": "/projects/demo-riverside", "score": 0.818791, "baseline": 0.818791},
+      {"route": "/takeoffs/demo-riverside", "score": 0.818538, "baseline": 0.818538},
+      {"route": "/settings/company", "score": 0.825706, "baseline": 0.825706},
+      {"route": "/assistant", "score": 0.823121, "baseline": 0.823121}
+    ],
+    "routes_at_or_above_release_threshold": 0,
+    "release_threshold": 0.99
+  },
+  "database": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "read_only_query": true,
+    "public_bidfast_table_count": 0,
+    "mutation_performed": false
+  },
+  "governance": {
+    "application_feature_branch_only": true,
+    "database_mutation_performed": false,
+    "production_mutation_performed": false,
+    "secret_exposure": false,
+    "test_threshold_changed": false,
+    "test_weakened": false,
+    "screenshot_substitution_used": false,
+    "real_ui_hidden": false,
+    "rollback_commit": "e61d2b2886b237ad0197c3b1b428a948e8e10b22"
+  },
+  "remaining_gates": {
+    "visual_parity_0_99_all_routes_viewports": false,
+    "operational_pass_rate_1_00": false,
+    "complete_light_dark_coverage": false,
+    "zero_dead_controls_verified": false,
+    "zero_tenant_leaks_verified": false,
+    "zero_authorization_bypasses_verified": false,
+    "production_smoke_and_rollback_receipts": false
+  }
+}

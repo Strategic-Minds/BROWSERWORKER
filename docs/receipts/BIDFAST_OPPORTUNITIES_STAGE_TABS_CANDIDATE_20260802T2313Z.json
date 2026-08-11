@@ -1,0 +1,130 @@
+{
+  "receipt_type": "BIDFAST_OPPORTUNITIES_STAGE_TABS_CANDIDATE",
+  "created_at": "2026-08-02T23:13:00Z",
+  "governance": {
+    "phase": "VALIDATE",
+    "production_locked": true,
+    "database_mutated": false,
+    "tests_weakened": false,
+    "release_threshold_changed": false,
+    "reference_image_substitution_detected": false,
+    "hidden_ui_for_parity_detected": false,
+    "release_authorized": false,
+    "candidate_retention_status": "PROVISIONAL_PENDING_FULL_MATRIX"
+  },
+  "repositories": {
+    "bidfast": {
+      "repository": "XTREME-SYSTEMS/bidfast",
+      "requested_alias": "XTREME-AI-SYSTEMS/bidfast",
+      "branch": "auto-builder/bidfast-complete-visual-system",
+      "pr": 2,
+      "baseline_commit": "65bd7345221c96915fba1f4c7704977c7d072e07",
+      "candidate_commit": "584767bbd75aad1c7b9459bbc710cd225e51ec53",
+      "candidate_path": "app/opportunities-parity-adjustments.css",
+      "candidate_diff": {
+        "files_changed": 1,
+        "additions": 8,
+        "deletions": 0,
+        "description": "replace equal opportunity-stage columns with 80/110/115/85 pixel component columns and shorten only the implemented first-tab active underline"
+      }
+    },
+    "browserworker": {
+      "repository": "Strategic-Minds/BROWSERWORKER",
+      "branch": "auto-builder/bidfast-proof-20260728",
+      "pr": 9,
+      "single_capture_endpoint_commit": "ee311eef452e77e774a930cc811d679267a84a16",
+      "single_capture_observable_commit": "b847be5745e69dd40cc14e529da9a40039ed1bb8",
+      "candidate_workflow_commit": "6e738014dde7cb845d73e16af9cb0eb6df7204e7",
+      "full_matrix_workflow_commit": "45152db289e440f50947b96183e54d0c5f2711be"
+    }
+  },
+  "deployment": {
+    "id": "dpl_An8sgdXqVACfAMfu7w1RzKzwTZQ8",
+    "url": "bidfast-dstdflt6y-strategic-minds-advisory.vercel.app",
+    "commit_sha": "584767bbd75aad1c7b9459bbc710cd225e51ec53",
+    "commit_ref": "auto-builder/bidfast-complete-visual-system",
+    "vercel_status": "success"
+  },
+  "source_of_truth": {
+    "drive_file_id": "1haXSs0QuoSMACLXzo-sVaSGPc1roz0jR",
+    "title": "04_BIDFAST_MOBILE_OPPORTUNITIES_LIST.png",
+    "sha256": "c3cd0b2ed394491128784384e19561457bfe800f4b0182a391b78b888db389ef",
+    "crop": {
+      "x": 178,
+      "y": 150,
+      "width": 570,
+      "height": 1387
+    }
+  },
+  "candidate_validation": {
+    "validator_version": "opportunities-single-capture-v1",
+    "workflow_run_id": 30771720532,
+    "workflow_job_id": 91559898640,
+    "workflow_conclusion": "success",
+    "artifact": {
+      "id": 8840740614,
+      "name": "bidfast-opportunities-stage-tabs-584767bb",
+      "digest": "sha256:c06edd1e7dbfd5808ea36e02878bcad6cc532abd0127d992842446f4382488fd",
+      "size_bytes": 1533
+    },
+    "live_screenshot_sha256": "e655911e85aa39a3d6b54dd72ddc709e1e4be95a2db87d3a2c58b70ae7372490",
+    "official_metrics": {
+      "baseline_composite": 0.858978,
+      "candidate_composite": 0.859699,
+      "composite_delta": 0.000721,
+      "pixel_similarity": 0.959065,
+      "structure_similarity": 0.986528,
+      "edge_similarity": 0.40133,
+      "color_similarity": 0.976191,
+      "strict_improvement_pass": true,
+      "release_threshold": 0.99,
+      "release_threshold_pass": false
+    },
+    "regional_overall": {
+      "baseline_diagnostic_score": 0.791098,
+      "candidate_diagnostic_score": 0.792038,
+      "diagnostic_delta": 0.00094,
+      "baseline_edge_similarity": 0.39881,
+      "candidate_edge_similarity": 0.40133,
+      "edge_delta": 0.00252,
+      "non_regression_pass": true
+    },
+    "stage_tabs": {
+      "baseline_diagnostic_score": 0.773582,
+      "candidate_diagnostic_score": 0.792958,
+      "diagnostic_delta": 0.019376,
+      "baseline_edge_similarity": 0.355128,
+      "candidate_edge_similarity": 0.410727,
+      "edge_delta": 0.055599,
+      "strict_improvement_pass": true
+    },
+    "technical": {
+      "provenance_pass": true,
+      "reference_integrity_pass": true,
+      "single_capture_coherence_pass": true,
+      "technical_pass": true,
+      "console_errors": 0,
+      "application_network_errors": 0,
+      "http_errors": 0
+    }
+  },
+  "full_matrix": {
+    "workflow_run_id": 30771794141,
+    "workflow_name": "BIDFAST Stage Tabs Candidate Full Matrix",
+    "status_at_receipt": "pending_runner_capacity",
+    "routes_required": 10,
+    "retention_decision_pending": true
+  },
+  "supabase": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "public_bidfast_table_count": 0,
+    "mutation_performed": false
+  },
+  "decision": {
+    "candidate_retained": false,
+    "candidate_reverted": false,
+    "candidate_status": "PROVISIONAL_PENDING_FULL_MATRIX",
+    "rollback_commit_if_required": "65bd7345221c96915fba1f4c7704977c7d072e07",
+    "production_status": "LOCKED"
+  }
+}

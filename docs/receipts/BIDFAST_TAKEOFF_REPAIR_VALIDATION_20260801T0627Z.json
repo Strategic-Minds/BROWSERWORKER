@@ -1,0 +1,179 @@
+{
+  "schema_version": "bidfast-browserworker-validation-receipt-v1",
+  "timestamp_utc": "2026-08-01T06:27:00Z",
+  "phase": "VALIDATION",
+  "step": "component-level mobile takeoff repair and current-head full route non-regression matrix",
+  "inspection_before_mutation": {
+    "bidfast_repository_requested": "XTREME-AI-SYSTEMS/bidfast",
+    "bidfast_repository_resolved": "XTREME-SYSTEMS/bidfast",
+    "bidfast_branch": "auto-builder/bidfast-complete-visual-system",
+    "bidfast_pull_request": 2,
+    "prior_bidfast_head": "7744bf8d569038badf618ef9c4fd4a93f765f214",
+    "current_pr_diff_inspected": true,
+    "latest_bidfast_receipt_inspected": "docs/receipts/BIDFAST_VALIDATION_RECEIPT_20260801T0032Z.json",
+    "browserworker_repository": "Strategic-Minds/BROWSERWORKER",
+    "browserworker_branch": "auto-builder/bidfast-proof-20260728",
+    "browserworker_pull_request": 9,
+    "prior_browserworker_head": "b566b5501fb8b40ef26f4e04788d8ef2fd676812",
+    "latest_browserworker_receipt_inspected": "docs/receipts/BIDFAST_ASSISTANT_REPAIR_VALIDATION_20260801T0521Z.json"
+  },
+  "approved_reference": {
+    "route": "/takeoffs/demo-riverside",
+    "drive_file_id": "1kmCENBUWbrUyt2XIRPBKaHytrKQo1plX",
+    "title": "08_BIDFAST_MOBILE_TAKEOFF_WORKSPACE.png",
+    "theme": "light",
+    "viewport": "390x844",
+    "bytes": 1103992,
+    "sha256": "669b2b1c7c6ce7b30fca878fb95fdddc4d1ec06c71b23d906144b278df3929bf",
+    "crop": { "x": 178, "y": 150, "width": 570, "height": 1387 },
+    "allowed_reference_asset_use": "isolated approved plan thumbnail crop only",
+    "full_screen_substitution": false
+  },
+  "bidfast": {
+    "validated_head": "42b8601a6dee4e7455b867f55cebe7c872f0ef7b",
+    "deployment_id": "dpl_41eH4jiqHbkffoUv9EPBKDDH2svX",
+    "deployment_url": "bidfast-ikhud7yhx-strategic-minds-advisory.vercel.app",
+    "rollback_head": "7744bf8d569038badf618ef9c4fd4a93f765f214",
+    "commits": [
+      { "commit": "b4d7a3d355ad4f3364a9063eb0c1114f141c298f", "message": "feat(bidfast): add integrity-pinned takeoff plan thumbnail" },
+      { "commit": "099ec9a31b35a5dad8b0b14a6caf0211f30004de", "message": "feat(bidfast): add governed mobile takeoff workspace" },
+      { "commit": "28c83ad25b45f94c212fd2707efc863cabd279e3", "message": "style(bidfast): align mobile takeoff to approved reference" },
+      { "commit": "80a681d365f7b025ba92ab66be7022cc4de39498", "message": "feat(bidfast): activate responsive takeoff parity route" },
+      { "commit": "891776965615993c80fc935f018a73a6c00b901a", "message": "style(bidfast): load governed takeoff parity styles" },
+      { "commit": "cbdcb9728a6a353e18299e2dbc84c6948910848f", "message": "style(bidfast): refine takeoff geometry from measured evidence" },
+      { "commit": "42b8601a6dee4e7455b867f55cebe7c872f0ef7b", "message": "style(bidfast): activate measured takeoff refinements" }
+    ],
+    "pr_after_change": {
+      "commits": 189,
+      "changed_files": 109,
+      "open": true,
+      "draft": true,
+      "merged": false,
+      "mergeable": false
+    }
+  },
+  "takeoff_repair_cycles": [
+    {
+      "head": "891776965615993c80fc935f018a73a6c00b901a",
+      "workflow_source_commit": "a6c6b53577be5e8c840e25097a988f9ae0d4f7b0",
+      "run_id": 30687238658,
+      "job_id": 91335858423,
+      "artifact_id": 8814421042,
+      "artifact_sha256": "78b87e8e506e523dcf303c23c9d0ed93d60592ed7a96c284760eb9c09a173b20",
+      "page_height": 949,
+      "composite": 0.782488,
+      "prior_composite": 0.779775,
+      "absolute_improvement": 0.002713,
+      "metrics": {
+        "pixel_similarity": 0.907798,
+        "structure_similarity": 0.962427,
+        "edge_similarity": 0.138262,
+        "color_similarity": 0.970976
+      },
+      "non_regression": true,
+      "retained": true
+    },
+    {
+      "head": "42b8601a6dee4e7455b867f55cebe7c872f0ef7b",
+      "workflow_source_commit": "12069470b3a719ddda76c759f506e678e47c8078",
+      "run_id": 30687555190,
+      "job_id": 91336284713,
+      "artifact_id": 8814481228,
+      "artifact_sha256": "60c2b568856db88402c9fc0fa7399c2ce07a5765d9a07ec5a95fc444f363f963",
+      "page_height": 949,
+      "composite": 0.818538,
+      "prior_composite": 0.782488,
+      "original_baseline": 0.779775,
+      "absolute_improvement_from_prior_cycle": 0.036050,
+      "absolute_improvement_from_original": 0.038763,
+      "relative_improvement_from_original_percent": 4.9712,
+      "metrics": {
+        "pixel_similarity": 0.943534,
+        "structure_similarity": 0.980197,
+        "edge_similarity": 0.231955,
+        "color_similarity": 0.973452
+      },
+      "live_sha256": "d5ee5be5fd3ae6f41169f71b32723314d5bea923d5aec4a9ee8debfebe0bfacc",
+      "technical_pass": true,
+      "provenance_pass": true,
+      "reference_integrity_pass": true,
+      "screenshot_integrity_pass": true,
+      "console_errors": 0,
+      "application_network_errors": 0,
+      "http_errors": 0,
+      "non_regression": true,
+      "release_threshold_0_99": false,
+      "retained": true
+    }
+  ],
+  "current_head_full_matrix": {
+    "workflow_source_commit": "50f661b32a04247136e81c885f73ebeb95002c1c",
+    "run_id": 30687621905,
+    "viewport": "390x844",
+    "theme": "light",
+    "threshold": 0.99,
+    "routes_measured": 10,
+    "routes_passing_threshold": 0,
+    "technical_results": {
+      "exact_route_identity": "10/10",
+      "source_commit_branch_deployment_provenance": "10/10",
+      "reference_hash_integrity": "10/10",
+      "screenshot_hash_integrity": "10/10",
+      "zero_console_errors": "10/10",
+      "zero_application_network_errors": "10/10",
+      "zero_http_errors": "10/10",
+      "non_regression": "10/10"
+    },
+    "routes": [
+      { "route": "/dashboard", "score": 0.810876, "artifact_id": 8814503758, "artifact_sha256": "a3e00a3e5c6add24e8224e40fcd109a9337fcf20292bcb5ebac36f4033cdaac5" },
+      { "route": "/analytics", "score": 0.810237, "artifact_id": 8814509382, "artifact_sha256": "41f22ab86613456df1a9e8eb269c81fb7621ad10ed3df5f081943751580a5374" },
+      { "route": "/approvals", "score": 0.802620, "artifact_id": 8814512832, "artifact_sha256": "9addb7b001ae010c9c08214470cf670b245ed9a160e89790973d07604448573c" },
+      { "route": "/opportunities", "score": 0.802843, "artifact_id": 8814517064, "artifact_sha256": "4454cd995ab942e73dd625048cbe656b7be04d2aebb1612fa18ae447436d899d" },
+      { "route": "/estimates/new", "score": 0.813012, "artifact_id": 8814520343, "artifact_sha256": "49277bdb28edf1c244255fd679f73e6920e50de1f2266a12f9f4c27d5716b8eb" },
+      { "route": "/proposals", "score": 0.795438, "artifact_id": 8814524801, "artifact_sha256": "0a9f67116fb70656be853314301dc3c3d0b646c75fd696f0ff50b6aa226019ab" },
+      { "route": "/projects/demo-riverside", "score": 0.818800, "artifact_id": 8814528377, "artifact_sha256": "51d5c1b1f28cef945ee30a12a9ab7eef9a22a18171b487fd2ce62e49876a8a68" },
+      { "route": "/takeoffs/demo-riverside", "score": 0.818538, "artifact_id": 8814533483, "artifact_sha256": "e34cb05bc50890f3423e869b9923260dcbb99b6b87bf1c092bf0289d220cb90a" },
+      { "route": "/settings/company", "score": 0.825706, "artifact_id": 8814536661, "artifact_sha256": "cf61f1e489b178ea2558e4fba869626a69808a6356fc7653a806d3c2b493e1c8" },
+      { "route": "/assistant", "score": 0.823121, "artifact_id": 8814541418, "artifact_sha256": "01230fa7b5fb73b6b87bfb34184619dcc9431768e080b08ad8def7b297185218" }
+    ]
+  },
+  "browserworker": {
+    "validation_commits": [
+      { "commit": "a6c6b53577be5e8c840e25097a988f9ae0d4f7b0", "message": "ci(validation): measure BIDFAST takeoff repair" },
+      { "commit": "12069470b3a719ddda76c759f506e678e47c8078", "message": "ci(validation): remeasure refined BIDFAST takeoff layout" },
+      { "commit": "e86c7afe21a80a9e062815df5c6f412f8fa1c229", "message": "ci(validation): pin full matrix to refined takeoff head" },
+      { "commit": "50f661b32a04247136e81c885f73ebeb95002c1c", "message": "ci(validation): expose current-head matrix as PR evidence" }
+    ]
+  },
+  "supabase": {
+    "project_id": "azajysheebfhyzoyplpf",
+    "read_only_retry_result": "BLOCKED_PERMISSION_DENIED",
+    "error_code": -32600,
+    "database_mutation_performed": false
+  },
+  "safety": {
+    "approved_full_screen_reference_used_as_page_background_overlay_hidden_layer_or_component_substitute": false,
+    "real_components_hidden_to_manufacture_parity": false,
+    "isolated_approved_assets_only": true,
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "production_mutated": false
+  },
+  "gates": {
+    "visual_parity_0_99_all_routes": false,
+    "operational_pass_rate_1_00": false,
+    "complete_light_dark_coverage": false,
+    "zero_dead_controls_all_routes": false,
+    "zero_unintended_console_errors_current_matrix": true,
+    "zero_unexpected_application_network_failures_current_matrix": true,
+    "zero_tenant_leaks": false,
+    "zero_authorization_bypasses": false,
+    "production_promotion": "LOCKED"
+  },
+  "remaining_blockers": [
+    "All ten approved current-head light-mobile routes remain below 0.99.",
+    "Supabase read-only inspection remains permission denied, blocking Account through Audit execution and hostile tenant tests.",
+    "Complete approved light and dark reference pairs remain unavailable.",
+    "BIDFAST PR 2 remains draft and non-mergeable."
+  ]
+}

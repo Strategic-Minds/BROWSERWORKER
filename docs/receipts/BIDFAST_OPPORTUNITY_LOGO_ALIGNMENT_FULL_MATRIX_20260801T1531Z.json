@@ -1,0 +1,89 @@
+{
+  "receipt_type": "BIDFAST_OPPORTUNITY_LOGO_ALIGNMENT_FULL_MATRIX",
+  "created_at": "2026-08-01T15:31:00Z",
+  "status": "RETAINED_NON_REGRESSION_PASS_RELEASE_GATE_FAIL",
+  "application": {
+    "repository": "XTREME-SYSTEMS/bidfast",
+    "pull_request": 2,
+    "branch": "auto-builder/bidfast-complete-visual-system",
+    "rollback_commit": "0c4a20af7995ae1a2b4eaa2975e5de20fae15c84",
+    "asset_commit": "d61cf5b1d5e9db1df8eb758499dc0cc83e7f2188",
+    "validated_commit": "2c8bfd2b628b296c9f4c44c8791a8dc3237506eb",
+    "deployment_id": "dpl_95N8Re29ThaGHKsbMaJcXi9VP2eX",
+    "deployment_hostname": "bidfast-agj9ptluh-strategic-minds-advisory.vercel.app",
+    "isolated_logo_asset": {
+      "endpoint": "/api/assets/opportunity-reference-logo",
+      "dimensions": "238x55",
+      "sha256": "b5a96b47cae7eb46ac3394398ade432fa93fa69fc8e635c8fcb91768198fb88a",
+      "source_reference": "04_BIDFAST_MOBILE_OPPORTUNITIES_LIST.png"
+    }
+  },
+  "browserworker": {
+    "repository": "Strategic-Minds/BROWSERWORKER",
+    "pull_request": 9,
+    "branch": "auto-builder/bidfast-proof-20260728",
+    "proof_commit": "3a60be12f8a7ff87116b5e12933f51e47ce92e8d",
+    "matrix_commit": "e4f6467c1ccdf2b9467daf8060ee1f13b26dce53",
+    "single_route_run": 30705398231,
+    "single_route_job": 91383523597,
+    "single_route_artifact": 8820172083,
+    "single_route_artifact_digest": "sha256:086eb577761d09495a4f30d2462a8c2aa43c82ca7f3d7ef37eeddb8974952544",
+    "matrix_run": 30705509653
+  },
+  "result": {
+    "opportunities_previous": 0.852709,
+    "opportunities_current": 0.858978,
+    "absolute_improvement": 0.006269,
+    "relative_improvement_percent": 0.7352,
+    "pixel_similarity": 0.958675,
+    "structure_similarity": 0.986244,
+    "edge_similarity": 0.398810,
+    "color_similarity": 0.976187,
+    "matrix_non_regression_passes": "10/10",
+    "technical_passes": "10/10",
+    "provenance_passes": "10/10",
+    "integrity_passes": "10/10",
+    "screenshot_hash_matches": "10/10",
+    "console_errors": 0,
+    "app_network_errors": 0,
+    "http_errors": 0,
+    "routes_at_or_above_0_99": "0/10",
+    "routes": [
+      {"route":"/dashboard","score":0.810876,"baseline":0.810876,"artifact_id":8820203556,"artifact_digest":"sha256:85d374a2144b5ad7cbaac64a696e4510596e72d3a2d7e50587585f0ad0d18c88","live_sha256":"d32cf8745580ecb4d53189ff5b0f808feab9e56d61c1f4051cd83b6c69b160e5"},
+      {"route":"/analytics","score":0.810237,"baseline":0.810237,"artifact_id":8820219669,"artifact_digest":"sha256:e0c120941679ea2b33eab437a5de1adb2bb6e77715c9a8d26f5fb6ecd953ced6","live_sha256":"6c68a9e9b6d3cfc04a01ebe670f1f83b73fc904c50f068ebdaedb9fe0e9d825d"},
+      {"route":"/approvals","score":0.836456,"baseline":0.836456,"artifact_id":8820234755,"artifact_digest":"sha256:6848259d96601e3548729cb907df572c13321ceafd0614a79964092d30b6ba5c","live_sha256":"0e14f51e6adab3d3f5d602fc64ba02ccfeff0d479aab8f328ec26dba47310a2b"},
+      {"route":"/opportunities","score":0.858978,"baseline":0.852709,"artifact_id":8820250275,"artifact_digest":"sha256:fea9e8849b2eb25bd10ec156b050325806827d00dcd944c1cb00c603b4a3bcc4","live_sha256":"1a94ea4eae5cb271921c691d955cf2b8141f3f04e7c42ccb293d2cd0f245d632"},
+      {"route":"/estimates/new","score":0.813012,"baseline":0.813012,"artifact_id":8820266515,"artifact_digest":"sha256:46bd70d589381f03d5b26c8dcc0bf1be648bea34c1c07fb8aacc1cbae5ee8c60","live_sha256":"e9fa9a8bc06eac289888a1368cf3bd31e41a1824690e7a6f58878aa1087135df"},
+      {"route":"/proposals","score":0.819855,"baseline":0.819855,"artifact_id":8820283574,"artifact_digest":"sha256:0173f2e93ebace48855d9fe6682f3879dc54983957d8cc6a970b985ddb847d93","live_sha256":"250f43556dae44a0f48e07bca66ee466ab12efacea1b4efd82c3a1e48f9533a6"},
+      {"route":"/projects/demo-riverside","score":0.818791,"baseline":0.818791,"artifact_id":8820301981,"artifact_digest":"sha256:679f1fdab7195d33398720ddec6b4797e5fd3a3f61a8d9ef5a132ab1b32ccbb1","live_sha256":"7d836e5456e9a6e328819bc0c1ceafb8793e5c131ff114a4bbd53d114d0c1281"},
+      {"route":"/takeoffs/demo-riverside","score":0.818538,"baseline":0.818538,"artifact_id":8820321173,"artifact_digest":"sha256:2bc1084e65469a02ba541600d236d257c0703d4c3c50e03013bb29f1ae4c4a43","live_sha256":"d5ee5be5fd3ae6f41169f71b32723314d5bea923d5aec4a9ee8debfebe0bfacc"},
+      {"route":"/settings/company","score":0.825706,"baseline":0.825706,"artifact_id":8820338492,"artifact_digest":"sha256:18e87a7d02d62971c321e25553c49617db5f098daa6f07eb546d541dd734a327","live_sha256":"1558e965af86f5e7ac9a7519d1945bd392906e75190517fa5c0e1fddd81f541c"},
+      {"route":"/assistant","score":0.823121,"baseline":0.823121,"artifact_id":8820355084,"artifact_digest":"sha256:b9f7201d8497865fce4fa4c9b40acd613f74a611cd293ac17330a66487c9b613","live_sha256":"8e13da8c6690d931f7e98d505fc478913b828686209a7d00120536fdc1ee13ae"}
+    ]
+  },
+  "governance": {
+    "full_screen_reference_substitution": false,
+    "hidden_real_ui": false,
+    "isolated_asset_only": true,
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "production_promoted": false
+  },
+  "supabase": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "public_bidfast_table_count": 0,
+    "schema_mutated": false,
+    "development_branch_created": false,
+    "branch_listing_blocker": "Project reference is missing when validating permissions"
+  },
+  "release": {
+    "production_locked": true,
+    "blockers": [
+      "all approved routes remain below 0.99",
+      "complete approved dark-mode pairs unavailable",
+      "public.bidfast_* entities absent",
+      "operational and authorization matrices unexecuted",
+      "BIDFAST PR #2 remains draft and non-mergeable"
+    ]
+  }
+}

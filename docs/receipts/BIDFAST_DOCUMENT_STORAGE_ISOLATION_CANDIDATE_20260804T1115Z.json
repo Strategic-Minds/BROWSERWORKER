@@ -1,0 +1,131 @@
+{
+  "receipt_type": "BIDFAST_DOCUMENT_STORAGE_ISOLATION_CANDIDATE",
+  "created_at": "2026-08-04T11:15:00Z",
+  "phase": "VALIDATE",
+  "step": "close the document-storage tenant-isolation gap without applying schema or changing preview secrets",
+  "auto_builder_bridge": {
+    "job_id": "bidfast-storage-tenant-isolation-hardening-20260804T1115Z",
+    "mode": "dry_run",
+    "status": "dry_run_complete",
+    "fallback_used": "governed GitHub feature-branch writes"
+  },
+  "inspection": {
+    "latest_receipt": "docs/receipts/BIDFAST_MIGRATION_ORDER_CONFIG_MISMATCH_BLOCKED_20260804T0920Z.json",
+    "source_head_before_change": "58e19f3429de3e22f767fa0190ae56569514c730",
+    "current_pr_diff_inspected": true,
+    "new_blocker": "DocumentWorkspace uploads and signs files in the takeoff-documents bucket, but the repository and governed database had no bucket creation or storage.objects tenant policies."
+  },
+  "bidfast": {
+    "repository": "XTREME-SYSTEMS/bidfast",
+    "branch": "auto-builder/bidfast-complete-visual-system",
+    "pull_request": 2,
+    "head_commit": "da9aa8faa8591c0c0283955eda7a6682d2ed412c",
+    "rollback_commit": "58e19f3429de3e22f767fa0190ae56569514c730",
+    "commits": [
+      {
+        "sha": "4ac83c2a59b4f33ad492ce1bfefa58850902e086",
+        "message": "fix(db): isolate BIDFAST document storage by tenant and project"
+      },
+      {
+        "sha": "7ca1186dcdea78a1216f061eaa1ac2602b3e072b",
+        "message": "test(governance): enforce BIDFAST document storage isolation"
+      },
+      {
+        "sha": "33db5ced129debce8a4ebaf23124206fa3149de4",
+        "message": "chore(governance): run BIDFAST document storage validation"
+      },
+      {
+        "sha": "da9aa8faa8591c0c0283955eda7a6682d2ed412c",
+        "message": "fix(db): support governed CAD document MIME variants"
+      }
+    ],
+    "effective_diff": {
+      "files": [
+        "package.json",
+        "scripts/check-bidfast-document-storage-governance.mjs",
+        "supabase/migrations/202608041115_harden_bidfast_document_storage.sql"
+      ],
+      "ui_changed": false,
+      "visual_assets_changed": false,
+      "tests_weakened": false
+    },
+    "pull_request_state": {
+      "open": true,
+      "draft": true,
+      "merged": false,
+      "mergeable": false
+    }
+  },
+  "storage_candidate": {
+    "bucket": "takeoff-documents",
+    "private": true,
+    "file_size_limit_bytes": 104857600,
+    "path_contract": "organization_id/project_id/randomized_safe_filename",
+    "project_membership_validation": true,
+    "policies": [
+      "bidfast_takeoff_documents_select",
+      "bidfast_takeoff_documents_insert",
+      "bidfast_takeoff_documents_update",
+      "bidfast_takeoff_documents_delete"
+    ],
+    "anonymous_access_allowed": false,
+    "path_parser_security_definer": false,
+    "cad_mime_variants_included": true,
+    "applied_to_database": false
+  },
+  "preview_build": {
+    "vercel_reference": "69WhfvWRDqTbxz2iRWFmDJjLFoZz",
+    "github_check_context": "Vercel",
+    "github_check_state": "pending",
+    "exact_dpl_identifier_available": false,
+    "scope_access_blocker": "The connected Vercel account cannot read the strategic-minds-advisory deployment record."
+  },
+  "supabase_catalog": {
+    "governed_project_id": "mhaovpyegtysfgualplu",
+    "public_bidfast_table_count": 0,
+    "public_bidfast_function_count": 0,
+    "takeoff_documents_bucket_count": 0,
+    "bidfast_storage_policy_count": 0,
+    "database_mutation_performed": false
+  },
+  "configuration_provenance": {
+    "last_proven_expected_project_ref": "mhaovpyegtysfgualplu",
+    "last_proven_actual_project_ref": "prhppuuwcnmfdhwsagug",
+    "new_provenance_run_executed": false,
+    "reason": "No preview environment correction was authorized or observed; the storage candidate is visually neutral and remains provisional until build and provenance gates pass."
+  },
+  "visual_evidence": {
+    "new_score_claimed": false,
+    "last_retained_dashboard_score": 0.837024,
+    "last_retained_route_count": 10,
+    "last_retained_routes_passed": 10,
+    "last_retained_matrix_pass_rate": 1.0,
+    "last_retained_routes_reaching_0_99": 0,
+    "last_retained_console_error_count": 0,
+    "last_retained_application_network_error_count": 0,
+    "last_retained_http_error_count": 0
+  },
+  "constraints": {
+    "screenshot_substitution_used": false,
+    "real_components_hidden": false,
+    "secrets_changed": false,
+    "vercel_environment_changed": false,
+    "database_mutated": false,
+    "merged": false,
+    "production_changed": false
+  },
+  "decision": {
+    "storage_isolation_candidate_retained_provisionally": true,
+    "visual_acceptance_complete": false,
+    "operational_acceptance_complete": false,
+    "release_authorized": false,
+    "production_promotion_authorized": false
+  },
+  "blockers": [
+    "The Vercel build for da9aa8faa8591c0c0283955eda7a6682d2ed412c is still pending.",
+    "The last proven preview Supabase environment targets prhppuuwcnmfdhwsagug instead of governed project mhaovpyegtysfgualplu.",
+    "The governed project contains zero public.bidfast_* tables/functions and no takeoff-documents bucket or BIDFAST storage policies.",
+    "The storage migration has not been fresh-installed or denial-tested in an isolated Supabase environment.",
+    "No approved route reaches 0.99 visual parity, and complete approved light/dark multi-viewport references remain unavailable."
+  ]
+}

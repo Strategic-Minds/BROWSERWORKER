@@ -1,0 +1,141 @@
+{
+  "schema_version": "bidfast-browserworker-validation-receipt-v1",
+  "timestamp_utc": "2026-08-01T03:14:24Z",
+  "phase": "VALIDATION",
+  "step": "revision-pinned mobile opportunity component repair with two measured non-regression cycles",
+  "inspection_before_mutation": {
+    "bidfast_prior_head": "b8405a12a4adcb4d59be2cac62f56d884149ba2e",
+    "bidfast_pr_diff_inspected": true,
+    "latest_bidfast_receipt": "docs/receipts/BIDFAST_VALIDATION_RECEIPT_20260801T0032Z.json",
+    "browserworker_prior_head": "30f7547aea6629f46db21e3886b6144921a3777a",
+    "latest_browserworker_receipt": "docs/receipts/BIDFAST_PROJECT_REPAIR_VALIDATION_20260801T0218Z.json",
+    "retained_opportunity_baseline": 0.742408
+  },
+  "bidfast": {
+    "repository": "XTREME-SYSTEMS/bidfast",
+    "branch": "auto-builder/bidfast-complete-visual-system",
+    "pull_request": 2,
+    "validated_head": "9559f07c2a67aad1bb6e009e82704b629971e4de",
+    "deployment_id": "dpl_2Xm4gyPJv8SJ4CArstnDGELQkzYN",
+    "deployment_url": "bidfast-6dlsx9b0k-strategic-minds-advisory.vercel.app",
+    "rollback_head": "b8405a12a4adcb4d59be2cac62f56d884149ba2e",
+    "changes": [
+      { "commit": "aeeddaf570115acc97af3ff6f43e3f299f59f34b", "message": "feat(bidfast): add responsive mobile opportunity workspace" },
+      { "commit": "1d4c7b29d33e3d148cd5ed55b907cb5daeb39fb9", "message": "feat(bidfast): select opportunity workspace by viewport" },
+      { "commit": "b3e4844518d73b01ff6902a06a4780501de55b55", "message": "style(bidfast): align mobile opportunities to approved reference" },
+      { "commit": "c2d415988d0da9b9f6f45a6126ef4a2c135b6fbb", "message": "feat(bidfast): add integrity-pinned opportunity thumbnail sheet" },
+      { "commit": "9d15c17804f7937998c72655384906815fdd306f", "message": "feat(bidfast): activate governed responsive opportunities route" },
+      { "commit": "5effef1b3afd2e209bc9e5c675b377da4938aa85", "message": "style(bidfast): activate mobile opportunities parity styles" },
+      { "commit": "17babe79d6069a52be8bd66ef46e40cbe1899288", "message": "style(bidfast): refine opportunity edge alignment" },
+      { "commit": "9559f07c2a67aad1bb6e009e82704b629971e4de", "message": "style(bidfast): activate opportunity parity refinements" }
+    ]
+  },
+  "approved_reference": {
+    "route": "/opportunities",
+    "drive_file_id": "1haXSs0QuoSMACLXzo-sVaSGPc1roz0jR",
+    "title": "04_BIDFAST_MOBILE_OPPORTUNITIES_LIST.png",
+    "sha256": "c3cd0b2ed394491128784384e19561457bfe800f4b0182a391b78b888db389ef",
+    "crop": { "x": 178, "y": 150, "width": 570, "height": 1387 },
+    "allowed_reference_asset_use": "six isolated project thumbnails only",
+    "full_screen_substitution": false
+  },
+  "browserworker": {
+    "repository": "Strategic-Minds/BROWSERWORKER",
+    "branch": "auto-builder/bidfast-proof-20260728",
+    "pull_request": 9,
+    "proof_workflow_commits": [
+      "7bd083fd95ed79181762f508938c2700dc81a92f",
+      "ca29618898213e95473633065e56efb816bcd575"
+    ],
+    "first_cycle": {
+      "run_id": 30681456884,
+      "job_id": 91319172348,
+      "artifact_id": 8812372624,
+      "artifact_sha256": "65071ef93274c37f0d37a13bf75fd3b2bbf8f1c2f7659f7a20ad72de57d8e6b5",
+      "bidfast_commit": "5effef1b3afd2e209bc9e5c675b377da4938aa85",
+      "deployment_id": "dpl_E1QBpkvdQAeVQNXfnFUTqKXtsxAW",
+      "composite_score": 0.799685
+    },
+    "second_cycle": {
+      "run_id": 30681534782,
+      "job_id": 91319397158,
+      "artifact_id": 8812428003,
+      "artifact_sha256": "4b1cf12b66c6f763293510158acb76f6b05a0aae814586bdba532e9504e1dd5a",
+      "bidfast_commit": "9559f07c2a67aad1bb6e009e82704b629971e4de",
+      "deployment_id": "dpl_2Xm4gyPJv8SJ4CArstnDGELQkzYN",
+      "composite_score": 0.802843
+    }
+  },
+  "measurement": {
+    "viewport": "390x844",
+    "theme": "light",
+    "page_height": 949,
+    "release_threshold": 0.99,
+    "prior_composite": 0.742408,
+    "first_cycle_composite": 0.799685,
+    "current_composite": 0.802843,
+    "absolute_improvement_from_prior": 0.060435,
+    "relative_improvement_percent_from_prior": 8.1404,
+    "current_metrics": {
+      "pixel_similarity": 0.930006,
+      "structure_similarity": 0.969187,
+      "edge_similarity": 0.192847,
+      "color_similarity": 0.973711
+    },
+    "live_sha256": "6010772f2314ba23f9b6f1af32da26ad42712106777733645d059b6cf782fa08",
+    "technical_pass": true,
+    "provenance_pass": true,
+    "reference_integrity_pass": true,
+    "screenshot_integrity_pass": true,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "non_regression_gate": "PASS",
+    "release_threshold_0_99": "FAIL"
+  },
+  "implementation": {
+    "authenticated_behavior": "loads organization-scoped public.bidfast_opportunities through the existing Supabase browser client",
+    "preview_behavior": "uses deterministic visual-only sample records only when VERCEL_ENV is preview and no governed session is available",
+    "desktop_behavior": "preserves the existing real Supabase CRUD OpportunityWorkspace",
+    "controls": [
+      "search",
+      "stage filters",
+      "sort selector",
+      "filter panel",
+      "refresh",
+      "opportunity detail links",
+      "mobile navigation"
+    ]
+  },
+  "supabase": {
+    "project_id": "azajysheebfhyzoyplpf",
+    "read_only_retry_result": "BLOCKED_PERMISSION_DENIED",
+    "error_code": -32600,
+    "database_mutation_performed": false
+  },
+  "safety": {
+    "approved_full_screen_reference_used_as_page_background_overlay_hidden_layer_or_component_substitute": false,
+    "real_components_hidden_to_manufacture_parity": false,
+    "isolated_approved_assets_only": true,
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "production_mutated": false
+  },
+  "gates": {
+    "opportunity_visual_parity_0_99": false,
+    "current_head_full_route_matrix_rerun": false,
+    "operational_pass_rate_1_00": false,
+    "complete_light_dark_coverage": false,
+    "zero_dead_controls_all_routes": false,
+    "zero_tenant_leaks": false,
+    "zero_authorization_bypasses": false,
+    "production_promotion": "LOCKED"
+  },
+  "remaining_blockers": [
+    "The current opportunity score is 0.802843, below the required 0.99.",
+    "The current 9559f07c head has not completed a full ten-route non-regression matrix.",
+    "Supabase read-only inspection remains permission denied, blocking operational and hostile-tenant tests.",
+    "Complete approved light and dark reference pairs are unavailable.",
+    "BIDFAST PR 2 remains draft and non-mergeable."
+  ]
+}

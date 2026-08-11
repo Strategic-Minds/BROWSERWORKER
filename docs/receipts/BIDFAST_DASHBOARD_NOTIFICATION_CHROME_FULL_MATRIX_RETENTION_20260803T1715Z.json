@@ -1,0 +1,127 @@
+{
+  "receipt_type": "BIDFAST_VISUAL_CANDIDATE_RETENTION",
+  "created_at": "2026-08-03T17:15:00Z",
+  "phase": "VALIDATION",
+  "step": "notification-button-only candidate full-matrix retention",
+  "inspection_before_mutation": {
+    "bidfast_repository": "XTREME-SYSTEMS/bidfast",
+    "bidfast_branch": "auto-builder/bidfast-complete-visual-system",
+    "bidfast_pull_request": 2,
+    "candidate_commit": "b58a4e293e3d5b8fad5a6c0fd2d521ce96489d31",
+    "rollback_commit": "4c46ca76e96ca3477fd40c5b219c8f3c28e7b76a",
+    "candidate_diff_files": [
+      "app/dashboard-quick-actions-candidate.css"
+    ],
+    "candidate_scope": "notification button border and background only",
+    "browserworker_repository": "Strategic-Minds/BROWSERWORKER",
+    "browserworker_branch": "auto-builder/bidfast-proof-20260728",
+    "browserworker_pull_request": 9,
+    "matrix_workflow_commit": "c74aaeb8a9a82b3a3a7d46604040935962545856"
+  },
+  "implementation_constraints": {
+    "component_level_implementation": true,
+    "approved_screenshot_used_as_background": false,
+    "approved_screenshot_used_as_overlay": false,
+    "approved_screenshot_used_as_hidden_replacement": false,
+    "real_components_hidden_for_parity": false,
+    "test_thresholds_weakened": false,
+    "secrets_exposed": false
+  },
+  "deployment": {
+    "deployment_id": "dpl_HXF2W3Rx7FVCjVPRoiBksJePbVpG",
+    "deployment_url": "bidfast-pknraw73q-strategic-minds-advisory.vercel.app",
+    "source_commit": "b58a4e293e3d5b8fad5a6c0fd2d521ce96489d31",
+    "source_ref": "auto-builder/bidfast-complete-visual-system"
+  },
+  "approved_reference": {
+    "route": "/dashboard",
+    "drive_file_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+    "title": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+    "sha256": "f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb",
+    "bytes": 1087711
+  },
+  "isolated_proof": {
+    "workflow_run_id": 30830899599,
+    "workflow_job_id": 91744273411,
+    "artifact_id": 8862914063,
+    "artifact_sha256": "d5e306711508fb031cf1d02781d3c9c37b94c063131454d93da4a2c43a8a3516",
+    "retained_baseline": 0.836091,
+    "candidate_score": 0.836926,
+    "delta": 0.000835,
+    "metrics": {
+      "pixel_similarity": 0.948106,
+      "structure_similarity": 0.975931,
+      "edge_similarity": 0.328753,
+      "color_similarity": 0.967785,
+      "composite_score": 0.836926
+    },
+    "geometry": {
+      "logo": {"x": 2, "y": 21.5, "width": 172, "height": 39},
+      "notification_button": {"x": 306, "y": 23, "width": 36, "height": 36},
+      "avatar": {"x": 352, "y": 23, "width": 36, "height": 36},
+      "search": {"x": 2, "y": 74, "width": 386, "height": 41}
+    },
+    "screenshot_sha256": "6a7f35071cea5495778598d6d1be633db466b7073a660aa14ba0bc708706b25b",
+    "console_error_count": 0,
+    "application_network_error_count": 0,
+    "http_error_count": 0,
+    "failures": []
+  },
+  "full_matrix": {
+    "workflow_run_id": 30835441829,
+    "workflow_job_id": 91759361157,
+    "artifact_id": 8864729538,
+    "artifact_sha256": "9e86a5b036ccd04b2613dd803f4aa4b2a260a1e135a3b2ba59cd6ef6e750a3d1",
+    "route_count": 10,
+    "passed_routes": 10,
+    "visual_matrix_pass_rate": 1.0,
+    "routes": {
+      "/dashboard": 0.836926,
+      "/analytics": 0.830446,
+      "/approvals": 0.859067,
+      "/opportunities": 0.859699,
+      "/estimates/new": 0.813012,
+      "/proposals": 0.819855,
+      "/projects/demo-riverside": 0.818791,
+      "/takeoffs/demo-riverside": 0.818538,
+      "/settings/company": 0.825706,
+      "/assistant": 0.823121
+    },
+    "console_error_count": 0,
+    "application_network_error_count": 0,
+    "http_error_count": 0,
+    "routes_reaching_release_threshold": 0,
+    "release_threshold": 0.99,
+    "failures": []
+  },
+  "supabase": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "public_bidfast_entity_count": 0,
+    "database_mutation_performed": false,
+    "operational_workflow_tested": false,
+    "tenant_isolation_tested": false,
+    "authorization_bypass_tested": false
+  },
+  "retention_decision": {
+    "retain_candidate": true,
+    "new_dashboard_baseline": 0.836926,
+    "release_authorized": false,
+    "production_promotion_authorized": false,
+    "reason": "The isolated proof improved measured dashboard parity and the revision-pinned ten-route matrix passed without visual regression or technical errors. Release gates remain unmet."
+  },
+  "rollback": {
+    "application_target": "4c46ca76e96ca3477fd40c5b219c8f3c28e7b76a",
+    "method": "revert commit b58a4e293e3d5b8fad5a6c0fd2d521ce96489d31 on the BIDFAST feature branch",
+    "production_rollback_required": false
+  },
+  "remaining_gates": {
+    "visual_parity_0_99_every_route_and_viewport": false,
+    "operational_pass_rate_1_00": false,
+    "complete_light_dark_coverage": false,
+    "zero_dead_controls_application_wide": false,
+    "zero_tenant_leaks": false,
+    "zero_authorization_bypasses": false,
+    "production_smoke_receipt": false,
+    "production_rollback_receipt": false
+  }
+}

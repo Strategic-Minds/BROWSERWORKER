@@ -1,0 +1,75 @@
+name: BIDFAST Approval Note Provenance Config Proof
+
+on:
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-approval-note-provenance-config-provenance.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-approval-note-provenance-config-provenance
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: b533e52e740f624f426ffffe2c35261a2a2eb9e8
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  BIDFAST_EXPECTED_SUPABASE_PROJECT_REF: mhaovpyegtysfgualplu
+  BIDFAST_ROLLBACK_COMMIT: c1dfebc80d09899d1eefb797018a739dd721fd3f
+
+jobs:
+  provenance:
+    name: Exact approval note provenance revision and governed Supabase proof
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Verify exact Supabase configuration provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-config-provenance?expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          accepted=false
+          for attempt in $(seq 1 15); do
+            status="$(curl -sS --max-time 120 -o evidence/provenance.json -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/provenance.http-status.txt
+            commit="$(node -e "try{const j=require('./evidence/provenance.json');process.stdout.write(String(j.source_revision?.commit_sha||''))}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" ]]; then
+              accepted=true
+              break
+            fi
+            echo "attempt=${attempt} status=${status:-none} commit=${commit:-unknown}"
+            if [[ "$attempt" != "15" ]]; then sleep 20; fi
+          done
+          test "$accepted" = true
+
+      - name: Enforce exact revision and governed project
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const body = JSON.parse(fs.readFileSync('evidence/provenance.json', 'utf8'))
+          const failures = []
+          if (body?.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`commit_sha=${String(body?.source_revision?.commit_sha)}`)
+          if (body?.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`commit_ref=${String(body?.source_revision?.commit_ref)}`)
+          if (body?.supabase?.project_ref !== process.env.BIDFAST_EXPECTED_SUPABASE_PROJECT_REF) failures.push(`supabase_project_ref=${String(body?.supabase?.project_ref)}`)
+          if (body?.configuration_pass !== true) failures.push(`configuration_pass=${String(body?.configuration_pass)}`)
+          if (body?.provenance_pass !== true) failures.push(`provenance_pass=${String(body?.provenance_pass)}`)
+          console.log(JSON.stringify({ expected_commit: process.env.BIDFAST_EXPECTED_COMMIT, expected_ref: process.env.BIDFAST_EXPECTED_REF, expected_supabase: process.env.BIDFAST_EXPECTED_SUPABASE_PROJECT_REF, rollback_commit: process.env.BIDFAST_ROLLBACK_COMMIT, observed: body, failures }, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable provenance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-approval-note-provenance-config-provenance-b533e52
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30

@@ -1,0 +1,158 @@
+name: BIDFAST Dashboard Retained Visual Capture
+
+on:
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-dashboard-retained-visual-capture.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/bidfast-dashboard-retained-visual-capture.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-dashboard-retained-visual-capture-1bc566b
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_ORIGIN: https://bidfast-aucd65eej-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: 1bc566b89a16af6ca180bc0a2069070e6630192b
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  DASHBOARD_REFERENCE_ID: 1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr
+  DASHBOARD_REFERENCE_SHA256: f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb
+  EXPECTED_LIVE_SHA256: cf697e505721702fcbb11c47e4a8249137c1662ad570d02dd6713ec30620a3af
+  RETAINED_BASELINE: '0.814804'
+
+jobs:
+  capture-retained-dashboard:
+    name: Capture revision-pinned retained dashboard
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Wait for BrowserWorker health
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 32); do
+            status="$(curl -sS -o /tmp/browserworker-health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            if [[ "$status" == "200" ]]; then
+              exit 0
+            fi
+            echo "BrowserWorker health attempt ${attempt}: ${status:-no-status}"
+            sleep 15
+          done
+          exit 1
+
+      - name: Verify exact BIDFAST preview provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          for attempt in $(seq 1 40); do
+            status="$(curl -sS -o evidence/build-info.json -w '%{http_code}' --max-time 30 "${BIDFAST_ORIGIN}/api/build-info" || true)"
+            commit="$(node -e "try{const j=require('./evidence/build-info.json');process.stdout.write(String(j?.source_revision?.commit_sha||''))}catch{}")"
+            ref="$(node -e "try{const j=require('./evidence/build-info.json');process.stdout.write(String(j?.source_revision?.commit_ref||''))}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" && "$ref" == "$BIDFAST_EXPECTED_REF" ]]; then
+              exit 0
+            fi
+            echo "BIDFAST provenance attempt ${attempt}: status=${status:-no-status} commit=${commit:-unknown} ref=${ref:-unknown}"
+            sleep 15
+          done
+          exit 1
+
+      - name: Capture exact retained dashboard PNG
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=/dashboard&theme=light&viewport=mobile&format=image"
+          for attempt in $(seq 1 8); do
+            status="$(curl -sS --max-time 240 -D evidence/dashboard-live.headers.txt -o evidence/dashboard-live.png -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/dashboard-live.http-status.txt
+            if [[ "$status" == "200" ]]; then
+              break
+            fi
+            echo "Dashboard image attempt ${attempt}: ${status:-no-status}"
+            if [[ "$attempt" != "8" ]]; then sleep 60; fi
+          done
+          test "$(cat evidence/dashboard-live.http-status.txt)" = "200"
+          file evidence/dashboard-live.png
+          test "$(xxd -p -l 8 evidence/dashboard-live.png)" = "89504e470d0a1a0a"
+          actual_sha="$(sha256sum evidence/dashboard-live.png | awk '{print $1}')"
+          printf '%s\n' "$actual_sha" > evidence/dashboard-live.sha256.txt
+          test "$actual_sha" = "$EXPECTED_LIVE_SHA256"
+
+      - name: Reproduce retained regional evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-dashboard-regions?expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          for attempt in $(seq 1 8); do
+            status="$(curl -sS --max-time 240 -o evidence/dashboard-regions.json -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/dashboard-regions.http-status.txt
+            if [[ "$status" == "200" ]] && node -e "const j=require('./evidence/dashboard-regions.json');process.exit(j.ok===true&&j.diagnostic_pass===true?0:1)"; then
+              exit 0
+            fi
+            echo "Dashboard regional attempt ${attempt}: ${status:-no-status}"
+            if [[ "$attempt" != "8" ]]; then sleep 60; fi
+          done
+          exit 1
+
+      - name: Enforce retained evidence gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const body = JSON.parse(fs.readFileSync('evidence/dashboard-regions.json', 'utf8'))
+          const score = body?.metrics?.composite_score
+          const failures = []
+          if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
+          if (body.diagnostic_pass !== true) failures.push(`diagnostic_pass=${String(body.diagnostic_pass)}`)
+          if (body.diagnostic_only !== true) failures.push(`diagnostic_only=${String(body.diagnostic_only)}`)
+          if (body.release_authorized !== false) failures.push(`release_authorized=${String(body.release_authorized)}`)
+          if (body.route !== '/dashboard') failures.push(`route=${String(body.route)}`)
+          if (body.theme !== 'light') failures.push(`theme=${String(body.theme)}`)
+          if (body?.viewport?.width !== 390 || body?.viewport?.height !== 844) failures.push('viewport mismatch')
+          if (body.provenance_pass !== true) failures.push(`provenance_pass=${String(body.provenance_pass)}`)
+          if (body.integrity_pass !== true) failures.push(`integrity_pass=${String(body.integrity_pass)}`)
+          if (body.technical_pass !== true) failures.push(`technical_pass=${String(body.technical_pass)}`)
+          if (body?.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`commit_sha=${String(body?.source_revision?.commit_sha)}`)
+          if (body?.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`commit_ref=${String(body?.source_revision?.commit_ref)}`)
+          if (body?.reference?.drive_file_id !== process.env.DASHBOARD_REFERENCE_ID) failures.push(`reference_id=${String(body?.reference?.drive_file_id)}`)
+          if (body?.reference?.sha256 !== process.env.DASHBOARD_REFERENCE_SHA256) failures.push(`reference_sha256=${String(body?.reference?.sha256)}`)
+          if (!Number.isFinite(score) || score < Number(process.env.RETAINED_BASELINE)) failures.push(`score=${String(score)}`)
+          if (body?.live?.sha256 !== process.env.EXPECTED_LIVE_SHA256) failures.push(`live_sha256=${String(body?.live?.sha256)}`)
+          for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
+            if (!Array.isArray(body[name]) || body[name].length !== 0) failures.push(`${name}=${JSON.stringify(body[name])}`)
+          }
+          const summary = {
+            score,
+            retained_baseline: Number(process.env.RETAINED_BASELINE),
+            release_threshold: 0.99,
+            release_threshold_pass: Number.isFinite(score) && score >= 0.99,
+            live_sha256: body?.live?.sha256 || null,
+            source_revision: body.source_revision,
+            weakest_regions: Array.isArray(body?.analysis?.regions) ? body.analysis.regions.slice(0, 5) : [],
+            failures,
+          }
+          fs.writeFileSync('evidence/dashboard-retained-capture-summary.json', JSON.stringify(summary, null, 2))
+          console.log(JSON.stringify(summary, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable retained dashboard evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-dashboard-retained-visual-capture-1bc566b
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30

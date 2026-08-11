@@ -1,0 +1,177 @@
+name: BIDFAST Estimate Regional Diagnostic
+
+on:
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - 'app/api/validation/bidfast-estimate-regions/route.ts'
+      - '.github/workflows/bidfast-estimate-regional-diagnostic.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-estimate-regional-diagnostic
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: cffc151bd0b9bf18a216d324781cf97c0896324c
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  ROUTE: /estimates/new
+  RETAINED_ROUTE_FLOOR: '0.805620'
+  RELEASE_THRESHOLD: '0.990000'
+  REFERENCE_SHA256: 3b50c10978f4e4ba111eba5cdd5dc15bf76c73a653920955cca894ee07e5854b
+
+jobs:
+  diagnostic:
+    name: Revision-pinned estimate regional diagnostic
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Wait for BrowserWorker health
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 30); do
+            status="$(curl -sS -o /tmp/health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            if [[ "$status" == "200" ]]; then
+              cat /tmp/health.json
+              exit 0
+            fi
+            echo "BrowserWorker health attempt ${attempt}: ${status:-no-status}"
+            sleep 15
+          done
+          exit 1
+
+      - name: Verify exact BIDFAST preview provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 40); do
+            status="$(curl -sS -o /tmp/bidfast-build-info.json -w '%{http_code}' --max-time 30 "${BIDFAST_ORIGIN}/api/build-info" || true)"
+            commit="$(node -e "try{const j=require('/tmp/bidfast-build-info.json');process.stdout.write(String(j?.source_revision?.commit_sha||''))}catch{}")"
+            ref="$(node -e "try{const j=require('/tmp/bidfast-build-info.json');process.stdout.write(String(j?.source_revision?.commit_ref||''))}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" && "$ref" == "$BIDFAST_EXPECTED_REF" ]]; then
+              cat /tmp/bidfast-build-info.json
+              exit 0
+            fi
+            echo "BIDFAST provenance attempt ${attempt}: status=${status:-no-status} commit=${commit:-unknown} ref=${ref:-unknown}"
+            sleep 15
+          done
+          cat /tmp/bidfast-build-info.json || true
+          exit 1
+
+      - name: Execute retained-floor parity proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-parity-v3?route=%2Festimates%2Fnew&expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          status="$(curl -sS --retry 2 --retry-all-errors --max-time 210 -o evidence/estimate-parity.json -w '%{http_code}' "$endpoint" || true)"
+          printf '%s\n' "$status" > evidence/estimate-parity.http-status.txt
+          cat evidence/estimate-parity.json || true
+          test "$status" = "200" -o "$status" = "409"
+
+      - name: Execute exact-reference estimate regional diagnostic
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-estimate-regions?expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          accepted=false
+          for attempt in $(seq 1 30); do
+            status="$(curl -sS --max-time 210 -o evidence/estimate-regions.json -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/estimate-regions.http-status.txt
+            version="$(node -e "try{const j=require('./evidence/estimate-regions.json');process.stdout.write(String(j?.validator_version||''))}catch{}")"
+            if [[ "$status" == "200" && "$version" == "estimate-regions-v1" ]]; then
+              accepted=true
+              cat evidence/estimate-regions.json
+              break
+            fi
+            echo "Diagnostic attempt ${attempt}: status=${status:-no-status} version=${version:-unknown}"
+            cat evidence/estimate-regions.json || true
+            if [[ "$attempt" != "30" ]]; then sleep 20; fi
+          done
+          test "$accepted" = true
+
+      - name: Enforce non-regression, integrity, provenance, and technical gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const parity = JSON.parse(fs.readFileSync('evidence/estimate-parity.json', 'utf8'))
+          const regions = JSON.parse(fs.readFileSync('evidence/estimate-regions.json', 'utf8'))
+          const failures = []
+          const score = Number(parity?.metrics?.composite_score)
+          if (!Number.isFinite(score)) failures.push('composite score missing')
+          else if (score < Number(process.env.RETAINED_ROUTE_FLOOR)) failures.push(`REGRESSION composite_score=${score} below retained floor ${process.env.RETAINED_ROUTE_FLOOR}`)
+          if (parity.route !== process.env.ROUTE) failures.push(`parity route=${String(parity.route)}`)
+          if (parity.provenance_pass !== true) failures.push(`parity provenance_pass=${String(parity.provenance_pass)}`)
+          if (parity.integrity_pass !== true) failures.push(`parity integrity_pass=${String(parity.integrity_pass)}`)
+          if (parity.technical_pass !== true) failures.push(`parity technical_pass=${String(parity.technical_pass)}`)
+          if (parity?.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`parity commit_sha=${String(parity?.source_revision?.commit_sha)}`)
+          if (parity?.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`parity commit_ref=${String(parity?.source_revision?.commit_ref)}`)
+          if (parity?.reference?.sha256 !== process.env.REFERENCE_SHA256) failures.push(`parity reference_sha256=${String(parity?.reference?.sha256)}`)
+          for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
+            if (!Array.isArray(parity[name]) || parity[name].length !== 0) failures.push(`parity ${name}=${JSON.stringify(parity[name])}`)
+          }
+          if (regions.ok !== true) failures.push(`regions ok=${String(regions.ok)}`)
+          if (regions.diagnostic_only !== true) failures.push(`regions diagnostic_only=${String(regions.diagnostic_only)}`)
+          if (regions.release_authorized !== false) failures.push(`regions release_authorized=${String(regions.release_authorized)}`)
+          if (regions.validator_version !== 'estimate-regions-v1') failures.push(`validator_version=${String(regions.validator_version)}`)
+          if (regions.route !== process.env.ROUTE) failures.push(`regions route=${String(regions.route)}`)
+          if (regions.technical_pass !== true) failures.push(`regions technical_pass=${String(regions.technical_pass)}`)
+          if (regions.provenance_pass !== true) failures.push(`regions provenance_pass=${String(regions.provenance_pass)}`)
+          if (regions.diagnostic_pass !== true) failures.push(`regions diagnostic_pass=${String(regions.diagnostic_pass)}`)
+          if (regions?.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`regions commit_sha=${String(regions?.source_revision?.commit_sha)}`)
+          if (regions?.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`regions commit_ref=${String(regions?.source_revision?.commit_ref)}`)
+          if (regions?.reference?.sha256 !== process.env.REFERENCE_SHA256) failures.push(`regions reference_sha256=${String(regions?.reference?.sha256)}`)
+          if (!Array.isArray(regions?.analysis?.regions) || regions.analysis.regions.length !== 7) failures.push('expected 7 estimate diagnostic regions')
+          for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
+            if (!Array.isArray(regions[name]) || regions[name].length !== 0) failures.push(`regions ${name}=${JSON.stringify(regions[name])}`)
+          }
+          const summary = {
+            route: process.env.ROUTE,
+            retained_route_floor: Number(process.env.RETAINED_ROUTE_FLOOR),
+            release_threshold: Number(process.env.RELEASE_THRESHOLD),
+            composite_score: score,
+            release_threshold_pass: Number.isFinite(score) && score >= Number(process.env.RELEASE_THRESHOLD),
+            source_revision: parity.source_revision,
+            reference: parity.reference,
+            live: parity.live,
+            parity_metrics: parity.metrics,
+            regional_overall: regions?.analysis?.overall,
+            lowest_regions: regions?.analysis?.regions,
+            geometry: regions.geometry,
+            failures,
+          }
+          fs.writeFileSync('evidence/gate.json', JSON.stringify(summary, null, 2))
+          console.log(JSON.stringify(summary, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable estimate diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-estimate-regional-diagnostic-cffc151
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Keep release gate closed below 0.99
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const gate = JSON.parse(fs.readFileSync('evidence/gate.json', 'utf8'))
+          if (gate.release_threshold_pass !== true) {
+            console.error(`release_threshold composite_score=${gate.composite_score} below ${gate.release_threshold}`)
+            process.exit(1)
+          }
+          NODE

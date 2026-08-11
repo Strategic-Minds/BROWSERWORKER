@@ -1,0 +1,110 @@
+{
+  "receipt_type": "BIDFAST_ANALYTICS_LOGO_MICROGEOMETRY_ROLLBACK",
+  "captured_at_utc": "2026-08-02T13:08:38Z",
+  "status": "CANDIDATE_REJECTED_ROLLBACK_VALIDATED",
+  "governance": {
+    "production_locked": true,
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "database_mutated": false,
+    "production_mutated": false,
+    "full_screen_reference_substitution": false,
+    "hidden_real_ui": false,
+    "component_level_implementation_required": true
+  },
+  "source_truth": {
+    "drive_file_id": "1MWcZn7eUYBHpy99t3Mtwwcg85xtOS5j0",
+    "title": "02_BIDFAST_MOBILE_ANALYTICS_KPI.png",
+    "reference_sha256": "5f8cba804e775ff9e774acdc8a9c92c2532dacd587fe3590c80fd8c24a42aef8"
+  },
+  "retained_baseline": {
+    "commit": "a262d1aa6c5abcd9aff98fe6de259a87a7d4c1fd",
+    "composite_score": 0.830446,
+    "pixel_similarity": 0.949692,
+    "structure_similarity": 0.982749,
+    "edge_similarity": 0.272893,
+    "color_similarity": 0.979986,
+    "live_sha256": "9e568b80e048e42884a89420cde379383415da7baa80afd32e179e7e4fb504d5"
+  },
+  "candidate": {
+    "repository": "XTREME-SYSTEMS/bidfast",
+    "branch": "auto-builder/bidfast-complete-visual-system",
+    "commit": "b3afc49ef30a5fd693c0817ea39639d3bc270dbe",
+    "file": "app/analytics-parity-adjustments.css",
+    "selector": ".bfa-header > img",
+    "changes": {
+      "width_px": 232,
+      "max_height_px": 55,
+      "translate_y_px": -6
+    },
+    "deployment_id": "dpl_34EoTDi2yVmeFLkEcf1c99WCkySv",
+    "deployment_url": "bidfast-oxipe2a4b-strategic-minds-advisory.vercel.app",
+    "workflow_run": 30749157424,
+    "workflow_job": 91499965394,
+    "artifact_id": 8833872720,
+    "artifact_digest": "sha256:e7c252c35b4555f37b6927255fe9d06474955db2a1ae9a5fc19a03d6b229652e",
+    "live_sha256": "a0b5a4e96ffc430d75666dea09c913d4ad1936c49908e082ee689c607405de55",
+    "metrics": {
+      "composite_score": 0.829008,
+      "pixel_similarity": 0.949069,
+      "structure_similarity": 0.982582,
+      "edge_similarity": 0.26677,
+      "color_similarity": 0.9802
+    },
+    "delta": {
+      "composite_score": -0.001438,
+      "pixel_similarity": -0.000623,
+      "structure_similarity": -0.000167,
+      "edge_similarity": -0.006123,
+      "color_similarity": 0.000214
+    },
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "provenance_pass": true,
+    "reference_integrity_pass": true,
+    "technical_pass": true,
+    "retained": false,
+    "rejection_reason": "Composite, pixel, structure, and edge scores regressed below the retained baseline."
+  },
+  "rollback": {
+    "commit": "eeb4a0d495b81bb28b7fcebd9c3fd069bd5d2b9c",
+    "net_diff_from_retained_baseline": [],
+    "deployment_id": "dpl_5UCBde9ahZAaCqbv3JPHb7T6itJc",
+    "deployment_url": "bidfast-kj94kzkvd-strategic-minds-advisory.vercel.app",
+    "workflow_run": 30749225172,
+    "stable_attempt_job": 91500319281,
+    "artifact_id": 8833905275,
+    "artifact_digest": "sha256:b475fe61f6d9a13dfda24985f3123f5da7e334683d0ed102e4749c509b98abbc",
+    "live_sha256": "9e568b80e048e42884a89420cde379383415da7baa80afd32e179e7e4fb504d5",
+    "metrics": {
+      "composite_score": 0.830446,
+      "pixel_similarity": 0.949692,
+      "structure_similarity": 0.982749,
+      "edge_similarity": 0.272893,
+      "color_similarity": 0.979986
+    },
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "provenance_pass": true,
+    "reference_integrity_pass": true,
+    "technical_pass": true,
+    "non_regression_pass": true,
+    "release_threshold_pass": false
+  },
+  "database_state": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "public_bidfast_table_count": 0,
+    "mutation_performed": false
+  },
+  "remaining_blockers": [
+    "No approved route reaches 0.99 measured visual parity.",
+    "The approved registry lacks complete light and dark multi-viewport reference pairs.",
+    "public.bidfast_* table count remains 0, blocking Account to Audit operational execution.",
+    "BIDFAST PR #2 remains draft and non-mergeable.",
+    "Native BIDFAST workflow runs remain absent for the current head.",
+    "The connected Vercel scope cannot directly inspect Strategic Minds Advisory deployments."
+  ],
+  "next_action": "Do not retry logo translation or enlargement. Diagnose a different fixed-height analytics microgeometry region and retain only a candidate that exceeds 0.830446 without any approved-route regression."
+}

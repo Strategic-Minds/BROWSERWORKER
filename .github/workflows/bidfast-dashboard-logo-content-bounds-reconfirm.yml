@@ -1,0 +1,173 @@
+name: BIDFAST Dashboard Logo Content Bounds Reconfirm
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/bidfast-dashboard-logo-content-bounds-reconfirm.yml'
+      - 'app/api/validation/bidfast-dashboard-logo-content-bounds/route.ts'
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-dashboard-logo-content-bounds-reconfirm.yml'
+      - 'app/api/validation/bidfast-dashboard-logo-content-bounds/route.ts'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-dashboard-logo-content-bounds-e9cbd64
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: e9cbd64bddf3a71e4a852aa29cd5b6041d16af5d
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  ROUTE: /dashboard
+  RETAINED_BASELINE: '0.836926'
+  RELEASE_THRESHOLD: '0.99'
+
+jobs:
+  logo-content-bounds:
+    name: Revision-pinned logo content bounds and baseline
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Wait for exact BrowserWorker preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          accepted=false
+          for attempt in $(seq 1 32); do
+            health_status="$(curl -sS -o evidence/health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            bounds_status="$(curl -sS -o evidence/dashboard-logo-content-bounds.json -w '%{http_code}' --max-time 180 "${BROWSERWORKER_PREVIEW}/api/validation/bidfast-dashboard-logo-content-bounds?expected_commit=${BIDFAST_EXPECTED_COMMIT}" || true)"
+            printf '%s\n' "$health_status" > evidence/health.http-status.txt
+            printf '%s\n' "$bounds_status" > evidence/dashboard-logo-content-bounds.http-status.txt
+            commit="$(node -e "try{const j=require('./evidence/dashboard-logo-content-bounds.json');process.stdout.write(String(j.source_revision?.commit_sha||''))}catch{}")"
+            if [[ "$health_status" == "200" && "$bounds_status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" ]]; then
+              accepted=true
+              break
+            fi
+            echo "attempt=${attempt} health=${health_status:-none} bounds=${bounds_status:-none} commit=${commit:-unknown}"
+            if [[ "$attempt" != "32" ]]; then sleep 20; fi
+          done
+          test "$accepted" = true
+
+      - name: Execute exact dashboard parity proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-parity-v3?route=%2Fdashboard&expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          accepted=false
+          for attempt in $(seq 1 12); do
+            status="$(curl -sS --max-time 210 -o evidence/dashboard-restored-parity.json -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/dashboard-restored-parity.http-status.txt
+            commit="$(node -e "try{const j=require('./evidence/dashboard-restored-parity.json');process.stdout.write(String(j.source_revision?.commit_sha||''))}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" ]]; then
+              accepted=true
+              break
+            fi
+            echo "attempt=${attempt} status=${status:-none} commit=${commit:-unknown}"
+            if [[ "$attempt" != "12" ]]; then sleep 25; fi
+          done
+          test "$accepted" = true
+
+      - name: Enforce provenance, content bounds, retained baseline, and technical gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const boundsBody = JSON.parse(fs.readFileSync('evidence/dashboard-logo-content-bounds.json', 'utf8'))
+          const parityBody = JSON.parse(fs.readFileSync('evidence/dashboard-restored-parity.json', 'utf8'))
+          const failures = []
+          const expectedCommit = process.env.BIDFAST_EXPECTED_COMMIT
+          const expectedRef = process.env.BIDFAST_EXPECTED_REF
+          const score = Number(parityBody?.metrics?.composite_score)
+          const analysis = boundsBody?.analysis
+          const logo = analysis?.logo
+          const alphaBounds = analysis?.natural_bounds?.alpha_visible
+          const nonWhiteBounds = analysis?.natural_bounds?.non_white
+          const renderedNonWhite = analysis?.rendered_bounds?.non_white
+
+          if (boundsBody.ok !== true) failures.push(`bounds_ok=${String(boundsBody.ok)}`)
+          if (boundsBody.provenance_pass !== true) failures.push(`bounds_provenance_pass=${String(boundsBody.provenance_pass)}`)
+          if (boundsBody.route !== process.env.ROUTE) failures.push(`bounds_route=${String(boundsBody.route)}`)
+          if (boundsBody.source_revision?.commit_sha !== expectedCommit) failures.push(`bounds_commit=${String(boundsBody.source_revision?.commit_sha)}`)
+          if (boundsBody.source_revision?.commit_ref !== expectedRef) failures.push(`bounds_ref=${String(boundsBody.source_revision?.commit_ref)}`)
+          if (boundsBody.main_document_status !== 200) failures.push(`bounds_main_document_status=${String(boundsBody.main_document_status)}`)
+          if (Array.isArray(boundsBody.failures) && boundsBody.failures.length) failures.push(`bounds_failures=${JSON.stringify(boundsBody.failures)}`)
+
+          if (!logo) failures.push('logo=missing')
+          for (const field of ['x', 'y', 'right', 'bottom', 'width', 'height', 'natural_width', 'natural_height']) {
+            if (!Number.isFinite(Number(logo?.[field]))) failures.push(`logo.${field}=${String(logo?.[field])}`)
+          }
+          if (logo?.complete !== true) failures.push('logo.complete=false')
+          if (Number(logo?.width) !== 172 || Number(logo?.height) !== 39) failures.push(`logo_geometry=${String(logo?.width)}x${String(logo?.height)}`)
+          if (logo?.display === 'none' || logo?.visibility === 'hidden' || Number(logo?.opacity) <= 0) failures.push('logo_not_visible')
+
+          for (const [name, bounds] of [['alpha_visible', alphaBounds], ['non_white', nonWhiteBounds], ['rendered_non_white', renderedNonWhite]]) {
+            if (!bounds) {
+              failures.push(`${name}=missing`)
+              continue
+            }
+            for (const field of ['left', 'top', 'right', 'bottom', 'width', 'height', 'x', 'y']) {
+              if (bounds[field] !== undefined && !Number.isFinite(Number(bounds[field]))) failures.push(`${name}.${field}=${String(bounds[field])}`)
+            }
+            if (Number(bounds.width) <= 0 || Number(bounds.height) <= 0) failures.push(`${name}=non_positive`)
+          }
+          if (Number(analysis?.pixels?.alpha_visible_count) <= 0) failures.push('alpha_visible_count=0')
+          if (Number(analysis?.pixels?.non_white_count) <= 0) failures.push('non_white_count=0')
+
+          if (parityBody.ok !== true) failures.push(`parity_ok=${String(parityBody.ok)}`)
+          if (parityBody.route !== process.env.ROUTE) failures.push(`parity_route=${String(parityBody.route)}`)
+          if (parityBody.source_revision?.commit_sha !== expectedCommit) failures.push(`parity_commit=${String(parityBody.source_revision?.commit_sha)}`)
+          if (parityBody.source_revision?.commit_ref !== expectedRef) failures.push(`parity_ref=${String(parityBody.source_revision?.commit_ref)}`)
+          if (parityBody.provenance_pass !== true) failures.push(`parity_provenance_pass=${String(parityBody.provenance_pass)}`)
+          if (parityBody.integrity_pass !== true) failures.push(`integrity_pass=${String(parityBody.integrity_pass)}`)
+          if (parityBody.technical_pass !== true) failures.push(`technical_pass=${String(parityBody.technical_pass)}`)
+          if (!Number.isFinite(score) || score < Number(process.env.RETAINED_BASELINE)) failures.push(`composite_score=${String(score)} baseline=${process.env.RETAINED_BASELINE}`)
+          for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
+            if (!Array.isArray(parityBody[name]) || parityBody[name].length !== 0) failures.push(`${name}=${JSON.stringify(parityBody[name])}`)
+          }
+
+          const summary = {
+            application_commit: expectedCommit,
+            application_ref: expectedRef,
+            route: process.env.ROUTE,
+            retained_baseline: Number(process.env.RETAINED_BASELINE),
+            score,
+            baseline_reconfirmed: Number.isFinite(score) && score >= Number(process.env.RETAINED_BASELINE),
+            release_threshold: Number(process.env.RELEASE_THRESHOLD),
+            release_threshold_pass: Number.isFinite(score) && score >= Number(process.env.RELEASE_THRESHOLD),
+            metrics: parityBody.metrics,
+            logo,
+            pixels: analysis?.pixels,
+            natural_bounds: analysis?.natural_bounds,
+            rendered_bounds: analysis?.rendered_bounds,
+            source_revision: parityBody.source_revision,
+            reference: parityBody.reference,
+            console_error_count: parityBody.console_errors?.length,
+            application_network_error_count: parityBody.app_network_errors?.length,
+            http_error_count: parityBody.http_errors?.length,
+            failures,
+            release_authorized: false,
+          }
+          fs.writeFileSync('evidence/dashboard-logo-content-bounds-summary.json', JSON.stringify(summary, null, 2) + '\n')
+          console.log(JSON.stringify(summary, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable logo-content evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-dashboard-logo-content-bounds-e9cbd64
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30

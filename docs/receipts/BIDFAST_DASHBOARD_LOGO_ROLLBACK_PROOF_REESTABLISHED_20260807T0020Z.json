@@ -1,0 +1,114 @@
+{
+  "receipt_type": "BIDFAST_DASHBOARD_LOGO_ROLLBACK_PROOF_REESTABLISHED",
+  "created_at": "2026-08-07T00:20:58Z",
+  "governance_state": "retained_baseline_reestablished_release_locked",
+  "workflow": {
+    "run_id": 31133478532,
+    "workflow_name": "BIDFAST Dashboard Logo Candidate Rollback Proof",
+    "workflow_head_sha": "9ae939dd7772038117e1bdd1b75b791bf66cf27f",
+    "conclusion": "success"
+  },
+  "artifact": {
+    "id": 8977292504,
+    "name": "bidfast-dashboard-logo-rollback-1039d80",
+    "sha256": "453c5bf276261cfbb099b1baa50c0f69b84013506a2768da14992aa664d2a61a",
+    "size_bytes": 3826,
+    "expires_at": "2026-09-06T00:20:57Z"
+  },
+  "bidfast": {
+    "repository": "XTREME-SYSTEMS/bidfast",
+    "branch": "auto-builder/bidfast-complete-visual-system",
+    "commit": "1039d807e4d63db03013d3a5786e087a5196669f",
+    "rolled_back_candidate": "a6eec0820c7eea1866e8e093bfb449f37e7497d3",
+    "retained_tree_equivalent_commit": "fb57e2b752ad1a4e67b74a2d238ec77114d46320",
+    "deployment_id": "dpl_6244wHrZxoDGi3o1kAx228u1jAYR",
+    "deployment_url": "bidfast-disvjbywa-strategic-minds-advisory.vercel.app"
+  },
+  "approved_reference": {
+    "drive_file_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+    "title": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+    "sha256": "f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb",
+    "crop": { "x": 178, "y": 150, "width": 570, "height": 1387 }
+  },
+  "measurement": {
+    "route": "/dashboard",
+    "theme": "light",
+    "viewport": { "name": "mobile", "width": 390, "height": 844 },
+    "page_height": 948,
+    "composite_score": 0.837024,
+    "retained_baseline": 0.837024,
+    "release_threshold": 0.99,
+    "release_threshold_pass": false,
+    "pixel_similarity": 0.948064,
+    "structure_similarity": 0.976117,
+    "edge_similarity": 0.328977,
+    "color_similarity": 0.967785,
+    "live_sha256": "a36ce9d4f7c4575d5383ef57ba1a6f779532117afa48d3502afee0c2ca1c3adc",
+    "technical_pass": true,
+    "provenance_pass": true,
+    "integrity_pass": true,
+    "console_error_count": 0,
+    "application_network_error_count": 0,
+    "http_error_count": 0
+  },
+  "regional_floors": {
+    "active_bid_3": 0.704336,
+    "active_bid_2": 0.714608,
+    "active_bid_1": 0.722198,
+    "header_logo": 0.722688,
+    "metrics_row_2": 0.729406,
+    "bottom_navigation": 0.753053,
+    "quick_actions": 0.761245,
+    "overview_heading": 0.777489,
+    "metrics_row_1": 0.783647,
+    "active_bids_heading": 0.795158,
+    "proposal_alert_2": 0.816409,
+    "search": 0.822644,
+    "proposal_alert_1": 0.829816,
+    "proposal_alerts_heading": 0.834863,
+    "quick_actions_heading": 0.877763
+  },
+  "observed_regions": {
+    "active_bid_3": 0.704336,
+    "active_bid_2": 0.714608,
+    "active_bid_1": 0.722198,
+    "header_logo": 0.722688,
+    "metrics_row_2": 0.729406,
+    "bottom_navigation": 0.753053,
+    "quick_actions": 0.761245,
+    "overview_heading": 0.777489,
+    "metrics_row_1": 0.783647,
+    "active_bids_heading": 0.795158,
+    "proposal_alert_2": 0.816409,
+    "search": 0.822644,
+    "proposal_alert_1": 0.829816,
+    "proposal_alerts_heading": 0.834863,
+    "quick_actions_heading": 0.877763
+  },
+  "geometry": {
+    "document": { "width": 390, "height": 948 },
+    "logo": { "x": 6, "y": 21.5, "width": 172, "height": 39, "right": 178, "bottom": 60.5 },
+    "search": { "x": 2, "y": 74, "width": 386, "height": 41, "right": 388, "bottom": 115 },
+    "active_bids_section": { "x": 2, "y": 506, "width": 386, "height": 242, "right": 388, "bottom": 748 },
+    "bid_1": { "x": 3, "y": 531, "width": 384, "height": 72, "right": 387, "bottom": 603 },
+    "bid_2": { "x": 3, "y": 603, "width": 384, "height": 72, "right": 387, "bottom": 675 },
+    "bid_3": { "x": 3, "y": 675, "width": 384, "height": 72, "right": 387, "bottom": 747 }
+  },
+  "acceptance": {
+    "rollback_validated": true,
+    "retained_baseline_reestablished": true,
+    "release_authorized": false,
+    "production_promotion_authorized": false
+  },
+  "constraints_preserved": {
+    "reference_substitution_used": false,
+    "full_screen_reference_layer_used": false,
+    "real_components_hidden": false,
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "production_resource_changed": false,
+    "database_changed": false
+  },
+  "next_gate": "Any new dashboard candidate must keep composite_score >= 0.837024, every regional score at or above its floor, technical/provenance/integrity true, and console/application-network/http error counts at zero.",
+  "production_status": "LOCKED"
+}

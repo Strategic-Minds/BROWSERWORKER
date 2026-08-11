@@ -1,0 +1,14 @@
+BIDFAST Dashboard Logo X4 Full Matrix
+
+application_repository=XTREME-SYSTEMS/bidfast
+application_branch=auto-builder/bidfast-complete-visual-system
+application_commit=2da86e312259db0a9df6a6ed96578a3e55e046f8
+rollback_commit=e9cbd64bddf3a71e4a852aa29cd5b6041d16af5d
+isolated_proof_run=30850099815
+isolated_proof_artifact=8870288612
+isolated_score=0.837024
+retained_baseline=0.836926
+release_threshold=0.99
+production_authorized=false
+
+Trigger the revision-pinned ten-route non-regression matrix. Preserve exact Drive references, zero technical errors, and all prior route baselines. This file authorizes validation only and does not authorize merge, schema mutation, or production promotion.

@@ -1,0 +1,85 @@
+{
+  "receipt_type": "bidfast_preview_build_blocker",
+  "recorded_at_utc": "2026-08-06T07:14:00Z",
+  "repositories": {
+    "bidfast": {
+      "repository": "XTREME-SYSTEMS/bidfast",
+      "requested_alias": "XTREME-AI-SYSTEMS/bidfast",
+      "branch": "auto-builder/bidfast-complete-visual-system",
+      "pull_request": 2,
+      "candidate_head": "c1dfebc80d09899d1eefb797018a739dd721fd3f",
+      "rollback_head": "fda77fc67c29b779e7ae365313475237bb156b32",
+      "commits": [
+        "674971478562c11fe7a4f19c770e5eca0140a40f",
+        "611fc53a3413cab83239d6f72d85763cf1d07296",
+        "1f15c736b7a67c7262eb8721c0d6f9f70cdc8216",
+        "c1dfebc80d09899d1eefb797018a739dd721fd3f"
+      ],
+      "delta": {
+        "commits": 4,
+        "files": 4,
+        "additions": 228,
+        "deletions": 11,
+        "paths": [
+          "components/approvals/ApprovalWorkspace.tsx",
+          "package.json",
+          "scripts/check-bidfast-approval-note-provenance-governance.mjs",
+          "supabase/migrations/202608060700_harden_bidfast_approval_note_provenance.sql"
+        ]
+      },
+      "vercel": {
+        "deployment_reference": "CcaSB65p63KbG7A42CsNyh9goX4M",
+        "status": "failure",
+        "underlying_dpl_id": "could_not_verify",
+        "build_logs": "blocked_by_vercel_scope_authorization"
+      }
+    },
+    "browserworker": {
+      "repository": "Strategic-Minds/BROWSERWORKER",
+      "branch": "auto-builder/bidfast-proof-20260728",
+      "pull_request": 9,
+      "proof_pin_commit": "8b5e4fce68af04ec5a2b6b465b51c80c8c4a04a4",
+      "vercel_deployment_reference": "DbDx7Hih2dbevThqqLUKFPDnCR7w",
+      "vercel_status": "success"
+    }
+  },
+  "implemented_controls": [
+    "separate request_notes from decision_notes",
+    "preserve legacy notes without relabeling them as new evidence",
+    "prevent pending approval mutation",
+    "prevent requester evidence mutation",
+    "require decision rationale for rejection and changes_requested",
+    "retain authenticated tenant, role, self-decision, actor and timestamp enforcement",
+    "register source governance checks",
+    "pin exact candidate revision for configuration provenance"
+  ],
+  "validation": {
+    "visual_parity_new_measurement": "not_executed",
+    "operational_pass_rate": "not_executed",
+    "console_errors": "not_measured",
+    "application_network_errors": "not_measured",
+    "tenant_isolation": "not_executed",
+    "authorization_matrix": "not_executed",
+    "reason": "BIDFAST preview build failed before runtime and parity gates"
+  },
+  "constraints": {
+    "screenshots_used_as_page_layers": false,
+    "real_components_hidden": false,
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "production_changed": false,
+    "database_changed": false
+  },
+  "blockers": [
+    "BIDFAST Vercel preview build failed at deployment reference CcaSB65p63KbG7A42CsNyh9goX4M",
+    "active Vercel connector cannot read build logs under strategic-minds-advisory scope",
+    "governed Supabase project access remains unavailable",
+    "exact configuration provenance, schema installation, operational workflow and visual matrices remain blocked"
+  ],
+  "rollback": {
+    "bidfast": "return auto-builder/bidfast-complete-visual-system to fda77fc67c29b779e7ae365313475237bb156b32",
+    "browserworker": "revert 8b5e4fce68af04ec5a2b6b465b51c80c8c4a04a4",
+    "receipt": "revert this receipt commit"
+  },
+  "production_status": "locked"
+}

@@ -1,0 +1,137 @@
+{
+  "receipt_type": "BIDFAST_WORKFLOW_LINEAGE_IMMUTABILITY_CANDIDATE",
+  "created_at": "2026-08-06T10:11:50Z",
+  "governance_state": "preview_validation_in_progress",
+  "repositories": {
+    "bidfast": {
+      "repository": "XTREME-SYSTEMS/bidfast",
+      "requested_alias": "XTREME-AI-SYSTEMS/bidfast",
+      "branch": "auto-builder/bidfast-complete-visual-system",
+      "pull_request": 2,
+      "base_commit": "5fb45d3cd497e1d976a4b4c5dfc05f8841db550d",
+      "head_commit": "8099ee3cf19a05bf95df8718f0534479e279b8ef",
+      "commits": [
+        {
+          "sha": "a6c69d9dd127134005670f7d581e623b260d4079",
+          "message": "fix(db): preserve BIDFAST workflow lineage"
+        },
+        {
+          "sha": "13c568672dad5226daf294a619096d059d50249e",
+          "message": "test(governance): enforce workflow lineage immutability"
+        },
+        {
+          "sha": "8099ee3cf19a05bf95df8718f0534479e279b8ef",
+          "message": "test(governance): run workflow lineage checks"
+        }
+      ],
+      "exact_delta": {
+        "commits": 3,
+        "files": 3,
+        "additions": 214,
+        "deletions": 1,
+        "paths": [
+          "package.json",
+          "scripts/check-bidfast-workflow-lineage-governance.mjs",
+          "supabase/migrations/202608061010_harden_bidfast_workflow_lineage_immutability.sql"
+        ]
+      },
+      "preview": {
+        "deployment_reference": "4Jg4cMoq2EuE6yExtpTrKQn1FTKs",
+        "status": "PENDING",
+        "underlying_dpl_id": "COULD_NOT_VERIFY_ACTIVE_CONNECTOR_SCOPE_DENIED"
+      }
+    },
+    "browserworker": {
+      "repository": "Strategic-Minds/BROWSERWORKER",
+      "branch": "auto-builder/bidfast-proof-20260728",
+      "pull_request": 9,
+      "base_commit": "02b4cd8bc9a3207541ac3670cf0a235c8e15e11c",
+      "proof_commit": "39f9eae2c1d881ed7adb750c092bae4748765319",
+      "proof_file": ".github/workflows/bidfast-workflow-lineage-config-provenance.yml",
+      "expected_bidfast_commit": "8099ee3cf19a05bf95df8718f0534479e279b8ef",
+      "expected_bidfast_ref": "auto-builder/bidfast-complete-visual-system",
+      "expected_supabase_project_ref": "mhaovpyegtysfgualplu",
+      "rollback_commit": "5fb45d3cd497e1d976a4b4c5dfc05f8841db550d",
+      "artifact_name": "bidfast-workflow-lineage-config-provenance-8099ee3",
+      "preview": {
+        "deployment_reference": "3ihgwnnvtMQYoxducAw524ADbroh",
+        "status": "SUCCESS",
+        "underlying_dpl_id": "COULD_NOT_VERIFY_ACTIVE_CONNECTOR_SCOPE_DENIED"
+      },
+      "workflow_run": {
+        "status": "QUEUED_OR_NOT_VISIBLE_IN_FIRST_PAGE_FANOUT",
+        "run_id": "COULD_NOT_VERIFY",
+        "job_id": "COULD_NOT_VERIFY",
+        "artifact_digest": "PENDING"
+      }
+    }
+  },
+  "confirmed_gap": {
+    "name": "same_tenant_workflow_lineage_reassignment",
+    "description": "The prior tenant-integrity controls validated same-tenant parents but did not universally prevent an existing project, document, or takeoff from being reassigned to a different same-tenant parent after authoritative downstream evidence existed.",
+    "risk": [
+      "project opportunity history reassignment",
+      "document project or storage evidence reassignment",
+      "takeoff project or source-document reassignment",
+      "audit chronology that no longer reflects the original workflow lineage"
+    ]
+  },
+  "candidate_controls": [
+    "Project organization remains immutable and a non-null opportunity_id cannot be replaced or removed.",
+    "A project may receive its first opportunity link only before downstream documents, takeoffs, estimates, proposals, or project approvals exist.",
+    "Document project_id and established storage_path are immutable.",
+    "A document cannot receive a late storage link after it already feeds a takeoff.",
+    "Takeoff project_id and established document_id are immutable.",
+    "A draft takeoff may receive its first document link only before downstream estimates exist.",
+    "Trigger function execution is revoked from public, anon, and authenticated roles and granted only to service_role.",
+    "Governance checker is registered in npm run governance and rejects RLS weakening, audit destruction, policy removal, and broad trigger execution.",
+    "Explicit evidence-first rollback instructions are included."
+  ],
+  "validation": {
+    "source_diff_inspected_before_change": true,
+    "latest_receipt_inspected_before_change": true,
+    "bidfast_preview_build": "PENDING",
+    "browserworker_preview_build": "PASS",
+    "migration_applied": false,
+    "isolated_database_test": false,
+    "governed_supabase_provenance": "PENDING",
+    "operational_workflow_pass_rate": "NOT_EXECUTED",
+    "visual_parity_remeasured": false,
+    "new_visual_score_claimed": false,
+    "tests_weakened": false,
+    "screenshot_substitution_used": false,
+    "real_components_hidden": false,
+    "production_promoted": false
+  },
+  "source_truth": {
+    "approved_drive_reference_name": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+    "approved_drive_reference_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+    "approved_mobile_light_routes": 10,
+    "complete_light_dark_multiviewport_pairs": false,
+    "legacy_evidence_preserved": true
+  },
+  "retained_evidence": {
+    "dashboard_parity": 0.837024,
+    "routes_technically_passed": "10/10",
+    "routes_reaching_0_99": 0,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "operational_pass_rate": "NOT_MEASURED"
+  },
+  "blockers": [
+    "The BIDFAST preview for 8099ee3 remains pending.",
+    "The exact workflow-lineage provenance run and artifact are not visible through the first-page BrowserWorker workflow fanout.",
+    "The active Supabase connector cannot access governed project mhaovpyegtysfgualplu.",
+    "The active Vercel connector cannot inspect deployments in strategic-minds-advisory, so underlying dpl identifiers and logs remain unavailable.",
+    "The migration has not been installed or tested in an isolated governed Supabase branch.",
+    "Same-tenant reassignment, cross-tenant denial, downstream-chain protection, authorization, audit, rollback, and the full Account to Audit workflow remain unexecuted against live entities.",
+    "No approved route has newly demonstrated 0.99 visual parity, and complete light/dark multi-viewport source coverage remains incomplete."
+  ],
+  "rollback": {
+    "bidfast": "Return auto-builder/bidfast-complete-visual-system to 5fb45d3cd497e1d976a4b4c5dfc05f8841db550d.",
+    "browserworker": "Revert 39f9eae2c1d881ed7adb750c092bae4748765319 and this receipt commit.",
+    "database": "No database rollback is required because the migration was not applied."
+  },
+  "production_status": "LOCKED"
+}

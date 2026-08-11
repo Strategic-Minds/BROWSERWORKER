@@ -1,0 +1,139 @@
+name: BIDFAST Opportunities Region Diagnostic
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'app/api/bidfast-opportunities-regions/route.ts'
+      - '.github/workflows/bidfast-opportunities-region-diagnostic.yml'
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - 'app/api/bidfast-opportunities-regions/route.ts'
+      - '.github/workflows/bidfast-opportunities-region-diagnostic.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-opportunities-region-diagnostic
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: 8db9cb761944b0bddd713c43564721916e39d1c5
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  REFERENCE_SHA256: c3cd0b2ed394491128784384e19561457bfe800f4b0182a391b78b888db389ef
+
+jobs:
+  diagnostic:
+    name: Revision-pinned opportunities region diagnostic
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Wait for BrowserWorker health
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 30); do
+            status="$(curl -sS -o /tmp/health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            if [[ "$status" == "200" ]]; then
+              cat /tmp/health.json
+              exit 0
+            fi
+            echo "BrowserWorker health attempt ${attempt}: ${status:-no-status}"
+            sleep 15
+          done
+          exit 1
+
+      - name: Verify exact BIDFAST preview provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 40); do
+            status="$(curl -sS -o /tmp/bidfast-build-info.json -w '%{http_code}' --max-time 30 "${BIDFAST_ORIGIN}/api/build-info" || true)"
+            commit="$(node -e "try{const j=require('/tmp/bidfast-build-info.json');process.stdout.write(String(j?.source_revision?.commit_sha||''))}catch{}")"
+            ref="$(node -e "try{const j=require('/tmp/bidfast-build-info.json');process.stdout.write(String(j?.source_revision?.commit_ref||''))}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" && "$ref" == "$BIDFAST_EXPECTED_REF" ]]; then
+              cat /tmp/bidfast-build-info.json
+              exit 0
+            fi
+            echo "BIDFAST provenance attempt ${attempt}: status=${status:-no-status} commit=${commit:-unknown} ref=${ref:-unknown}"
+            sleep 15
+          done
+          cat /tmp/bidfast-build-info.json || true
+          exit 1
+
+      - name: Execute exact-reference opportunities diagnostic
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-opportunities-regions?expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          for attempt in $(seq 1 30); do
+            status="$(curl -sS --max-time 210 -o evidence/opportunities-regions.json -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/opportunities-regions.http-status.txt
+            version="$(node -e "try{const j=require('./evidence/opportunities-regions.json');process.stdout.write(String(j?.validator_version||''))}catch{}")"
+            if [[ "$status" == "200" && "$version" == "opportunities-regions-v1" ]]; then
+              cat evidence/opportunities-regions.json
+              exit 0
+            fi
+            echo "Diagnostic attempt ${attempt}: status=${status:-no-status} version=${version:-unknown}"
+            cat evidence/opportunities-regions.json || true
+            if [[ "$attempt" != "30" ]]; then sleep 20; fi
+          done
+          exit 1
+
+      - name: Enforce diagnostic integrity and technical gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const body = JSON.parse(fs.readFileSync('evidence/opportunities-regions.json', 'utf8'))
+          const failures = []
+          if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
+          if (body.diagnostic_only !== true) failures.push(`diagnostic_only=${String(body.diagnostic_only)}`)
+          if (body.release_authorized !== false) failures.push(`release_authorized=${String(body.release_authorized)}`)
+          if (body.validator_version !== 'opportunities-regions-v1') failures.push(`validator_version=${String(body.validator_version)}`)
+          if (body.route !== '/opportunities') failures.push(`route=${String(body.route)}`)
+          if (body.theme !== 'light') failures.push(`theme=${String(body.theme)}`)
+          if (body.technical_pass !== true) failures.push(`technical_pass=${String(body.technical_pass)}`)
+          if (body.provenance_pass !== true) failures.push(`provenance_pass=${String(body.provenance_pass)}`)
+          if (body.diagnostic_pass !== true) failures.push(`diagnostic_pass=${String(body.diagnostic_pass)}`)
+          if (body?.source_revision?.commit_sha !== process.env.BIDFAST_EXPECTED_COMMIT) failures.push(`commit_sha=${String(body?.source_revision?.commit_sha)}`)
+          if (body?.source_revision?.commit_ref !== process.env.BIDFAST_EXPECTED_REF) failures.push(`commit_ref=${String(body?.source_revision?.commit_ref)}`)
+          if (body?.reference?.sha256 !== process.env.REFERENCE_SHA256) failures.push(`reference_sha256=${String(body?.reference?.sha256)}`)
+          if (!Array.isArray(body?.analysis?.regions) || body.analysis.regions.length !== 11) failures.push('expected 11 diagnostic regions')
+          if (!body?.geometry?.card_1 || !body?.geometry?.bottom_navigation) failures.push('required component geometry missing')
+          for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
+            if (!Array.isArray(body[name]) || body[name].length !== 0) failures.push(`${name}=${JSON.stringify(body[name])}`)
+          }
+          const summary = {
+            validator_version: body.validator_version,
+            source_revision: body.source_revision,
+            reference: body.reference,
+            live: body.live,
+            page_height: body.page_height,
+            overall: body?.analysis?.overall,
+            lowest_regions: body?.analysis?.regions?.slice(0, 5),
+            geometry: body.geometry,
+            failures,
+          }
+          fs.writeFileSync('evidence/gate.json', JSON.stringify(summary, null, 2))
+          console.log(JSON.stringify(summary, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-opportunities-region-diagnostic-8db9cb76
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30

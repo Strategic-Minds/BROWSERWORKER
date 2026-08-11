@@ -1,0 +1,284 @@
+name: BIDFAST Dashboard Logo Y14 Observable Proof
+
+on:
+  push:
+    branches:
+      - auto-builder/bidfast-proof-20260728
+    paths:
+      - '.github/workflows/bidfast-dashboard-logo-y14-observable-proof.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bidfast-dashboard-logo-y14-observable-proof
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_ORIGIN: https://bidfast-git-auto-builder-bidfas-2c6093-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: a6eec0820c7eea1866e8e093bfb449f37e7497d3
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  BIDFAST_ROLLBACK_COMMIT: fb57e2b752ad1a4e67b74a2d238ec77114d46320
+  DASHBOARD_REFERENCE_ID: 1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr
+  DASHBOARD_REFERENCE_SHA256: f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb
+  RETAINED_BASELINE: '0.837024'
+  RELEASE_THRESHOLD: '0.99'
+  RECEIPT_PATH: docs/receipts/BIDFAST_DASHBOARD_LOGO_Y14_CANDIDATE_A6EEC082_RESULT.json
+
+jobs:
+  dashboard-logo-y14-observable-proof:
+    name: Observable exact dashboard logo candidate proof
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - name: Checkout proof branch for immutable receipt
+        uses: actions/checkout@v4
+        with:
+          ref: auto-builder/bidfast-proof-20260728
+          fetch-depth: 0
+
+      - name: Wait for BrowserWorker health
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 32); do
+            status="$(curl -sS -o /tmp/browserworker-health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            if [[ "$status" == "200" ]]; then
+              cat /tmp/browserworker-health.json
+              exit 0
+            fi
+            echo "BrowserWorker health attempt ${attempt}: ${status:-no-status}"
+            sleep 15
+          done
+          exit 1
+
+      - name: Verify exact BIDFAST candidate preview provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 40); do
+            status="$(curl -sS -o /tmp/bidfast-build-info.json -w '%{http_code}' --max-time 30 "${BIDFAST_ORIGIN}/api/build-info" || true)"
+            commit="$(node -e "try{const j=require('/tmp/bidfast-build-info.json');process.stdout.write(String(j?.source_revision?.commit_sha||''))}catch{}")"
+            ref="$(node -e "try{const j=require('/tmp/bidfast-build-info.json');process.stdout.write(String(j?.source_revision?.commit_ref||''))}catch{}")"
+            if [[ "$status" == "200" && "$commit" == "$BIDFAST_EXPECTED_COMMIT" && "$ref" == "$BIDFAST_EXPECTED_REF" ]]; then
+              cat /tmp/bidfast-build-info.json
+              exit 0
+            fi
+            echo "BIDFAST provenance attempt ${attempt}: status=${status:-no-status} commit=${commit:-unknown} ref=${ref:-unknown}"
+            sleep 15
+          done
+          cat /tmp/bidfast-build-info.json || true
+          exit 1
+
+      - name: Execute bounded dashboard regional diagnostic
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-dashboard-regions?expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          for attempt in $(seq 1 8); do
+            status="$(curl -sS --max-time 240 -D evidence/dashboard-regions.headers.txt -o evidence/dashboard-regions.json -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/dashboard-regions.http-status.txt
+            if [[ "$status" == "200" ]] && node -e "const j=require('./evidence/dashboard-regions.json');process.exit(j.ok===true&&j.diagnostic_pass===true?0:1)"; then
+              cat evidence/dashboard-regions.json
+              exit 0
+            fi
+            retryable=false
+            if [[ "$status" == "409" || "$status" == "429" || "$status" == "500" ]]; then retryable=true; fi
+            if grep -Eqi 'Too Many Requests|burst limit|Browser proof failed with HTTP 500|Browser proof failed with HTTP 409' evidence/dashboard-regions.json 2>/dev/null; then retryable=true; fi
+            echo "Observable diagnostic attempt ${attempt}: status=${status:-no-status} retryable=${retryable}"
+            cat evidence/dashboard-regions.json || true
+            if [[ "$attempt" == "8" || "$retryable" != "true" ]]; then exit 1; fi
+            sleep 65
+          done
+          exit 1
+
+      - name: Enforce exact provenance, geometry, regional floors, and technical gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const body = JSON.parse(fs.readFileSync('evidence/dashboard-regions.json', 'utf8'))
+          const score = body?.metrics?.composite_score
+          const floors = {
+            active_bid_3: 0.704336,
+            active_bid_2: 0.714608,
+            active_bid_1: 0.722198,
+            header_logo: 0.722688,
+            metrics_row_2: 0.729406,
+            bottom_navigation: 0.753053,
+            quick_actions: 0.761245,
+            overview_heading: 0.777489,
+            metrics_row_1: 0.783647,
+            active_bids_heading: 0.795158,
+            proposal_alert_2: 0.816409,
+            search: 0.822644,
+            proposal_alert_1: 0.829816,
+            proposal_alerts_heading: 0.834863,
+            quick_actions_heading: 0.877763,
+          }
+          const failures = []
+          const requireEqual = (label, actual, expected) => {
+            if (actual !== expected) failures.push(`${label}=${String(actual)} expected=${String(expected)}`)
+          }
+          requireEqual('ok', body.ok, true)
+          requireEqual('diagnostic_pass', body.diagnostic_pass, true)
+          requireEqual('diagnostic_only', body.diagnostic_only, true)
+          requireEqual('release_authorized', body.release_authorized, false)
+          requireEqual('route', body.route, '/dashboard')
+          requireEqual('validator_version', body.validator_version, 'dashboard-regions-v1-single-capture')
+          requireEqual('provenance_pass', body.provenance_pass, true)
+          requireEqual('integrity_pass', body.integrity_pass, true)
+          requireEqual('technical_pass', body.technical_pass, true)
+          requireEqual('commit_sha', body?.source_revision?.commit_sha, process.env.BIDFAST_EXPECTED_COMMIT)
+          requireEqual('commit_ref', body?.source_revision?.commit_ref, process.env.BIDFAST_EXPECTED_REF)
+          requireEqual('reference_id', body?.reference?.drive_file_id, process.env.DASHBOARD_REFERENCE_ID)
+          requireEqual('reference_sha256', body?.reference?.sha256, process.env.DASHBOARD_REFERENCE_SHA256)
+          if (!Number.isFinite(score)) failures.push('composite_score missing')
+          else if (score + 0.000001 < Number(process.env.RETAINED_BASELINE)) failures.push(`REGRESSION composite_score=${score} baseline=${process.env.RETAINED_BASELINE}`)
+          for (const name of ['console_errors', 'app_network_errors', 'http_errors']) {
+            if (!Array.isArray(body[name]) || body[name].length !== 0) failures.push(`${name}=${JSON.stringify(body[name])}`)
+          }
+          const logo = body?.geometry?.logo
+          if (!logo) failures.push('logo_geometry_missing')
+          else {
+            if (Math.abs(Number(logo.x) - 6) > 0.01) failures.push(`logo_x=${String(logo.x)}`)
+            if (Math.abs(Number(logo.y) - 7.5) > 0.01) failures.push(`logo_y=${String(logo.y)}`)
+            if (Math.abs(Number(logo.width) - 172) > 0.01) failures.push(`logo_width=${String(logo.width)}`)
+            if (Math.abs(Number(logo.height) - 39) > 0.01) failures.push(`logo_height=${String(logo.height)}`)
+          }
+          const regions = Array.isArray(body?.analysis?.regions) ? body.analysis.regions : []
+          const observed = Object.fromEntries(regions.map(region => [region.name, region.diagnostic_score]))
+          if (regions.length !== 15) failures.push(`regional_evidence_count=${regions.length}`)
+          for (const [name, floor] of Object.entries(floors)) {
+            const value = observed[name]
+            if (!Number.isFinite(value)) failures.push(`region_missing=${name}`)
+            else if (value + 0.000001 < floor) failures.push(`REGRESSION region=${name} score=${value} floor=${floor}`)
+          }
+          if (Number.isFinite(observed.header_logo) && observed.header_logo <= floors.header_logo + 0.000001) {
+            failures.push(`TARGET_NOT_IMPROVED header_logo=${observed.header_logo} floor=${floors.header_logo}`)
+          }
+          const summary = {
+            workflow_run_id: process.env.GITHUB_RUN_ID,
+            workflow_sha: process.env.GITHUB_SHA,
+            candidate_commit: process.env.BIDFAST_EXPECTED_COMMIT,
+            rollback_commit: process.env.BIDFAST_ROLLBACK_COMMIT,
+            route: body.route,
+            score,
+            retained_baseline: Number(process.env.RETAINED_BASELINE),
+            release_threshold: Number(process.env.RELEASE_THRESHOLD),
+            release_threshold_pass: Number.isFinite(score) && score >= Number(process.env.RELEASE_THRESHOLD),
+            source_revision: body.source_revision,
+            reference: body.reference,
+            live_sha256: body?.live?.sha256 || null,
+            geometry: body.geometry,
+            observed_regions: observed,
+            regional_floors: floors,
+            console_error_count: body.console_errors?.length,
+            application_network_error_count: body.app_network_errors?.length,
+            http_error_count: body.http_errors?.length,
+            failures,
+            candidate_retained: failures.length === 0,
+            release_authorized: false,
+          }
+          fs.writeFileSync('evidence/dashboard-logo-y14-observable-summary.json', JSON.stringify(summary, null, 2))
+          console.log(JSON.stringify(summary, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable observable candidate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-dashboard-logo-y14-observable-a6eec08
+          path: evidence/
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Commit governed candidate result receipt to proof branch
+        if: always()
+        shell: bash
+        env:
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$(dirname "${RECEIPT_PATH}")"
+          node - <<'NODE'
+          const fs = require('node:fs')
+          const path = process.env.RECEIPT_PATH
+          let summary = null
+          if (fs.existsSync('evidence/dashboard-logo-y14-observable-summary.json')) {
+            summary = JSON.parse(fs.readFileSync('evidence/dashboard-logo-y14-observable-summary.json', 'utf8'))
+          }
+          let diagnostic = null
+          if (fs.existsSync('evidence/dashboard-regions.json')) {
+            try { diagnostic = JSON.parse(fs.readFileSync('evidence/dashboard-regions.json', 'utf8')) } catch {}
+          }
+          const httpStatus = fs.existsSync('evidence/dashboard-regions.http-status.txt')
+            ? fs.readFileSync('evidence/dashboard-regions.http-status.txt', 'utf8').trim()
+            : null
+          const receipt = {
+            receipt_type: 'BIDFAST_DASHBOARD_LOGO_Y14_CANDIDATE_RESULT',
+            created_at: new Date().toISOString(),
+            governance_state: summary?.candidate_retained === true
+              ? 'candidate_validation_passed_release_still_locked'
+              : 'candidate_validation_failed_or_incomplete_release_locked',
+            workflow: {
+              run_id: process.env.GITHUB_RUN_ID,
+              workflow_sha: process.env.GITHUB_SHA,
+              job_status: process.env.JOB_STATUS,
+              event_name: process.env.GITHUB_EVENT_NAME,
+              ref: process.env.GITHUB_REF,
+            },
+            candidate: {
+              bidfast_commit: process.env.BIDFAST_EXPECTED_COMMIT,
+              bidfast_ref: process.env.BIDFAST_EXPECTED_REF,
+              rollback_commit: process.env.BIDFAST_ROLLBACK_COMMIT,
+              route: '/dashboard',
+              theme: 'light',
+              viewport: { name: 'mobile', width: 390, height: 844 },
+            },
+            approved_reference: {
+              drive_file_id: process.env.DASHBOARD_REFERENCE_ID,
+              sha256: process.env.DASHBOARD_REFERENCE_SHA256,
+            },
+            retained_baseline: Number(process.env.RETAINED_BASELINE),
+            release_threshold: Number(process.env.RELEASE_THRESHOLD),
+            http_status: httpStatus,
+            summary,
+            diagnostic_available: diagnostic !== null,
+            diagnostic_failure: diagnostic?.error || diagnostic?.message || null,
+            acceptance: {
+              candidate_retained: summary?.candidate_retained === true,
+              release_authorized: false,
+              production_promotion_authorized: false,
+            },
+            constraints_preserved: {
+              reference_substitution_used: false,
+              full_screen_reference_layer_used: false,
+              real_components_hidden: false,
+              tests_weakened: false,
+              secrets_exposed: false,
+              production_resource_changed: false,
+              database_changed: false,
+            },
+            rollback: {
+              bidfast_restore_commit: process.env.BIDFAST_ROLLBACK_COMMIT,
+              browserworker_receipt_revert: 'Revert the commit that adds this receipt if the recorded evidence is inaccurate.',
+            },
+            production_status: 'LOCKED',
+          }
+          fs.writeFileSync(path, JSON.stringify(receipt, null, 2) + '\n')
+          NODE
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "${RECEIPT_PATH}"
+          if git diff --cached --quiet; then
+            echo 'No receipt change to commit.'
+            exit 0
+          fi
+          git commit -m 'docs(receipts): preserve BIDFAST logo candidate result [skip ci]'
+          git push origin HEAD:auto-builder/bidfast-proof-20260728

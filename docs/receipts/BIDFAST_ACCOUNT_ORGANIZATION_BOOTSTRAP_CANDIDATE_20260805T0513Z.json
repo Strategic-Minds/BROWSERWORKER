@@ -1,0 +1,145 @@
+{
+  "receipt_type": "BIDFAST_ACCOUNT_ORGANIZATION_BOOTSTRAP_CANDIDATE",
+  "created_at": "2026-08-05T05:13:00Z",
+  "phase": "VALIDATE",
+  "step": "repair the real Account to Organization boundary and pin exact-revision validation without changing secrets, database state, thresholds, or production",
+  "inspection": {
+    "latest_receipt": "docs/receipts/BIDFAST_CURRENT_PROVENANCE_PIN_20260805T0407Z.json",
+    "latest_receipt_inspected": true,
+    "bidfast_repository": "XTREME-SYSTEMS/bidfast",
+    "bidfast_pull_request": 2,
+    "bidfast_branch": "auto-builder/bidfast-complete-visual-system",
+    "bidfast_head_before_change": "bd52c12edfac70d7d1e1f0b1cfeee79994b3e6e8",
+    "bidfast_head_after_change": "291646ea70b8e992ec5e0c036334ec2d3ee8f001",
+    "bidfast_diff_inspected_before_change": true,
+    "browserworker_repository": "Strategic-Minds/BROWSERWORKER",
+    "browserworker_pull_request": 9,
+    "browserworker_branch": "auto-builder/bidfast-proof-20260728",
+    "browserworker_head_before_change": "5bd53c170e3a02cc1c0bea39f9e1df3a804d0fa4",
+    "approved_drive_reference": {
+      "name": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+      "drive_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr"
+    }
+  },
+  "confirmed_defects": [
+    "Signup collected company metadata but the account trigger discarded it from public.bidfast_accounts.",
+    "Successful signup and login navigated into tenant workspaces without creating or resolving a BIDFAST organization.",
+    "The organization RLS policy exposed organization rows only to owners, so legitimate invited members could not resolve their tenant organization.",
+    "Account, organization, and owner-membership creation were not atomic or concurrency-safe.",
+    "Organization and membership mutations were absent from the append-only workflow audit trigger set.",
+    "Direct client organization deletion could cascade tenant data and audit evidence."
+  ],
+  "bidfast_commits": [
+    {
+      "commit": "209639c22de428dc4bd59bef32819e8d5e62b250",
+      "message": "fix(db): atomically bootstrap BIDFAST organizations"
+    },
+    {
+      "commit": "af2a4da422aea89447de0ae185315ab939ebedb4",
+      "message": "fix(auth): ensure BIDFAST organization on sign in"
+    },
+    {
+      "commit": "f07dd5de8c57173090d814507985959eada54c3f",
+      "message": "fix(auth): bootstrap BIDFAST organization after signup"
+    },
+    {
+      "commit": "0cec59cf54be3021d0cd82c68afd8432d5cf60c1",
+      "message": "test(governance): enforce account organization bootstrap"
+    },
+    {
+      "commit": "27297eda8c6c3e7fdf9da6c3691dd6e977337afa",
+      "message": "fix(db): preserve organization audit integrity"
+    },
+    {
+      "commit": "291646ea70b8e992ec5e0c036334ec2d3ee8f001",
+      "message": "test(governance): forbid client organization deletion"
+    }
+  ],
+  "candidate_diff": {
+    "base": "bd52c12edfac70d7d1e1f0b1cfeee79994b3e6e8",
+    "head": "291646ea70b8e992ec5e0c036334ec2d3ee8f001",
+    "commits": 6,
+    "files": [
+      "app/login/page.tsx",
+      "app/signup/page.tsx",
+      "scripts/check-bidfast-account-bootstrap-governance.mjs",
+      "supabase/migrations/202608050510_harden_bidfast_organization_bootstrap.sql"
+    ]
+  },
+  "implemented_controls": [
+    "Preserve only approved company onboarding fields from auth metadata in public.bidfast_accounts.",
+    "Idempotent SECURITY INVOKER organization bootstrap callable by authenticated users.",
+    "Per-account transaction advisory lock prevents concurrent duplicate organization creation.",
+    "Existing invited memberships are resolved before creating a new owner organization.",
+    "Organization and owner membership creation occur in one database transaction.",
+    "Organization select is tenant-member visible while insert and update remain owner-only.",
+    "Client organization deletion is privilege-revoked and remains service-role gated.",
+    "Organization insert/update and membership insert/update/delete are trigger-audited.",
+    "Governance rejects SECURITY DEFINER bootstrap, missing login/signup RPC calls, client organization deletion, and the organization-delete audit foreign-key conflict."
+  ],
+  "browserworker_validation": {
+    "workflow_commit": "29adba63dc69747db8a7fc6de524cf29e3f86387",
+    "message": "test(validation): pin BIDFAST organization bootstrap candidate",
+    "workflow": ".github/workflows/bidfast-supabase-config-provenance-observable-matrix.yml",
+    "run_id": 30977488802,
+    "run_state_at_receipt": "queued",
+    "expected_application_commit": "291646ea70b8e992ec5e0c036334ec2d3ee8f001",
+    "expected_supabase_project_ref": "mhaovpyegtysfgualplu",
+    "route_matrix_threshold": 0.99,
+    "operational_release_authorized": false
+  },
+  "deployments": {
+    "bidfast": {
+      "reference": "GKCcnmfQ6z21QnD4CRrSfUhF53q7",
+      "status_at_receipt": "pending"
+    },
+    "browserworker": {
+      "reference": "5QEQjZC5Ja2KzVkwbyX8MU3YykKH",
+      "status_at_receipt": "pending"
+    }
+  },
+  "retained_visual_evidence": {
+    "new_score_claimed": false,
+    "dashboard_score": 0.837024,
+    "routes_technically_passed": 10,
+    "routes_total": 10,
+    "routes_reaching_0_99": 0,
+    "console_error_count": 0,
+    "application_network_error_count": 0,
+    "http_error_count": 0
+  },
+  "constraints": {
+    "screenshot_substitution_used": false,
+    "real_components_hidden": false,
+    "approved_reference_modified": false,
+    "secrets_changed": false,
+    "vercel_environment_changed": false,
+    "database_mutated": false,
+    "validation_thresholds_changed": false,
+    "tests_weakened": false,
+    "merged": false,
+    "production_changed": false
+  },
+  "decision": {
+    "candidate_retained_pending_build": true,
+    "visual_acceptance_complete": false,
+    "operational_acceptance_complete": false,
+    "release_authorized": false,
+    "production_promotion_authorized": false
+  },
+  "remaining_blockers": [
+    "The BIDFAST and BrowserWorker preview deployments have not completed.",
+    "The exact-revision provenance workflow is queued.",
+    "The preview remains historically configured for Supabase project prhppuuwcnmfdhwsagug instead of governed project mhaovpyegtysfgualplu.",
+    "The governed project has no installed public.bidfast_* workflow entities or required storage controls.",
+    "The new migration has not been applied, rolled back, or adversarially tested in an isolated Supabase environment.",
+    "No approved route reaches measured parity 0.99 and complete light/dark multi-viewport reference coverage remains incomplete."
+  ],
+  "rollback": {
+    "bidfast": "Reset or revert the six candidate commits to restore bd52c12edfac70d7d1e1f0b1cfeee79994b3e6e8.",
+    "browserworker_workflow": "Revert 29adba63dc69747db8a7fc6de524cf29e3f86387 to restore workflow pin 5bd53c170e3a02cc1c0bea39f9e1df3a804d0fa4.",
+    "database": "No rollback required because the migration was not applied.",
+    "environment": "No rollback required because no environment value changed.",
+    "production": "No rollback required because production was not changed."
+  }
+}

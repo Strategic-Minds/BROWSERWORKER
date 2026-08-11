@@ -1,0 +1,123 @@
+{
+  "receipt_type": "BIDFAST_DASHBOARD_PARITY_RETRY_EXACT_SCORE_RECOVERED",
+  "created_at": "2026-08-06T14:08:39Z",
+  "governance_state": "dashboard_exact_score_recovered_below_threshold",
+  "inspection": {
+    "latest_receipt_inspected": "docs/receipts/BIDFAST_GOVERNED_PARITY_ARTIFACT_MATRIX_AND_DASHBOARD_RETRY_20260806T1313Z.json",
+    "bidfast_pull_request": 2,
+    "bidfast_head": "8099ee3cf19a05bf95df8718f0534479e279b8ef",
+    "bidfast_diff_inspected": true,
+    "browserworker_pull_request": 9,
+    "browserworker_pre_receipt_head": "4d282ffd8f5f50b067b5d7484654b1faa91f2cd1",
+    "browserworker_diff_inspected": true
+  },
+  "dashboard_retry": {
+    "workflow_run_id": 31104952564,
+    "workflow_job_id": 92627586063,
+    "workflow_name": "BIDFAST Dashboard Parity Retry Proof",
+    "job_name": "Exact dashboard parity with bounded retry",
+    "conclusion": "FAILURE",
+    "failure_classification": "VISUAL_THRESHOLD_ONLY",
+    "parity_attempts": [
+      { "attempt": 1, "http_status": 409, "retryable": true },
+      { "attempt": 2, "http_status": 409, "retryable": true },
+      { "attempt": 3, "http_status": 409, "retryable": true },
+      { "attempt": 4, "http_status": 409, "retryable": true },
+      { "attempt": 5, "http_status": 200, "retryable": false }
+    ]
+  },
+  "artifact": {
+    "artifact_id": 8969678920,
+    "artifact_name": "bidfast-dashboard-parity-retry-8099ee3",
+    "artifact_sha256": "1a0f711f276f865b561493ae33aa0f021682b7b21e7e813d7222117f1467ca3e",
+    "size_bytes": 88057,
+    "expired": false,
+    "files_recorded": 8
+  },
+  "source_revision": {
+    "repository": "XTREME-SYSTEMS/bidfast",
+    "branch": "auto-builder/bidfast-complete-visual-system",
+    "commit_sha": "8099ee3cf19a05bf95df8718f0534479e279b8ef",
+    "deployment_id": "dpl_4Jg4cMoq2EuE6yExtpTrKQn1FTKs",
+    "deployment_reference": "4Jg4cMoq2EuE6yExtpTrKQn1FTKs",
+    "deployment_url": "bidfast-341tyimfo-strategic-minds-advisory.vercel.app"
+  },
+  "approved_reference": {
+    "title": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+    "drive_file_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+    "sha256": "f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb",
+    "bytes": 1087711,
+    "crop": { "x": 178, "y": 150, "width": 570, "height": 1387 }
+  },
+  "measurement": {
+    "route": "/dashboard",
+    "theme": "light",
+    "viewport": { "name": "mobile", "width": 390, "height": 844 },
+    "page_height": 948,
+    "normalized_width": 195,
+    "normalized_height": 474,
+    "pixel_similarity": 0.948064,
+    "structure_similarity": 0.976117,
+    "edge_similarity": 0.328977,
+    "color_similarity": 0.967785,
+    "composite_score": 0.837024,
+    "required_threshold": 0.99,
+    "visual_pass": false,
+    "evidence_pass": false,
+    "technical_pass": true,
+    "integrity_pass": true,
+    "provenance_pass": true,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "live_screenshot_sha256": "a36ce9d4f7c4575d5383ef57ba1a6f779532117afa48d3502afee0c2ca1c3adc",
+    "live_screenshot_bytes": 87149,
+    "browser_version": "151.0.7922.72"
+  },
+  "visual_diagnosis": {
+    "status": "INFERRED_NOT_SCORE_ATTRIBUTED",
+    "method": "Exact Drive reference crop compared side by side with the immutable implemented-component screenshot.",
+    "observed_gaps": [
+      "Header logo scale and horizontal geometry differ materially from the approved reference.",
+      "Header-to-search vertical cadence and top chrome geometry remain compressed.",
+      "Quick-action icon scale and card internals are smaller than the approved reference.",
+      "Active-bid and proposal-alert typography and row cadence remain more compressed than the approved reference.",
+      "The low edge-similarity score is consistent with widespread microgeometry and typography differences, but no individual component contribution was numerically isolated in this receipt."
+    ],
+    "reference_substitution_used": false,
+    "real_components_hidden": false
+  },
+  "changes": {
+    "bidfast_application_code_changed": false,
+    "browserworker_validation_code_changed": false,
+    "database_changed": false,
+    "secrets_changed": false,
+    "threshold_changed": false,
+    "tests_weakened": false,
+    "production_changed": false,
+    "receipt_only": true
+  },
+  "acceptance": {
+    "dashboard_visual_gate": "FAILED",
+    "routes_reaching_0_99": 0,
+    "operational_pass_rate": "NOT_EXECUTED",
+    "complete_light_dark_multiviewport_coverage": false,
+    "merge_gate": "CLOSED",
+    "production_gate": "CLOSED"
+  },
+  "blockers": [
+    "The dashboard composite score is 0.837024, below the required 0.99 threshold.",
+    "All other previously measured approved routes remain below 0.99.",
+    "Complete approved light and dark desktop, tablet, and mobile reference pairs remain unavailable.",
+    "Governed Supabase project mhaovpyegtysfgualplu remains inaccessible through the active connector.",
+    "The workflow-lineage migration remains unapplied and untested in an isolated governed database branch.",
+    "The complete Account to Organization to Opportunity to Project to Document to Takeoff to Estimate to Proposal to Approval to Audit workflow remains unverified."
+  ],
+  "rollback": {
+    "receipt": "Revert only this receipt commit if the recorded evidence is inaccurate.",
+    "artifact": "Do not alter the immutable workflow artifact.",
+    "bidfast": "No BIDFAST application rollback is required because no application code changed.",
+    "database": "No database rollback is required because no database change occurred."
+  },
+  "production_status": "LOCKED"
+}

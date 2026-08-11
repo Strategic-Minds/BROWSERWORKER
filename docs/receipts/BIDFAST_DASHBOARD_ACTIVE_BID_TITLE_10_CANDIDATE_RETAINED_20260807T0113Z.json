@@ -1,0 +1,133 @@
+{
+  "receipt_type": "BIDFAST_DASHBOARD_ACTIVE_BID_TITLE_10_CANDIDATE_RETAINED",
+  "created_at": "2026-08-07T01:13:12Z",
+  "governance_state": "candidate_retained_release_locked",
+  "inspection": {
+    "latest_retained_receipt": "docs/receipts/BIDFAST_DASHBOARD_LOGO_ROLLBACK_PROOF_REESTABLISHED_20260807T0020Z.json",
+    "bidfast_diff_base": "1039d807e4d63db03013d3a5786e087a5196669f",
+    "bidfast_diff_head": "cffc151bd0b9bf18a216d324781cf97c0896324c",
+    "bidfast_changed_files": ["app/dashboard-quick-actions-candidate.css"],
+    "browserworker_diff_base": "d4143ee175697a4b81cfa8b1018da80966029b5e",
+    "browserworker_diff_head": "614151ea29bc669daa47c4ff7e03269fefdb4d02",
+    "browserworker_changed_files": [".github/workflows/bidfast-dashboard-active-bid-title-10-candidate.yml"]
+  },
+  "candidate": {
+    "repository": "XTREME-SYSTEMS/bidfast",
+    "branch": "auto-builder/bidfast-complete-visual-system",
+    "commit": "cffc151bd0b9bf18a216d324781cf97c0896324c",
+    "rollback_commit": "1039d807e4d63db03013d3a5786e087a5196669f",
+    "change": ".bfm-bid-main strong { font-size: 10px; }",
+    "change_scope": "single CSS property on implemented active-bid title components",
+    "deployment_id": "dpl_4G6BiwuQotPA5vrAXLCuBbBwBxCW",
+    "deployment_url": "bidfast-8vezw97u0-strategic-minds-advisory.vercel.app"
+  },
+  "proof": {
+    "repository": "Strategic-Minds/BROWSERWORKER",
+    "branch": "auto-builder/bidfast-proof-20260728",
+    "workflow_commit": "614151ea29bc669daa47c4ff7e03269fefdb4d02",
+    "run_id": 31137256104,
+    "job_id": 92739282996,
+    "workflow_name": "BIDFAST Dashboard Active Bid Title 10 Candidate",
+    "conclusion": "success",
+    "artifact": {
+      "id": 8978436179,
+      "name": "bidfast-dashboard-active-bid-title-10-cffc151",
+      "sha256": "bcef92fd8677a1730dc140e728c3cb7b7f07fe0c05c5cf90ea16c1dffc56c982",
+      "size_bytes": 3890,
+      "expires_at": "2026-09-06T01:13:12Z"
+    }
+  },
+  "approved_reference": {
+    "drive_file_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+    "title": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+    "sha256": "f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb",
+    "crop": { "x": 178, "y": 150, "width": 570, "height": 1387 }
+  },
+  "measurement": {
+    "route": "/dashboard",
+    "theme": "light",
+    "viewport": { "name": "mobile", "width": 390, "height": 844 },
+    "page_height": 948,
+    "retained_previous_composite": 0.837024,
+    "candidate_composite": 0.838192,
+    "composite_delta": 0.001168,
+    "release_threshold": 0.99,
+    "release_threshold_pass": false,
+    "pixel_similarity": 0.948344,
+    "structure_similarity": 0.976815,
+    "edge_similarity": 0.331914,
+    "color_similarity": 0.969472,
+    "live_sha256": "f594baa5bbdc8a3bf3bcbfeb94ad7aec9e3a9ef5583ab09589942f68de0d1ae1",
+    "technical_pass": true,
+    "provenance_pass": true,
+    "integrity_pass": true,
+    "console_error_count": 0,
+    "application_network_error_count": 0,
+    "http_error_count": 0
+  },
+  "regional_comparison": {
+    "active_bid_1": { "previous": 0.722198, "candidate": 0.729258, "delta": 0.007060 },
+    "active_bid_2": { "previous": 0.714608, "candidate": 0.721138, "delta": 0.006530 },
+    "active_bid_3": { "previous": 0.704336, "candidate": 0.704651, "delta": 0.000315 },
+    "header_logo": { "previous": 0.722688, "candidate": 0.722688, "delta": 0.0 },
+    "metrics_row_2": { "previous": 0.729406, "candidate": 0.729406, "delta": 0.0 },
+    "bottom_navigation": { "previous": 0.753053, "candidate": 0.753053, "delta": 0.0 },
+    "quick_actions": { "previous": 0.761245, "candidate": 0.761245, "delta": 0.0 },
+    "overview_heading": { "previous": 0.777489, "candidate": 0.777489, "delta": 0.0 },
+    "metrics_row_1": { "previous": 0.783647, "candidate": 0.783647, "delta": 0.0 },
+    "active_bids_heading": { "previous": 0.795158, "candidate": 0.795158, "delta": 0.0 },
+    "proposal_alert_2": { "previous": 0.816409, "candidate": 0.816409, "delta": 0.0 },
+    "search": { "previous": 0.822644, "candidate": 0.822644, "delta": 0.0 },
+    "proposal_alert_1": { "previous": 0.829816, "candidate": 0.829816, "delta": 0.0 },
+    "proposal_alerts_heading": { "previous": 0.834863, "candidate": 0.834863, "delta": 0.0 },
+    "quick_actions_heading": { "previous": 0.877763, "candidate": 0.877763, "delta": 0.0 }
+  },
+  "active_bid_mean": {
+    "previous": 0.713714,
+    "candidate": 0.718349,
+    "delta": 0.004635
+  },
+  "ratcheted_floors": {
+    "composite": 0.838192,
+    "active_bid_3": 0.704651,
+    "active_bid_2": 0.721138,
+    "active_bid_1": 0.729258,
+    "header_logo": 0.722688,
+    "metrics_row_2": 0.729406,
+    "bottom_navigation": 0.753053,
+    "quick_actions": 0.761245,
+    "overview_heading": 0.777489,
+    "metrics_row_1": 0.783647,
+    "active_bids_heading": 0.795158,
+    "proposal_alert_2": 0.816409,
+    "search": 0.822644,
+    "proposal_alert_1": 0.829816,
+    "proposal_alerts_heading": 0.834863,
+    "quick_actions_heading": 0.877763
+  },
+  "acceptance": {
+    "candidate_retained": true,
+    "new_dashboard_validation_floor_established": true,
+    "release_authorized": false,
+    "production_promotion_authorized": false
+  },
+  "constraints_preserved": {
+    "reference_substitution_used": false,
+    "full_screen_reference_layer_used": false,
+    "real_components_hidden": false,
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "production_resource_changed": false,
+    "database_changed": false
+  },
+  "database_state": {
+    "governed_expected_project_ref": "mhaovpyegtysfgualplu",
+    "governed_project_visible_to_connector": false,
+    "connector_visible_project_ref": "azajysheebfhyzoyplpf",
+    "connector_visible_project_status": "ACTIVE_HEALTHY",
+    "public_table_read_result": "read ECONNRESET",
+    "database_write_performed": false
+  },
+  "next_gate": "Any subsequent dashboard candidate must keep composite_score >= 0.838192 and every ratcheted regional score at or above its retained floor, while keeping technical/provenance/integrity true and console/application-network/http errors at zero.",
+  "production_status": "LOCKED"
+}

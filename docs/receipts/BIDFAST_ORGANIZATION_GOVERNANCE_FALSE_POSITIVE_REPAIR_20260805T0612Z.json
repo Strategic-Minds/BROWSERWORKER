@@ -1,0 +1,106 @@
+{
+  "receipt_type": "BIDFAST_ORGANIZATION_GOVERNANCE_FALSE_POSITIVE_REPAIR",
+  "created_at": "2026-08-05T06:12:00Z",
+  "phase": "VALIDATE",
+  "step": "repair the failed Account to Organization candidate build without weakening organization deletion, audit, tenant, parity, or release gates",
+  "inspection": {
+    "latest_receipt": "docs/receipts/BIDFAST_ACCOUNT_ORGANIZATION_BOOTSTRAP_CANDIDATE_20260805T0513Z.json",
+    "latest_receipt_inspected": true,
+    "bidfast_repository": "XTREME-SYSTEMS/bidfast",
+    "bidfast_pull_request": 2,
+    "bidfast_branch": "auto-builder/bidfast-complete-visual-system",
+    "bidfast_head_before_change": "291646ea70b8e992ec5e0c036334ec2d3ee8f001",
+    "bidfast_diff_inspected_before_change": true,
+    "browserworker_repository": "Strategic-Minds/BROWSERWORKER",
+    "browserworker_pull_request": 9,
+    "browserworker_branch": "auto-builder/bidfast-proof-20260728",
+    "browserworker_head_before_change": "984cc61dc7a1b9668acc456b244f59da5f058272",
+    "approved_drive_reference": {
+      "name": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+      "drive_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+      "mime_type": "image/png",
+      "size_bytes": 1087711,
+      "modified_time": "2026-07-28T02:14:36.777Z"
+    }
+  },
+  "confirmed_failure_cause": {
+    "failed_application_commit": "291646ea70b8e992ec5e0c036334ec2d3ee8f001",
+    "failed_deployment_reference": "GKCcnmfQ6z21QnD4CRrSfUhF53q7",
+    "governance_rule": "BIDFAST_ORGANIZATION_DELETE_AUDIT_FK_CONFLICT",
+    "cause": "The check used an unbounded [\\s\\S]*? pattern. It began at the named organization trigger and continued into the later dynamic trigger loop, incorrectly treating an unrelated after insert or update or delete clause as part of bidfast_organizations_audit_trigger.",
+    "security_control_was_not_removed": true
+  },
+  "bidfast_repair": {
+    "commit": "e56189af0bb0c4c44a72ccfe04376dcf24fd799f",
+    "message": "fix(governance): scope organization audit trigger check",
+    "file": "scripts/check-bidfast-account-bootstrap-governance.mjs",
+    "change": "Scope the forbidden organization delete-audit pattern to the complete named trigger event clause ending on public.bidfast_organizations.",
+    "rollback_commit": "291646ea70b8e992ec5e0c036334ec2d3ee8f001",
+    "deployment_reference": "HSb9TasDzAxkboa72yKPRvD6KYeQ",
+    "deployment_status_at_receipt": "pending"
+  },
+  "browserworker_validation": {
+    "commit": "f5d81f618b4faa24210b239abddd36b4a7e26f47",
+    "message": "test(validation): pin BIDFAST governance repair candidate",
+    "workflow": ".github/workflows/bidfast-supabase-config-provenance-observable-matrix.yml",
+    "expected_application_commit": "e56189af0bb0c4c44a72ccfe04376dcf24fd799f",
+    "expected_application_ref": "auto-builder/bidfast-complete-visual-system",
+    "expected_supabase_project_ref": "mhaovpyegtysfgualplu",
+    "release_threshold": 0.99,
+    "deployment_reference": "5W5vfRHNZPz2FibZTpygSTX43uym",
+    "deployment_status_at_receipt": "pending"
+  },
+  "governed_supabase_catalog": {
+    "project_ref": "mhaovpyegtysfgualplu",
+    "public_bidfast_table_count": 0,
+    "public_bidfast_function_count": 0,
+    "public_autobid_table_count": 44,
+    "takeoff_documents_bucket_count": 0,
+    "bidfast_storage_policy_count": 0,
+    "database_mutated": false
+  },
+  "retained_visual_evidence": {
+    "new_score_claimed": false,
+    "dashboard_score": 0.837024,
+    "routes_technically_passed": 10,
+    "routes_total": 10,
+    "routes_reaching_0_99": 0,
+    "console_error_count": 0,
+    "application_network_error_count": 0,
+    "http_error_count": 0
+  },
+  "constraints": {
+    "screenshot_substitution_used": false,
+    "real_components_hidden": false,
+    "approved_reference_modified": false,
+    "secrets_changed": false,
+    "vercel_environment_changed": false,
+    "database_mutated": false,
+    "validation_thresholds_changed": false,
+    "tests_weakened": false,
+    "merged": false,
+    "production_changed": false
+  },
+  "decision": {
+    "candidate_retained_pending_build": true,
+    "visual_acceptance_complete": false,
+    "operational_acceptance_complete": false,
+    "release_authorized": false,
+    "production_promotion_authorized": false
+  },
+  "remaining_blockers": [
+    "The repaired BIDFAST and BrowserWorker preview deployments have not completed.",
+    "Exact-revision configuration provenance has not completed for e56189af0bb0c4c44a72ccfe04376dcf24fd799f.",
+    "The preview has historically reported Supabase project prhppuuwcnmfdhwsagug instead of governed project mhaovpyegtysfgualplu.",
+    "The governed project has no public.bidfast_* workflow entities or required storage controls.",
+    "The Account to Organization migration has not been applied, rolled back, or adversarially tested in an isolated Supabase environment.",
+    "No approved route reaches measured parity 0.99 and complete light/dark multi-viewport reference coverage remains incomplete."
+  ],
+  "rollback": {
+    "bidfast": "Revert e56189af0bb0c4c44a72ccfe04376dcf24fd799f to restore 291646ea70b8e992ec5e0c036334ec2d3ee8f001.",
+    "browserworker_workflow": "Revert f5d81f618b4faa24210b239abddd36b4a7e26f47 to restore workflow pin 984cc61dc7a1b9668acc456b244f59da5f058272.",
+    "database": "No rollback required because no migration was applied.",
+    "environment": "No rollback required because no environment value changed.",
+    "production": "No rollback required because production was not changed."
+  }
+}

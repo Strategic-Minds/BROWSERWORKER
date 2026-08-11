@@ -1,0 +1,175 @@
+{
+  "receipt_type": "BIDFAST_OPPORTUNITIES_REGION_DIAGNOSTIC",
+  "created_at": "2026-08-02T21:14:00Z",
+  "governance": {
+    "phase": "VALIDATE",
+    "production_locked": true,
+    "database_mutated": false,
+    "bidfast_application_mutated": false,
+    "browserworker_validator_only": true,
+    "tests_weakened": false,
+    "release_threshold_changed": false,
+    "reference_image_substitution_detected": false,
+    "hidden_ui_for_parity_detected": false,
+    "release_authorized": false
+  },
+  "repositories": {
+    "bidfast": {
+      "repository": "XTREME-SYSTEMS/bidfast",
+      "requested_alias": "XTREME-AI-SYSTEMS/bidfast",
+      "branch": "auto-builder/bidfast-complete-visual-system",
+      "pr": 2,
+      "head": "8db9cb761944b0bddd713c43564721916e39d1c5",
+      "retained_base": "eeb4a0d495b81bb28b7fcebd9c3fd069bd5d2b9c",
+      "candidate_diff": [
+        {
+          "path": "app/approvals-parity-adjustments.css",
+          "status": "added",
+          "additions": 17,
+          "deletions": 0
+        },
+        {
+          "path": "app/layout.tsx",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 0
+        }
+      ]
+    },
+    "browserworker": {
+      "repository": "Strategic-Minds/BROWSERWORKER",
+      "branch": "auto-builder/bidfast-proof-20260728",
+      "pr": 9,
+      "validator_commit": "f2e16fd68514a89752fb8bfc012575d16cec945d",
+      "workflow_commit": "5a43c07041c273de3fda3192a5cc9ee3e65a21f4",
+      "validator_path": "app/api/bidfast-opportunities-regions/route.ts",
+      "workflow_path": ".github/workflows/bidfast-opportunities-region-diagnostic.yml"
+    }
+  },
+  "auto_builder": {
+    "health_status": "ok",
+    "job_id": "bidfast-opportunities-geometry-validator-20260802T2115Z",
+    "receipt_id": "receipt_1785705026130",
+    "status": "accepted_but_provider_adapter_blocked",
+    "fallback_used": "manual_github_feature_branch_write",
+    "blocked_operation": "deploy BrowserWorker branch preview",
+    "provider_adapter_implemented": false
+  },
+  "deployment_under_test": {
+    "id": "dpl_8wHZB8fCCQaRtdjHTpErkCNPfHhj",
+    "url": "bidfast-5ogt0k57e-strategic-minds-advisory.vercel.app",
+    "commit_sha": "8db9cb761944b0bddd713c43564721916e39d1c5",
+    "commit_ref": "auto-builder/bidfast-complete-visual-system"
+  },
+  "validation": {
+    "workflow_name": "BIDFAST Opportunities Region Diagnostic",
+    "workflow_run_id": 30767372850,
+    "workflow_job_id": 91548379433,
+    "workflow_conclusion": "success",
+    "artifact": {
+      "id": 8839378668,
+      "name": "bidfast-opportunities-region-diagnostic-8db9cb76",
+      "digest": "sha256:c7323e52e2b2651c5307a499ac3bdd201d375360d1fa1f729d04f05d7618903b"
+    },
+    "route": "/opportunities",
+    "theme": "light",
+    "viewport": {
+      "name": "mobile",
+      "width": 390,
+      "height": 844
+    },
+    "page_height": 949,
+    "reference": {
+      "drive_file_id": "1haXSs0QuoSMACLXzo-sVaSGPc1roz0jR",
+      "title": "04_BIDFAST_MOBILE_OPPORTUNITIES_LIST.png",
+      "crop": {
+        "x": 178,
+        "y": 150,
+        "width": 570,
+        "height": 1387
+      },
+      "sha256": "c3cd0b2ed394491128784384e19561457bfe800f4b0182a391b78b888db389ef",
+      "integrity_pass": true
+    },
+    "live": {
+      "http_status": 200,
+      "sha256": "1a94ea4eae5cb271921c691d955cf2b8141f3f04e7c42ccb293d2cd0f245d632"
+    },
+    "official_parity_baseline": {
+      "composite_score": 0.858978,
+      "pixel_similarity": 0.958675,
+      "structure_similarity": 0.986244,
+      "edge_similarity": 0.39881,
+      "color_similarity": 0.976187,
+      "release_threshold": 0.99,
+      "release_threshold_pass": false
+    },
+    "diagnostic": {
+      "overall_score": 0.791098,
+      "scoring_note": "Diagnostic score uses luma-weighted regional analysis and is not a release parity score.",
+      "lowest_regions": [
+        {
+          "name": "opportunity_3",
+          "diagnostic_score": 0.756879,
+          "edge_similarity": 0.31091
+        },
+        {
+          "name": "stage_tabs",
+          "diagnostic_score": 0.773582,
+          "edge_similarity": 0.355128
+        },
+        {
+          "name": "opportunity_2",
+          "diagnostic_score": 0.774406,
+          "edge_similarity": 0.354592
+        },
+        {
+          "name": "opportunity_4",
+          "diagnostic_score": 0.778468,
+          "edge_similarity": 0.366321
+        },
+        {
+          "name": "bottom_navigation",
+          "diagnostic_score": 0.783844,
+          "edge_similarity": 0.382605
+        }
+      ],
+      "best_region": {
+        "name": "search",
+        "diagnostic_score": 0.850489,
+        "edge_similarity": 0.554304
+      },
+      "measured_geometry": {
+        "header": { "x": 0, "y": 0, "width": 390, "height": 75 },
+        "logo": { "x": -3, "y": 3, "width": 235, "height": 61 },
+        "search": { "x": 0, "y": 75, "width": 390, "height": 43 },
+        "tabs": { "x": 0, "y": 118, "width": 390, "height": 52 },
+        "toolbar": { "x": 0, "y": 170, "width": 390, "height": 52 },
+        "card_1": { "x": 0, "y": 222, "width": 390, "height": 110 },
+        "card_2": { "x": 0, "y": 339, "width": 390, "height": 110 },
+        "card_6": { "x": 0, "y": 807, "width": 390, "height": 110 },
+        "bottom_navigation": { "x": -17, "y": 905, "width": 425, "height": 62 }
+      }
+    },
+    "technical": {
+      "diagnostic_pass": true,
+      "provenance_pass": true,
+      "reference_integrity_pass": true,
+      "console_errors": 0,
+      "application_network_errors": 0,
+      "http_errors": 0
+    }
+  },
+  "supabase": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "public_bidfast_table_count": 0,
+    "mutation_performed": false
+  },
+  "decision": {
+    "application_candidate_changed": false,
+    "candidate_retained": true,
+    "next_safe_target": "opportunity card edge microgeometry, beginning with the third card region and stage tabs",
+    "rollback_required": false,
+    "production_status": "LOCKED"
+  }
+}

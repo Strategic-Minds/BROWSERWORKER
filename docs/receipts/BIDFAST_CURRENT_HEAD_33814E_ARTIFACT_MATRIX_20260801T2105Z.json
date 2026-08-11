@@ -1,0 +1,162 @@
+{
+  "receipt_type": "BIDFAST_CURRENT_HEAD_ARTIFACT_MATRIX",
+  "captured_at_utc": "2026-08-01T21:05:20Z",
+  "status": "CURRENT_HEAD_MEASURED_RELEASE_BLOCKED_WORKFLOW_PIN_STALE",
+  "inspection_before_mutation": {
+    "bidfast_repository": "XTREME-SYSTEMS/bidfast",
+    "bidfast_pull_request": 2,
+    "bidfast_branch": "auto-builder/bidfast-complete-visual-system",
+    "bidfast_head": "33814e987b32b971734e952134bb1a85d55e6951",
+    "bidfast_mergeable": false,
+    "bidfast_ahead_by": 235,
+    "bidfast_behind_by": 34,
+    "bidfast_changed_files": 121,
+    "browserworker_repository": "Strategic-Minds/BROWSERWORKER",
+    "browserworker_pull_request": 9,
+    "browserworker_branch": "auto-builder/bidfast-proof-20260728",
+    "browserworker_head_before_receipt": "6951316a236ffd92dfa482a10ecd19baf5539ec6",
+    "latest_base44_receipt": "BIDFAST-GOVERNED-SECURITY-CI-20260801T1813Z",
+    "current_branch_diff_inspected": true
+  },
+  "deployment": {
+    "id": "dpl_74XMGemSg7B1mky7peABgL8PQ2o2",
+    "url": "bidfast-126ruk4u1-strategic-minds-advisory.vercel.app",
+    "commit": "33814e987b32b971734e952134bb1a85d55e6951",
+    "ref": "auto-builder/bidfast-complete-visual-system",
+    "connector_direct_inspection": "BLOCKED_403_STRATEGIC_MINDS_ADVISORY_SCOPE",
+    "browserworker_runtime_provenance_observed": true
+  },
+  "browserworker": {
+    "measured_workflow_run": 30716348037,
+    "measured_workflow_name": "BIDFAST Governed Parity Proof",
+    "measured_workflow_conclusion": "failure",
+    "stale_expected_commit": "106579c02ab6da9af87d1747b9645e348509883e",
+    "actual_measured_commit": "33814e987b32b971734e952134bb1a85d55e6951",
+    "failure_classification": "WORKFLOW_PROVENANCE_PIN_STALE_PLUS_VISUAL_THRESHOLD_NOT_MET",
+    "dedicated_current_head_workflow_run": 30716348074,
+    "dedicated_current_head_workflow_status": "queued",
+    "dedicated_current_head_expected_commit": "33814e987b32b971734e952134bb1a85d55e6951",
+    "theme": "light",
+    "viewport": {
+      "name": "mobile",
+      "width": 390,
+      "height": 844
+    },
+    "release_threshold": 0.99
+  },
+  "matrix": [
+    {
+      "route": "/dashboard",
+      "composite_score": 0.810876,
+      "artifact_id": 8823440587,
+      "artifact_digest": "sha256:c83420857f86d83556d3a87d8edecb23ceaa91b3e880664a627374051202b484",
+      "live_sha256": "d32cf8745580ecb4d53189ff5b0f808feab9e56d61c1f4051cd83b6c69b160e5"
+    },
+    {
+      "route": "/analytics",
+      "composite_score": 0.81372,
+      "artifact_id": 8823445729,
+      "artifact_digest": "sha256:b77ad1f88b7cca5b0c4f12b847c9abaf62511136d23adcac6585fb94876e2d96",
+      "live_sha256": "dc1919b9418326aa11fd4e91d4b7aff42d62fb4510a758df33aa002671e5e263"
+    },
+    {
+      "route": "/approvals",
+      "composite_score": 0.836456,
+      "artifact_id": 8823449520,
+      "artifact_digest": "sha256:f16f55e5d97c917df13c9ea80cfbc3110fba1c6b8926be2e266ed38caf7b5402",
+      "live_sha256": "0e14f51e6adab3d3f5d602fc64ba02ccfeff0d479aab8f328ec26dba47310a2b"
+    },
+    {
+      "route": "/opportunities",
+      "composite_score": 0.858978,
+      "artifact_id": 8823453613,
+      "artifact_digest": "sha256:7153021bcc136f07cf1745a01a3064f6cda3af2be2c19ee20325b5536768a472",
+      "live_sha256": "1a94ea4eae5cb271921c691d955cf2b8141f3f04e7c42ccb293d2cd0f245d632"
+    },
+    {
+      "route": "/estimates/new",
+      "composite_score": 0.813012,
+      "artifact_id": 8823458106,
+      "artifact_digest": "sha256:d0c086ff7115cf91cfa0528aa6e63d055975444422b678c243943a1aa109d12e",
+      "live_sha256": "e9fa9a8bc06eac289888a1368cf3bd31e41a1824690e7a6f58878aa1087135df"
+    },
+    {
+      "route": "/proposals",
+      "composite_score": 0.819855,
+      "artifact_id": 8823462285,
+      "artifact_digest": "sha256:7bc648264ebe09ee126b5ce6e04cd9bac40d388b2d1db7d38694318344c42afc",
+      "live_sha256": "250f43556dae44a0f48e07bca66ee466ab12efacea1b4efd82c3a1e48f9533a6"
+    },
+    {
+      "route": "/projects/demo-riverside",
+      "composite_score": 0.818791,
+      "artifact_id": 8823467367,
+      "artifact_digest": "sha256:73d2fb5dcf7882694a408c7ca05178da44600aebefeba6abfdedd9073b218e28",
+      "live_sha256": "7d836e5456e9a6e328819bc0c1ceafb8793e5c131ff114a4bbd53d114d0c1281"
+    },
+    {
+      "route": "/takeoffs/demo-riverside",
+      "composite_score": 0.818538,
+      "artifact_id": 8823471505,
+      "artifact_digest": "sha256:d48e34c028f2cbb0ce961bf61172cdb1ca6ad4af19056126146566bed57dcaf0",
+      "live_sha256": "d5ee5be5fd3ae6f41169f71b32723314d5bea923d5aec4a9ee8debfebe0bfacc"
+    },
+    {
+      "route": "/settings/company",
+      "composite_score": 0.825706,
+      "artifact_id": 8823475961,
+      "artifact_digest": "sha256:5a7b2204aba98bc223ae6fd3eeee0a14f29609ef413d3f9e3efde5ede1c282a4",
+      "live_sha256": "1558e965af86f5e7ac9a7519d1945bd392906e75190517fa5c0e1fddd81f541c"
+    },
+    {
+      "route": "/assistant",
+      "composite_score": 0.823121,
+      "artifact_id": 8823480666,
+      "artifact_digest": "sha256:49ea8b551f524b0392b99876ae6d1572e6220740328d9d002ddaf2cf75ee00a6",
+      "live_sha256": "8e13da8c6690d931f7e98d505fc478913b828686209a7d00120536fdc1ee13ae"
+    }
+  ],
+  "aggregate": {
+    "routes_measured": 10,
+    "routes_at_or_above_0_99": 0,
+    "highest_route": "/opportunities",
+    "highest_score": 0.858978,
+    "lowest_route": "/dashboard",
+    "lowest_score": 0.810876,
+    "reference_integrity": "10/10",
+    "implemented_component_screenshots": "10/10",
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "actual_commit_consistency": "10/10",
+    "actual_deployment_consistency": "10/10",
+    "release_gate": "FAIL"
+  },
+  "supabase": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "public_bidfast_table_count": 0,
+    "workflow_validation_status": "BLOCKED_NO_BIDFAST_ENTITIES",
+    "mutation_performed": false
+  },
+  "current_head_ci": {
+    "bidfast_commit_workflow_runs": 0,
+    "status": "MISSING"
+  },
+  "safety": {
+    "code_changed": false,
+    "full_screen_reference_substitution": false,
+    "hidden_real_ui": false,
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "production_mutated": false
+  },
+  "gates": {
+    "visual_parity_0_99_all_routes": false,
+    "operational_pass_rate_1_00": false,
+    "complete_light_dark_coverage": false,
+    "zero_dead_controls": false,
+    "zero_tenant_leaks": false,
+    "zero_authorization_bypasses": false,
+    "production_promotion": "LOCKED"
+  }
+}

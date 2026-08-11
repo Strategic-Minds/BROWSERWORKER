@@ -1,0 +1,133 @@
+{
+  "receipt_type": "BIDFAST_BROWSERWORKER_RECEIPT_PREVIEW_PASS",
+  "created_at": "2026-08-04T20:07:45Z",
+  "phase": "VALIDATE",
+  "step": "preserve successful BrowserWorker receipt-preview deployment while retaining all BIDFAST acceptance locks",
+  "auto_builder_bridge": {
+    "job_id": "bidfast-browserworker-receipt-preview-pass-20260804T2006Z",
+    "receipt_id": "receipt_1785874050420",
+    "mode": "dry_run",
+    "status": "dry_run_complete",
+    "command_folder_id": "13uLhv0NRhmdCdJCCLrroLzyRRttoXtpr",
+    "provider_adapter_status": "not_implemented",
+    "fallback_used": "governed direct GitHub feature-branch text write"
+  },
+  "inspection": {
+    "latest_prior_receipt": "docs/receipts/BIDFAST_TAKEOFF_CHAIN_RECEIPT_DEPLOYMENT_PASS_20260804T1906Z.json",
+    "latest_prior_receipt_commit": "38fd8b306f9752421031689ed976746f4288c1dd",
+    "current_branch_diff_inspected": true,
+    "bidfast_diff_base": "abe2659c04c4e4ef4c51aaa2db9c8985b4aafb10",
+    "bidfast_diff_head": "9ea40afc8cb67b76849d0f75f02c8baf37c05340",
+    "bidfast_ahead_by": 2,
+    "bidfast_diff_files": [
+      "scripts/check-bidfast-takeoff-governance.mjs",
+      "supabase/migrations/202608041710_harden_bidfast_takeoff_chain_state.sql"
+    ],
+    "browserworker_head_before_receipt": "38fd8b306f9752421031689ed976746f4288c1dd"
+  },
+  "bidfast": {
+    "repository": "XTREME-SYSTEMS/bidfast",
+    "requested_repository_alias": "XTREME-AI-SYSTEMS/bidfast",
+    "branch": "auto-builder/bidfast-complete-visual-system",
+    "pull_request": 2,
+    "head_commit": "9ea40afc8cb67b76849d0f75f02c8baf37c05340",
+    "rollback_commit": "abe2659c04c4e4ef4c51aaa2db9c8985b4aafb10",
+    "pull_request_state": {
+      "open": true,
+      "draft": true,
+      "merged": false,
+      "mergeable": false
+    },
+    "vercel_check": "success",
+    "vercel_reference": "8HmTLnaHkkf2bhs25eaMsVJKSeCB",
+    "deployment_id": "dpl_8HmTLnaHkkf2bhs25eaMsVJKSeCB",
+    "application_changed_this_cycle": false,
+    "visual_code_changed_this_cycle": false,
+    "tests_weakened": false
+  },
+  "browserworker": {
+    "repository": "Strategic-Minds/BROWSERWORKER",
+    "branch": "auto-builder/bidfast-proof-20260728",
+    "pull_request": 9,
+    "validated_commit": "38fd8b306f9752421031689ed976746f4288c1dd",
+    "pull_request_state_before_receipt": {
+      "open": true,
+      "draft": true,
+      "merged": false,
+      "mergeable": true
+    },
+    "vercel_check": "success",
+    "vercel_reference": "F8jpXZUjujAYjt8cDFVy36JHGcQu",
+    "exact_deployment_id_available": false,
+    "deployment_scope_access": "unavailable through the connected Vercel team"
+  },
+  "configuration_provenance": {
+    "latest_completed_workflow_run": 30932786327,
+    "expected_supabase_project_ref": "mhaovpyegtysfgualplu",
+    "actual_supabase_project_ref": "prhppuuwcnmfdhwsagug",
+    "configuration_pass": false,
+    "route_matrix_executed": false,
+    "operational_matrix_executed": false,
+    "changed_this_cycle": false
+  },
+  "governed_supabase_catalog": {
+    "project_ref": "mhaovpyegtysfgualplu",
+    "inspection_mode": "read_only",
+    "public_bidfast_table_count": 0,
+    "public_bidfast_function_count": 0,
+    "takeoff_documents_bucket_count": 0,
+    "bidfast_storage_policy_count": 0,
+    "database_mutated": false
+  },
+  "approved_visual_source": {
+    "file_name": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+    "drive_file_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+    "mime_type": "image/png",
+    "verified_this_cycle": true,
+    "changed_this_cycle": false
+  },
+  "retained_visual_evidence": {
+    "new_score_claimed": false,
+    "dashboard_score": 0.837024,
+    "routes_technically_passed": 10,
+    "routes_total": 10,
+    "matrix_pass_rate": 1.0,
+    "routes_reaching_0_99": 0,
+    "console_error_count": 0,
+    "application_network_error_count": 0,
+    "http_error_count": 0
+  },
+  "constraints": {
+    "screenshot_substitution_used": false,
+    "real_components_hidden": false,
+    "secrets_changed": false,
+    "vercel_environment_changed": false,
+    "database_mutated": false,
+    "validation_thresholds_changed": false,
+    "tests_weakened": false,
+    "merged": false,
+    "production_changed": false
+  },
+  "decision": {
+    "browserworker_receipt_preview_build_passed": true,
+    "takeoff_chain_candidate_retained_provisionally": true,
+    "configuration_gate_passed": false,
+    "visual_acceptance_complete": false,
+    "operational_acceptance_complete": false,
+    "release_authorized": false,
+    "production_promotion_authorized": false
+  },
+  "blockers": [
+    "The exact BIDFAST preview revision still targets Supabase project prhppuuwcnmfdhwsagug instead of governed project mhaovpyegtysfgualplu.",
+    "The governed Supabase project contains zero public.bidfast_* tables and functions, no takeoff-documents bucket, and no BIDFAST storage policies.",
+    "The takeoff-chain migration is not installed, transaction-tested, or tenant-denial tested in an isolated environment.",
+    "Visual and operational matrices remain blocked by configuration provenance.",
+    "No approved route currently reaches measured parity of 0.99 and complete approved light/dark multi-viewport references remain incomplete."
+  ],
+  "rollback": {
+    "browserworker": "Revert only this additive receipt commit if the evidence record is rejected.",
+    "application": "No BIDFAST application change occurred in this cycle.",
+    "database": "No database rollback is required because this cycle performed read-only inspection only.",
+    "environment": "No environment rollback is required because this cycle changed no Vercel or Supabase configuration."
+  }
+}

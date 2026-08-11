@@ -1,0 +1,582 @@
+{
+  "receipt_type": "BIDFAST_APPROVALS_MICROGEOMETRY_FULL_MATRIX",
+  "created_at": "2026-08-02T17:06:35Z",
+  "governance": {
+    "production_locked": true,
+    "database_mutated": false,
+    "application_mutated_in_this_cycle": false,
+    "tests_weakened": false,
+    "reference_image_substitution_detected": false,
+    "hidden_ui_for_parity_detected": false
+  },
+  "repositories": {
+    "bidfast": {
+      "repository": "XTREME-SYSTEMS/bidfast",
+      "requested_alias": "XTREME-AI-SYSTEMS/bidfast",
+      "branch": "auto-builder/bidfast-complete-visual-system",
+      "pr": 2,
+      "head": "8db9cb761944b0bddd713c43564721916e39d1c5",
+      "retained_base": "eeb4a0d495b81bb28b7fcebd9c3fd069bd5d2b9c",
+      "candidate_diff": [
+        {
+          "path": "app/approvals-parity-adjustments.css",
+          "status": "added",
+          "additions": 17,
+          "deletions": 0
+        },
+        {
+          "path": "app/layout.tsx",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 0
+        }
+      ]
+    },
+    "browserworker": {
+      "repository": "Strategic-Minds/BROWSERWORKER",
+      "branch": "auto-builder/bidfast-proof-20260728",
+      "pr": 9,
+      "workflow_head": "bb248a75166a48d8c6aafb90b55d3fb9bfcd53e2",
+      "workflow_run_id": 30756124023,
+      "workflow_name": "BIDFAST Approvals Candidate Observable Matrix",
+      "workflow_conclusion": "failure_due_only_to_release_threshold"
+    }
+  },
+  "deployment": {
+    "id": "dpl_8wHZB8fCCQaRtdjHTpErkCNPfHhj",
+    "url": "bidfast-5ogt0k57e-strategic-minds-advisory.vercel.app",
+    "commit_sha": "8db9cb761944b0bddd713c43564721916e39d1c5",
+    "commit_ref": "auto-builder/bidfast-complete-visual-system"
+  },
+  "matrix": [
+    {
+      "index": 0,
+      "route": "/dashboard",
+      "theme": "light",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "page_height": 948,
+      "reference": {
+        "drive_file_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+        "title": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+        "sha256": "f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb",
+        "expected_sha256": "f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb",
+        "integrity_match": true
+      },
+      "live": {
+        "sha256": "d32cf8745580ecb4d53189ff5b0f808feab9e56d61c1f4051cd83b6c69b160e5",
+        "http_status": 200
+      },
+      "metrics": {
+        "normalized_width": 195,
+        "normalized_height": 474,
+        "live_source_width": 390,
+        "live_source_height": 948,
+        "reference_source_width": 941,
+        "reference_source_height": 1672,
+        "pixel_similarity": 0.93598,
+        "structure_similarity": 0.970456,
+        "edge_similarity": 0.226313,
+        "color_similarity": 0.967731,
+        "composite_score": 0.810876
+      },
+      "baseline": 0.810876,
+      "non_regression_pass": true,
+      "release_threshold": 0.99,
+      "release_threshold_pass": false,
+      "technical_pass": true,
+      "integrity_pass": true,
+      "provenance_pass": true,
+      "console_error_count": 0,
+      "app_network_error_count": 0,
+      "http_error_count": 0,
+      "artifact": {
+        "id": 8835983616,
+        "digest": "sha256:bd6faeebd13df4f59f58613a27f4a72ccd220bae606e81f80c475109515674d1",
+        "name": "bidfast-approvals-observable-0"
+      }
+    },
+    {
+      "index": 1,
+      "route": "/analytics",
+      "theme": "light",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "page_height": 973,
+      "reference": {
+        "drive_file_id": "1MWcZn7eUYBHpy99t3Mtwwcg85xtOS5j0",
+        "title": "02_BIDFAST_MOBILE_ANALYTICS_KPI.png",
+        "sha256": "5f8cba804e775ff9e774acdc8a9c92c2532dacd587fe3590c80fd8c24a42aef8",
+        "expected_sha256": "5f8cba804e775ff9e774acdc8a9c92c2532dacd587fe3590c80fd8c24a42aef8",
+        "integrity_match": true
+      },
+      "live": {
+        "sha256": "9e568b80e048e42884a89420cde379383415da7baa80afd32e179e7e4fb504d5",
+        "http_status": 200
+      },
+      "metrics": {
+        "normalized_width": 195,
+        "normalized_height": 487,
+        "live_source_width": 390,
+        "live_source_height": 973,
+        "reference_source_width": 941,
+        "reference_source_height": 1672,
+        "pixel_similarity": 0.949692,
+        "structure_similarity": 0.982749,
+        "edge_similarity": 0.272893,
+        "color_similarity": 0.979986,
+        "composite_score": 0.830446
+      },
+      "baseline": 0.830446,
+      "non_regression_pass": true,
+      "release_threshold": 0.99,
+      "release_threshold_pass": false,
+      "technical_pass": true,
+      "integrity_pass": true,
+      "provenance_pass": true,
+      "console_error_count": 0,
+      "app_network_error_count": 0,
+      "http_error_count": 0,
+      "artifact": {
+        "id": 8836001599,
+        "digest": "sha256:0f0545bc0b189eb1e5b58f977ed731cdec59518941fd32a7daff21f07ca9dd39",
+        "name": "bidfast-approvals-observable-1"
+      }
+    },
+    {
+      "index": 2,
+      "route": "/approvals",
+      "theme": "light",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "page_height": 949,
+      "reference": {
+        "drive_file_id": "17f9b8t1VnHRQ8sOl7y1of_4uws3KgoUr",
+        "title": "03_BIDFAST_MOBILE_APPROVAL_QUEUE.png",
+        "sha256": "555db1b73a207833fdce0f08572af263dc11a8105dab50af1c79f83f535fca1c",
+        "expected_sha256": "555db1b73a207833fdce0f08572af263dc11a8105dab50af1c79f83f535fca1c",
+        "integrity_match": true
+      },
+      "live": {
+        "sha256": "9e9a54431df6e2c37628ffcbc7a2e3fc14ae0651f86288144fce08047d24273b",
+        "http_status": 200
+      },
+      "metrics": {
+        "normalized_width": 195,
+        "normalized_height": 475,
+        "live_source_width": 390,
+        "live_source_height": 949,
+        "reference_source_width": 941,
+        "reference_source_height": 1672,
+        "pixel_similarity": 0.959883,
+        "structure_similarity": 0.98455,
+        "edge_similarity": 0.395262,
+        "color_similarity": 0.983046,
+        "composite_score": 0.859067
+      },
+      "baseline": 0.859067,
+      "non_regression_pass": true,
+      "release_threshold": 0.99,
+      "release_threshold_pass": false,
+      "technical_pass": true,
+      "integrity_pass": true,
+      "provenance_pass": true,
+      "console_error_count": 0,
+      "app_network_error_count": 0,
+      "http_error_count": 0,
+      "artifact": {
+        "id": 8836017366,
+        "digest": "sha256:060543d7d451702d559ef48d56dcf3638fbe2e665dcbb0a244af44f0b43a99b7",
+        "name": "bidfast-approvals-observable-2"
+      }
+    },
+    {
+      "index": 3,
+      "route": "/opportunities",
+      "theme": "light",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "page_height": 949,
+      "reference": {
+        "drive_file_id": "1haXSs0QuoSMACLXzo-sVaSGPc1roz0jR",
+        "title": "04_BIDFAST_MOBILE_OPPORTUNITIES_LIST.png",
+        "sha256": "c3cd0b2ed394491128784384e19561457bfe800f4b0182a391b78b888db389ef",
+        "expected_sha256": "c3cd0b2ed394491128784384e19561457bfe800f4b0182a391b78b888db389ef",
+        "integrity_match": true
+      },
+      "live": {
+        "sha256": "1a94ea4eae5cb271921c691d955cf2b8141f3f04e7c42ccb293d2cd0f245d632",
+        "http_status": 200
+      },
+      "metrics": {
+        "normalized_width": 195,
+        "normalized_height": 475,
+        "live_source_width": 390,
+        "live_source_height": 949,
+        "reference_source_width": 941,
+        "reference_source_height": 1672,
+        "pixel_similarity": 0.958675,
+        "structure_similarity": 0.986244,
+        "edge_similarity": 0.39881,
+        "color_similarity": 0.976187,
+        "composite_score": 0.858978
+      },
+      "baseline": 0.858978,
+      "non_regression_pass": true,
+      "release_threshold": 0.99,
+      "release_threshold_pass": false,
+      "technical_pass": true,
+      "integrity_pass": true,
+      "provenance_pass": true,
+      "console_error_count": 0,
+      "app_network_error_count": 0,
+      "http_error_count": 0,
+      "artifact": {
+        "id": 8836034578,
+        "digest": "sha256:ab42ef88fbe16c624d1a936c33c2222e8e7b7f49a1645ddcbdd226e8789ef421",
+        "name": "bidfast-approvals-observable-3"
+      }
+    },
+    {
+      "index": 4,
+      "route": "/estimates/new",
+      "theme": "light",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "page_height": 1360,
+      "reference": {
+        "drive_file_id": "1jhUC4Zzwi6JBRWD51jwZWutJhUJIDETH",
+        "title": "05_BIDFAST_MOBILE_ESTIMATE_BUILDER.png",
+        "sha256": "3b50c10978f4e4ba111eba5cdd5dc15bf76c73a653920955cca894ee07e5854b",
+        "expected_sha256": "3b50c10978f4e4ba111eba5cdd5dc15bf76c73a653920955cca894ee07e5854b",
+        "integrity_match": true
+      },
+      "live": {
+        "sha256": "e9fa9a8bc06eac289888a1368cf3bd31e41a1824690e7a6f58878aa1087135df",
+        "http_status": 200
+      },
+      "metrics": {
+        "normalized_width": 195,
+        "normalized_height": 680,
+        "live_source_width": 390,
+        "live_source_height": 1360,
+        "reference_source_width": 941,
+        "reference_source_height": 1672,
+        "pixel_similarity": 0.933564,
+        "structure_similarity": 0.950868,
+        "edge_similarity": 0.303646,
+        "color_similarity": 0.929397,
+        "composite_score": 0.813012
+      },
+      "baseline": 0.813012,
+      "non_regression_pass": true,
+      "release_threshold": 0.99,
+      "release_threshold_pass": false,
+      "technical_pass": true,
+      "integrity_pass": true,
+      "provenance_pass": true,
+      "console_error_count": 0,
+      "app_network_error_count": 0,
+      "http_error_count": 0,
+      "artifact": {
+        "id": 8836052187,
+        "digest": "sha256:90842b8d9b6053ed06a3df8f6171289c909e00f43c77f52e735f0e6b1e2dfbd6",
+        "name": "bidfast-approvals-observable-4"
+      }
+    },
+    {
+      "index": 5,
+      "route": "/proposals",
+      "theme": "light",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "page_height": 954,
+      "reference": {
+        "drive_file_id": "1LkVtoUMfnOK690_4BJHcrdpHax_ta_pj",
+        "title": "06_BIDFAST_MOBILE_PROPOSAL_BUILDER.png",
+        "sha256": "30cd512acf82876e2213094ceb84332ec048f006b2ab6f0e23adf5802ef16c9a",
+        "expected_sha256": "30cd512acf82876e2213094ceb84332ec048f006b2ab6f0e23adf5802ef16c9a",
+        "integrity_match": true
+      },
+      "live": {
+        "sha256": "250f43556dae44a0f48e07bca66ee466ab12efacea1b4efd82c3a1e48f9533a6",
+        "http_status": 200
+      },
+      "metrics": {
+        "normalized_width": 195,
+        "normalized_height": 477,
+        "live_source_width": 390,
+        "live_source_height": 954,
+        "reference_source_width": 941,
+        "reference_source_height": 1672,
+        "pixel_similarity": 0.943717,
+        "structure_similarity": 0.98084,
+        "edge_similarity": 0.238278,
+        "color_similarity": 0.971933,
+        "composite_score": 0.819855
+      },
+      "baseline": 0.819855,
+      "non_regression_pass": true,
+      "release_threshold": 0.99,
+      "release_threshold_pass": false,
+      "technical_pass": true,
+      "integrity_pass": true,
+      "provenance_pass": true,
+      "console_error_count": 0,
+      "app_network_error_count": 0,
+      "http_error_count": 0,
+      "artifact": {
+        "id": 8836070378,
+        "digest": "sha256:f40a2637caa6deb24f7530d7897b55d36f5e935ca0cd0b3ed9551e87d9eb4c9b",
+        "name": "bidfast-approvals-observable-5"
+      }
+    },
+    {
+      "index": 6,
+      "route": "/projects/demo-riverside",
+      "theme": "light",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "page_height": 949,
+      "reference": {
+        "drive_file_id": "1vfHzBR7IJzaLV6kWrM67ApbqwUW044Cg",
+        "title": "07_BIDFAST_MOBILE_PROJECT_DETAIL.png",
+        "sha256": "422d62c3cff09b25aa8cbeba7b83ec75e06b5e694badcc2c9d9f176bb7a445d9",
+        "expected_sha256": "422d62c3cff09b25aa8cbeba7b83ec75e06b5e694badcc2c9d9f176bb7a445d9",
+        "integrity_match": true
+      },
+      "live": {
+        "sha256": "7d836e5456e9a6e328819bc0c1ceafb8793e5c131ff114a4bbd53d114d0c1281",
+        "http_status": 200
+      },
+      "metrics": {
+        "normalized_width": 195,
+        "normalized_height": 475,
+        "live_source_width": 390,
+        "live_source_height": 949,
+        "reference_source_width": 941,
+        "reference_source_height": 1672,
+        "pixel_similarity": 0.922003,
+        "structure_similarity": 0.957211,
+        "edge_similarity": 0.307048,
+        "color_similarity": 0.971714,
+        "composite_score": 0.818791
+      },
+      "baseline": 0.818791,
+      "non_regression_pass": true,
+      "release_threshold": 0.99,
+      "release_threshold_pass": false,
+      "technical_pass": true,
+      "integrity_pass": true,
+      "provenance_pass": true,
+      "console_error_count": 0,
+      "app_network_error_count": 0,
+      "http_error_count": 0,
+      "artifact": {
+        "id": 8836088038,
+        "digest": "sha256:9267fd1b3e44894df5300a100332f2a51fbbcc38113a3784b2a38e9370dd9757",
+        "name": "bidfast-approvals-observable-6"
+      }
+    },
+    {
+      "index": 7,
+      "route": "/takeoffs/demo-riverside",
+      "theme": "light",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "page_height": 949,
+      "reference": {
+        "drive_file_id": "1kmCENBUWbrUyt2XIRPBKaHytrKQo1plX",
+        "title": "08_BIDFAST_MOBILE_TAKEOFF_WORKSPACE.png",
+        "sha256": "669b2b1c7c6ce7b30fca878fb95fdddc4d1ec06c71b23d906144b278df3929bf",
+        "expected_sha256": "669b2b1c7c6ce7b30fca878fb95fdddc4d1ec06c71b23d906144b278df3929bf",
+        "integrity_match": true
+      },
+      "live": {
+        "sha256": "d5ee5be5fd3ae6f41169f71b32723314d5bea923d5aec4a9ee8debfebe0bfacc",
+        "http_status": 200
+      },
+      "metrics": {
+        "normalized_width": 195,
+        "normalized_height": 475,
+        "live_source_width": 390,
+        "live_source_height": 949,
+        "reference_source_width": 941,
+        "reference_source_height": 1672,
+        "pixel_similarity": 0.943534,
+        "structure_similarity": 0.980197,
+        "edge_similarity": 0.231955,
+        "color_similarity": 0.973452,
+        "composite_score": 0.818538
+      },
+      "baseline": 0.818538,
+      "non_regression_pass": true,
+      "release_threshold": 0.99,
+      "release_threshold_pass": false,
+      "technical_pass": true,
+      "integrity_pass": true,
+      "provenance_pass": true,
+      "console_error_count": 0,
+      "app_network_error_count": 0,
+      "http_error_count": 0,
+      "artifact": {
+        "id": 8836105293,
+        "digest": "sha256:62dd6a41b392245440f8437021275b5a4577ea9b53c53517031cb9428bbc2c31",
+        "name": "bidfast-approvals-observable-7"
+      }
+    },
+    {
+      "index": 8,
+      "route": "/settings/company",
+      "theme": "light",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "page_height": 949,
+      "reference": {
+        "drive_file_id": "16PwtPY7HPvE7B0Mj68pF-m6xypZQ3XLI",
+        "title": "09_BIDFAST_MOBILE_COMPANY_SETTINGS.png",
+        "sha256": "9c970f77a58082c5859b0d08e1042c7d025aa27e6be196e8bf024772f10f5e25",
+        "expected_sha256": "9c970f77a58082c5859b0d08e1042c7d025aa27e6be196e8bf024772f10f5e25",
+        "integrity_match": true
+      },
+      "live": {
+        "sha256": "1558e965af86f5e7ac9a7519d1945bd392906e75190517fa5c0e1fddd81f541c",
+        "http_status": 200
+      },
+      "metrics": {
+        "normalized_width": 195,
+        "normalized_height": 475,
+        "live_source_width": 390,
+        "live_source_height": 949,
+        "reference_source_width": 941,
+        "reference_source_height": 1672,
+        "pixel_similarity": 0.94924,
+        "structure_similarity": 0.978038,
+        "edge_similarity": 0.261309,
+        "color_similarity": 0.97573,
+        "composite_score": 0.825706
+      },
+      "baseline": 0.825706,
+      "non_regression_pass": true,
+      "release_threshold": 0.99,
+      "release_threshold_pass": false,
+      "technical_pass": true,
+      "integrity_pass": true,
+      "provenance_pass": true,
+      "console_error_count": 0,
+      "app_network_error_count": 0,
+      "http_error_count": 0,
+      "artifact": {
+        "id": 8836123382,
+        "digest": "sha256:05e2b789b9c2eabba7fae6bcb64965427c4d84218922761e37b34d33bb0700f9",
+        "name": "bidfast-approvals-observable-8"
+      }
+    },
+    {
+      "index": 9,
+      "route": "/assistant",
+      "theme": "light",
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "page_height": 949,
+      "reference": {
+        "drive_file_id": "1h5b3hB2OnhozgzotwUi3h2hZkrlDIuRw",
+        "title": "10_BIDFAST_MOBILE_AI_ASSISTANT.png",
+        "sha256": "37ac9f0007621b57163b05200e4516657831a7640c0478fc36b1d4cd1e8ffd74",
+        "expected_sha256": "37ac9f0007621b57163b05200e4516657831a7640c0478fc36b1d4cd1e8ffd74",
+        "integrity_match": true
+      },
+      "live": {
+        "sha256": "8e13da8c6690d931f7e98d505fc478913b828686209a7d00120536fdc1ee13ae",
+        "http_status": 200
+      },
+      "metrics": {
+        "normalized_width": 195,
+        "normalized_height": 475,
+        "live_source_width": 390,
+        "live_source_height": 949,
+        "reference_source_width": 941,
+        "reference_source_height": 1672,
+        "pixel_similarity": 0.942599,
+        "structure_similarity": 0.978979,
+        "edge_similarity": 0.263616,
+        "color_similarity": 0.966503,
+        "composite_score": 0.823121
+      },
+      "baseline": 0.823121,
+      "non_regression_pass": true,
+      "release_threshold": 0.99,
+      "release_threshold_pass": false,
+      "technical_pass": true,
+      "integrity_pass": true,
+      "provenance_pass": true,
+      "console_error_count": 0,
+      "app_network_error_count": 0,
+      "http_error_count": 0,
+      "artifact": {
+        "id": 8836140671,
+        "digest": "sha256:a9d1daf5e2849dd2ceca5898111ac8a570702a0c759af96522c3b18f04985073",
+        "name": "bidfast-approvals-observable-9"
+      }
+    }
+  ],
+  "summary": {
+    "routes_measured": 10,
+    "provenance_pass_count": 10,
+    "integrity_pass_count": 10,
+    "technical_pass_count": 10,
+    "non_regression_pass_count": 10,
+    "release_threshold_pass_count": 0,
+    "console_error_count": 0,
+    "app_network_error_count": 0,
+    "http_error_count": 0,
+    "candidate_retention": "RETAIN",
+    "release_authorization": "DENIED"
+  },
+  "supabase": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "query_scope": "information_schema.tables public.bidfast_%",
+    "public_bidfast_table_count": 0,
+    "mutation_performed": false
+  },
+  "unverified_gates": [
+    "complete dark-mode reference and parity coverage",
+    "tablet, desktop, and large-desktop reference and parity coverage",
+    "Account -> Organization -> Opportunity -> Project -> Document -> Takeoff -> Estimate -> Proposal -> Approval -> Audit operational pass rate 1.00",
+    "zero dead controls",
+    "tenant isolation and RLS denial coverage",
+    "authorization bypass denial coverage",
+    "migration apply and rollback receipts",
+    "production deployment, smoke-test, and rollback receipts"
+  ]
+}

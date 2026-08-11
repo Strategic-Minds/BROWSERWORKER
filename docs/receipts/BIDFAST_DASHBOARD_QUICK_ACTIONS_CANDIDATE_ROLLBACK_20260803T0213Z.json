@@ -1,0 +1,207 @@
+{
+  "receipt_type": "BIDFAST_DASHBOARD_QUICK_ACTIONS_CANDIDATE_ROLLBACK",
+  "created_at": "2026-08-03T02:13:00Z",
+  "governance": {
+    "phase": "VALIDATE",
+    "production_locked": true,
+    "application_mutated_then_reverted": true,
+    "net_application_tree_change": false,
+    "database_mutated": false,
+    "tests_weakened": false,
+    "release_threshold_changed": false,
+    "reference_image_substitution_detected": false,
+    "hidden_ui_for_parity_detected": false,
+    "release_authorized": false
+  },
+  "auto_builder": {
+    "job_id": "bidfast-dashboard-quick-actions-candidate-20260803T0205Z",
+    "status": "accepted_fallback_execution",
+    "receipt_id": "receipt_1785722702270",
+    "provider_adapter": "manual_receipt_fallback",
+    "blocked_actions": [
+      "merge_pull_request",
+      "production_promotion",
+      "database_mutation",
+      "secret_access",
+      "threshold_reduction",
+      "test_weakening",
+      "reference_image_substitution",
+      "hide_real_ui",
+      "modify_other_routes"
+    ]
+  },
+  "repositories": {
+    "bidfast": {
+      "repository": "XTREME-SYSTEMS/bidfast",
+      "requested_alias": "XTREME-AI-SYSTEMS/bidfast",
+      "branch": "auto-builder/bidfast-complete-visual-system",
+      "pr": 2,
+      "retained_tree_commit": "584767bbd75aad1c7b9459bbc710cd225e51ec53",
+      "candidate_file_commit": "caae05673733fa512f8129b80fe148262d6c4a41",
+      "candidate_head_commit": "1c750c4fb830cac3489f720241e5847165813ab3",
+      "rollback_unload_commit": "8f47129e6fcdc41a4e848b2b16112fd174d7d523",
+      "rollback_head_commit": "e61d2b2886b237ad0197c3b1b428a948e8e10b22",
+      "rollback_compare": {
+        "base": "584767bbd75aad1c7b9459bbc710cd225e51ec53",
+        "head": "e61d2b2886b237ad0197c3b1b428a948e8e10b22",
+        "changed_files": 0,
+        "exact_tree_restored": true
+      },
+      "state": "open_draft_unmerged_nonmergeable"
+    },
+    "browserworker": {
+      "repository": "Strategic-Minds/BROWSERWORKER",
+      "branch": "auto-builder/bidfast-proof-20260728",
+      "pr": 9,
+      "candidate_workflow_commit": "d99b35b2d8a4dd4b9fe8cdf86ce4a4f2e4a440f2",
+      "rollback_workflow_commit": "8b330a5ab1af394766e8460c1908f8d8893e73be",
+      "candidate_workflow": ".github/workflows/bidfast-dashboard-quick-actions-candidate.yml",
+      "rollback_workflow": ".github/workflows/bidfast-dashboard-quick-actions-rollback.yml"
+    }
+  },
+  "reference": {
+    "route": "/dashboard",
+    "drive_file_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+    "title": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+    "theme": "light",
+    "viewport": "390x844",
+    "sha256": "f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb",
+    "integrity_pass": true
+  },
+  "candidate": {
+    "scope": [
+      "app/dashboard-quick-actions-candidate.css",
+      "app/layout.tsx import only"
+    ],
+    "component_rules": {
+      ".bfm-actions": {
+        "margin_left": "-15px",
+        "margin_right": "-15px",
+        "grid_template_columns": "repeat(5, 73px)",
+        "gap": "8px"
+      },
+      ".bfm-actions > a": {
+        "height": "71px"
+      }
+    },
+    "deployment": {
+      "id": "dpl_H6cYcK5dcQTZF3x1FgCv7Qc3yv7b",
+      "url": "bidfast-lfcpus3oi-strategic-minds-advisory.vercel.app",
+      "commit_sha": "1c750c4fb830cac3489f720241e5847165813ab3",
+      "commit_ref": "auto-builder/bidfast-complete-visual-system"
+    },
+    "validation": {
+      "workflow_run_id": 30778471916,
+      "workflow_job_id": 91578393735,
+      "conclusion": "failure",
+      "artifact": {
+        "id": 8842863208,
+        "name": "bidfast-dashboard-quick-actions-1c750c4f",
+        "digest": "sha256:40268e27c9dac20d682791238d955ddf376a152e905ac37ea6c159454c806596"
+      },
+      "official_metrics": {
+        "composite_score": 0.809102,
+        "pixel_similarity": 0.935670,
+        "structure_similarity": 0.971411,
+        "edge_similarity": 0.215620,
+        "color_similarity": 0.968552,
+        "retained_baseline": 0.810876,
+        "composite_delta": -0.001774,
+        "release_threshold": 0.99,
+        "non_regression_pass": false,
+        "release_threshold_pass": false
+      },
+      "quick_actions_region": {
+        "diagnostic_score": 0.674621,
+        "retained_baseline": 0.677388,
+        "delta": -0.002767,
+        "edge_similarity": 0.066602,
+        "edge_baseline": 0.078722,
+        "edge_delta": -0.012120
+      },
+      "live_screenshot_sha256": "30601acfe0e2f82fa1a38f5afce5e2e6ae736bd6665a37c4571ddd8daa007dae",
+      "page_height": 951,
+      "geometry": {
+        "quick_actions_grid": { "x": 0, "width": 390, "height": 71 },
+        "card_width": 73,
+        "gap": 8,
+        "last_card_right": 397
+      },
+      "provenance_pass": true,
+      "integrity_pass": true,
+      "technical_pass": true,
+      "console_errors": 0,
+      "application_network_errors": 0,
+      "http_errors": 0,
+      "failed_gates": [
+        "dashboard composite regression",
+        "Quick Actions diagnostic regression",
+        "Quick Actions edge regression"
+      ]
+    }
+  },
+  "rollback": {
+    "deployment": {
+      "id": "dpl_FQVsUSvTryKUrjffXJeJf7Y7nzNR",
+      "url": "bidfast-29hvcwbn9-strategic-minds-advisory.vercel.app",
+      "commit_sha": "e61d2b2886b237ad0197c3b1b428a948e8e10b22",
+      "commit_ref": "auto-builder/bidfast-complete-visual-system"
+    },
+    "validation": {
+      "workflow_run_id": 30778602584,
+      "workflow_job_id": 91578748471,
+      "conclusion": "success",
+      "artifact": {
+        "id": 8842905080,
+        "name": "bidfast-dashboard-quick-actions-rollback-e61d2b28",
+        "digest": "sha256:9dbab664865d1880bacad2e6fc07e6c5db1879cbc423febddfc383c04620bf39"
+      },
+      "official_metrics": {
+        "composite_score": 0.810876,
+        "pixel_similarity": 0.935980,
+        "structure_similarity": 0.970456,
+        "edge_similarity": 0.226313,
+        "color_similarity": 0.967731,
+        "retained_baseline": 0.810876,
+        "exact_baseline_restored": true,
+        "release_threshold": 0.99,
+        "release_threshold_pass": false
+      },
+      "quick_actions_region": {
+        "diagnostic_score": 0.677388,
+        "edge_similarity": 0.078722,
+        "exact_baseline_restored": true
+      },
+      "live_screenshot_sha256": "d32cf8745580ecb4d53189ff5b0f808feab9e56d61c1f4051cd83b6c69b160e5",
+      "page_height": 948,
+      "provenance_pass": true,
+      "integrity_pass": true,
+      "technical_pass": true,
+      "console_errors": 0,
+      "application_network_errors": 0,
+      "http_errors": 0
+    }
+  },
+  "supabase": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "public_bidfast_table_count": 0,
+    "read_only_query_performed": true,
+    "mutation_performed": false
+  },
+  "decision": {
+    "candidate_retained": false,
+    "candidate_reverted": true,
+    "reason": "The full-bleed Quick Actions rail reduced the official dashboard composite, the target-region diagnostic, and target edge similarity.",
+    "frozen_baseline_commit": "e61d2b2886b237ad0197c3b1b428a948e8e10b22",
+    "next_bounded_target": "quick_actions_internal_icon_and_label_geometry_with_existing_grid_bounds_frozen",
+    "production_status": "LOCKED"
+  },
+  "remaining_blockers": [
+    "The dashboard remains below the 0.99 visual release threshold at 0.810876.",
+    "All ten approved routes remain below 0.99.",
+    "Supabase contains zero public.bidfast_* tables, so the real workflow, tenant isolation, RLS denial, and authorization-bypass tests cannot execute.",
+    "Complete approved dark, tablet, desktop, and large-desktop reference pairs remain unavailable.",
+    "BIDFAST PR #2 remains draft, unmerged, and non-mergeable.",
+    "The Account to Audit operational workflow and 1.00 pass-rate gate remain unverified."
+  ]
+}

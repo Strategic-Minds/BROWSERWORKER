@@ -1,0 +1,130 @@
+{
+  "receipt_type": "BIDFAST_ACCOUNT_MIGRATION_ORDER_REPAIR",
+  "created_at": "2026-08-04T09:05:00Z",
+  "phase": "VALIDATION",
+  "step": "repair account-bootstrap migration ordering without applying schema or changing preview configuration",
+  "inspection_before_mutation": {
+    "latest_prior_receipt": "docs/receipts/BIDFAST_ACCOUNT_BOOTSTRAP_CONFIG_MISMATCH_BLOCKED_20260804T0221Z.json",
+    "bidfast_repository": "XTREME-SYSTEMS/bidfast",
+    "bidfast_branch": "auto-builder/bidfast-complete-visual-system",
+    "bidfast_pull_request": 2,
+    "bidfast_head_before_change": "bcc52ae864c73184754a94de65726ad2f6f9fa18",
+    "candidate_base_commit": "ee807932694606d50b10c7f544afe6b8c9617ed5",
+    "candidate_diff_before_change": [
+      "package.json",
+      "scripts/check-bidfast-account-bootstrap-governance.mjs",
+      "supabase/migrations/202607300900_create_bidfast_accounts_bootstrap.sql"
+    ],
+    "known_remote_migration_floor": "20260730222027",
+    "authorization_hardening_migration": "202607310100_harden_bidfast_authorization_audit.sql",
+    "ordering_risk": "The account bootstrap migration version 202607300900 sorted before the known remote migration floor 20260730222027 and could require out-of-order repair or fail to apply cleanly to the existing migration history."
+  },
+  "bridge_receipt": {
+    "job_id": "bidfast-account-migration-order-repair-20260804T0503Z",
+    "receipt_id": "receipt_1785834298925",
+    "mode": "dry_run",
+    "status": "dry_run_complete",
+    "provider_adapter_status": "not_implemented",
+    "fallback_used": "direct governed GitHub feature-branch writes"
+  },
+  "feature_branch_changes": {
+    "head_after_change": "58e19f3429de3e22f767fa0190ae56569514c730",
+    "rollback_commit": "bcc52ae864c73184754a94de65726ad2f6f9fa18",
+    "commits": [
+      {
+        "sha": "49ef61abaa6a995e71cff2aa4eac8fe75c6ac159",
+        "message": "fix(db): place account bootstrap after remote migration floor"
+      },
+      {
+        "sha": "15031f77a36a373e606af309a6d7e2017835f3e3",
+        "message": "test(governance): enforce account migration floor ordering"
+      },
+      {
+        "sha": "58e19f3429de3e22f767fa0190ae56569514c730",
+        "message": "chore(db): remove superseded pre-floor account migration"
+      }
+    ],
+    "effective_diff": [
+      {
+        "path": "supabase/migrations/202607310000_create_bidfast_accounts_bootstrap.sql",
+        "change": "GitHub-recognized rename from 202607300900 with zero content additions or deletions"
+      },
+      {
+        "path": "scripts/check-bidfast-account-bootstrap-governance.mjs",
+        "change": "enforce legacy-path absence and strict 20260730222027 < 202607310000 < 202607310100 ordering"
+      }
+    ],
+    "old_path_absent": true,
+    "new_path_blob_sha": "fa6b4933fe50adfef3b531de58f15ebc833d6d24",
+    "migration_content_changed": false,
+    "ui_changed": false,
+    "visual_reference_changed": false,
+    "test_threshold_changed": false
+  },
+  "preview_validation": {
+    "vercel_reference": "GC7zygQRM2DZc265cujdpWKeB9k8",
+    "vercel_status": "pending",
+    "exact_dpl_identifier_available": false,
+    "scope_access": "The connected Vercel account is not authorized for strategic-minds-advisory.",
+    "new_visual_matrix_executed": false,
+    "new_visual_score_claimed": false,
+    "new_operational_score_claimed": false
+  },
+  "source_truth": {
+    "dashboard_drive_file_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+    "dashboard_drive_title": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+    "reference_changed": false
+  },
+  "supabase_catalog": {
+    "governed_project_id": "mhaovpyegtysfgualplu",
+    "public_bidfast_table_count": 0,
+    "public_bidfast_function_count": 0,
+    "database_mutation_performed": false
+  },
+  "last_retained_visual_evidence": {
+    "application_commit": "2da86e312259db0a9df6a6ed96578a3e55e046f8",
+    "dashboard_score": 0.837024,
+    "route_count": 10,
+    "routes_passed": 10,
+    "matrix_pass_rate": 1.0,
+    "routes_reaching_0_99": 0,
+    "console_error_count": 0,
+    "application_network_error_count": 0,
+    "http_error_count": 0,
+    "new_visual_score_claimed": false
+  },
+  "implementation_constraints": {
+    "approved_screenshot_used_as_background": false,
+    "approved_screenshot_used_as_overlay": false,
+    "approved_screenshot_used_as_hidden_replacement": false,
+    "real_components_hidden_for_parity": false,
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "vercel_environment_changed": false,
+    "database_mutated": false,
+    "pull_request_merged": false,
+    "production_changed": false
+  },
+  "decision": {
+    "migration_order_repair_retained_provisionally": true,
+    "release_authorized": false,
+    "production_promotion_authorized": false,
+    "schema_migration_authorized": false,
+    "environment_secret_change_authorized": false
+  },
+  "blockers": [
+    "Vercel build and governance validation for 58e19f3429de3e22f767fa0190ae56569514c730 remain pending.",
+    "The last proven BIDFAST preview configuration still targets Supabase project prhppuuwcnmfdhwsagug instead of governed project mhaovpyegtysfgualplu.",
+    "The governed Supabase project contains zero public.bidfast_* tables and zero public.bidfast_* functions.",
+    "The complete Account through Audit workflow, tenant-isolation tests, and authorization-denial tests have not executed.",
+    "No approved route reaches the 0.99 visual release threshold.",
+    "Complete approved light/dark and multi-viewport reference coverage remains unavailable."
+  ],
+  "next_actions": [
+    "Consume the Vercel and governance result for exact commit 58e19f3429de3e22f767fa0190ae56569514c730.",
+    "Revert to bcc52ae864c73184754a94de65726ad2f6f9fa18 if build or governance fails.",
+    "After a successful build, pin BrowserWorker provenance validation to 58e19f3429de3e22f767fa0190ae56569514c730.",
+    "Do not run route scoring or operational acceptance until the preview reports exact governed Supabase project mhaovpyegtysfgualplu.",
+    "Do not apply the migration packet without an isolated Supabase branch and complete fresh-install, rollback, RLS, tenant-isolation, and authorization-denial proof."
+  ]
+}

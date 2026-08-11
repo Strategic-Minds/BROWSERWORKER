@@ -1,0 +1,214 @@
+{
+  "receipt_type": "BIDFAST_ANALYTICS_LOGO_MICROGEOMETRY_DIAGNOSIS",
+  "captured_at_utc": "2026-08-02T12:08:59.117Z",
+  "status": "DIAGNOSIS_PRESERVED_NO_APPLICATION_MUTATION",
+  "governance": {
+    "production_locked": true,
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "production_mutated": false,
+    "database_mutated": false,
+    "application_code_mutated": false,
+    "workflow_mutated": false,
+    "full_screen_reference_substitution": false,
+    "hidden_real_ui": false,
+    "component_level_implementation_required": true
+  },
+  "repository_state": {
+    "bidfast_repository": "XTREME-SYSTEMS/bidfast",
+    "bidfast_pull_request": 2,
+    "bidfast_branch": "auto-builder/bidfast-complete-visual-system",
+    "bidfast_head_commit": "a262d1aa6c5abcd9aff98fe6de259a87a7d4c1fd",
+    "bidfast_pull_request_state": "open_draft_unmerged_non_mergeable",
+    "browserworker_repository": "Strategic-Minds/BROWSERWORKER",
+    "browserworker_pull_request": 9,
+    "browserworker_branch": "auto-builder/bidfast-proof-20260728",
+    "browserworker_head_before_receipt": "0e5dc2ca5152d9e20a81a433eaa752f2b96521f1"
+  },
+  "current_bidfast_diff": {
+    "base_commit": "edb516f93f4548e98575140ff9306dd69a74cd60",
+    "head_commit": "a262d1aa6c5abcd9aff98fe6de259a87a7d4c1fd",
+    "ahead_by": 1,
+    "files": [
+      {
+        "path": "app/analytics-parity-adjustments.css",
+        "additions": 33,
+        "deletions": 0
+      }
+    ]
+  },
+  "retained_validation": {
+    "deployment_id": "dpl_J9iMdn72pj2BVXUtKjqATT8fwEo3",
+    "deployment_url": "bidfast-6xgtsfq47-strategic-minds-advisory.vercel.app",
+    "workflow_run": 30737211665,
+    "artifact_id": 8830039400,
+    "artifact_digest": "sha256:857f60670d88a76c867640f0029b23f63e2608a04b18b87b9596ae9cb053ce29",
+    "route": "/analytics",
+    "composite_score": 0.830446,
+    "pixel_similarity": 0.949692,
+    "structure_similarity": 0.982749,
+    "edge_similarity": 0.272893,
+    "color_similarity": 0.979986,
+    "release_threshold": 0.99,
+    "release_threshold_pass": false,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "provenance_pass": true,
+    "reference_integrity_pass": true,
+    "technical_pass": true,
+    "non_regression_pass": true
+  },
+  "source_truth": {
+    "drive_file_id": "1MWcZn7eUYBHpy99t3Mtwwcg85xtOS5j0",
+    "title": "02_BIDFAST_MOBILE_ANALYTICS_KPI.png",
+    "reference_sha256": "5f8cba804e775ff9e774acdc8a9c92c2532dacd587fe3590c80fd8c24a42aef8",
+    "reference_dimensions": {
+      "width": 941,
+      "height": 1672
+    },
+    "approved_crop": {
+      "x": 178,
+      "y": 150,
+      "width": 570,
+      "height": 1387
+    },
+    "live_sha256": "9e568b80e048e42884a89420cde379383415da7baa80afd32e179e7e4fb504d5",
+    "live_dimensions": {
+      "width": 390,
+      "height": 973
+    }
+  },
+  "inspected_implementation": {
+    "component": {
+      "path": "components/analytics/MobileAnalytics.tsx",
+      "blob_sha": "19bd8f86ec3bc484389d10a84b70aaf779c242d5"
+    },
+    "base_styles": {
+      "path": "app/analytics-mobile.css",
+      "blob_sha": "870d5a456d96e27b8b0b1aebe393e8fe35a3d063"
+    },
+    "retained_adjustments": {
+      "path": "app/analytics-parity-adjustments.css",
+      "blob_sha": "480cbc8fab4a8ebf2762ad8d4f9122e9111580cb"
+    },
+    "logo_asset_route": {
+      "path": "app/api/assets/bidfast-logo/route.ts",
+      "blob_sha": "a818fdc9840f9ec4f39e809164b83baaf32b5c55",
+      "drive_file_id": "1200CYorgL96KDvutV6CD1-WjKCULNcuv",
+      "drive_title": "BIDFAST_Pulse_Horizontal_Light.png"
+    }
+  },
+  "diagnostic_method": {
+    "purpose": "Isolate a bounded component-level repair target without changing application code or treating a screenshot as implementation.",
+    "reference_region": {
+      "x": 0,
+      "y": 0,
+      "width": 360,
+      "height": 110
+    },
+    "live_region": {
+      "x": 0,
+      "y": 0,
+      "width": 250,
+      "height": 74
+    },
+    "foreground_rule": "Pixel is foreground when mean RGB is below 180 or RGB channel range is above 60.",
+    "reference_to_live_scale": {
+      "x": 0.6842105263,
+      "y": 0.7015140591
+    },
+    "release_score_effect": "NONE. These measurements are diagnostic-only and do not replace BrowserWorker parity scores."
+  },
+  "measured_logo_geometry": {
+    "reference_crop_foreground_bbox": {
+      "left": 0,
+      "top": 10,
+      "right_exclusive": 339,
+      "bottom_exclusive": 88,
+      "width": 339,
+      "height": 78
+    },
+    "reference_bbox_scaled_to_live": {
+      "left": 0.0,
+      "top": 7.015,
+      "right_exclusive": 231.947,
+      "bottom_exclusive": 61.733,
+      "width": 231.947,
+      "height": 54.718
+    },
+    "live_foreground_bbox": {
+      "left": 0,
+      "top": 15,
+      "right_exclusive": 230,
+      "bottom_exclusive": 67,
+      "width": 230,
+      "height": 52
+    },
+    "live_minus_scaled_reference": {
+      "top_px": 7.985,
+      "bottom_px": 5.267,
+      "width_px": -1.947,
+      "height_px": -2.718
+    },
+    "search_top_alignment": {
+      "scaled_reference_px": 75.762,
+      "live_px": 74,
+      "live_minus_reference_px": -1.762
+    }
+  },
+  "diagnosis": {
+    "verified": [
+      "The retained section cadence aligns the KPI cards and major panel starts closely enough that moving the whole page would risk regression.",
+      "The analytics logo foreground is approximately 2 pixels narrower, 3 pixels shorter, and 5 to 8 pixels lower than the scaled approved reference geometry.",
+      "The search bar top is already within 2 pixels of the scaled reference and should not be moved with the logo.",
+      "The next repair target can therefore be constrained to the header logo element only."
+    ],
+    "bounded_candidate_envelope": {
+      "file": "app/analytics-parity-adjustments.css",
+      "selector": ".bfa-header > img",
+      "properties_allowed_for_test": [
+        "width",
+        "max-height",
+        "transform: translateY(...)"
+      ],
+      "suggested_sweep": {
+        "width_px": [231, 232, 233],
+        "max_height_px": [54, 55, 56],
+        "translate_y_px": [-5, -6, -7, -8]
+      },
+      "properties_to_hold_constant": [
+        "header height",
+        "page padding",
+        "header margin-bottom",
+        "search geometry",
+        "heading geometry",
+        "card cadence",
+        "panel cadence",
+        "navigation geometry"
+      ]
+    },
+    "retention_rule": "Retain no candidate unless /analytics exceeds 0.830446 and the full ten-route matrix preserves every current baseline with zero provenance, integrity, console, application-network, HTTP, or screenshot-hash failures."
+  },
+  "execution_status": {
+    "autobuilder_health": "ok",
+    "autobuilder_dry_run_job": "bidfast-analytics-logo-diagnosis-receipt-20260802T1207Z",
+    "autobuilder_dry_run_receipt": "receipt_1785672539115",
+    "github_provider_adapter_status": "NOT_IMPLEMENTED",
+    "vercel_workflow_provider_adapter_status": "NOT_IMPLEMENTED",
+    "routed_to": "manual_receipt",
+    "application_candidate_executed": false,
+    "preview_deployed": false,
+    "new_visual_score_generated": false
+  },
+  "remaining_blockers": [
+    "AUTO BUILDER GitHub and Vercel Workflow provider adapters are not implemented and route governed execution to manual receipt fallback.",
+    "No approved route reaches 0.99 measured visual parity.",
+    "The approved registry lacks complete light and dark multi-viewport pairs.",
+    "public.bidfast_* table count remains 0, blocking Account to Audit operational execution.",
+    "Native BIDFAST workflow runs remain absent for a262d1aa.",
+    "BIDFAST PR #2 remains draft and non-mergeable.",
+    "The connected Vercel team cannot resolve deployment dpl_J9iMdn72pj2BVXUtKjqATT8fwEo3."
+  ],
+  "next_action": "When the governed feature-branch execution adapter is available, test only the bounded analytics header logo sweep. Revert every candidate that does not improve the official BrowserWorker score or that moves any non-logo component."
+}

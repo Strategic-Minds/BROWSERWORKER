@@ -1,0 +1,229 @@
+{
+  "receipt_type": "BIDFAST_GOVERNED_PARITY_ARTIFACT_MATRIX_AND_DASHBOARD_RETRY",
+  "created_at": "2026-08-06T13:13:14Z",
+  "governance_state": "exact_route_matrix_consumed_dashboard_retry_queued",
+  "inspection": {
+    "latest_receipt_inspected": "docs/receipts/BIDFAST_WORKFLOW_LINEAGE_IMMUTABILITY_PREVIEWS_READY_20260806T1012Z.json",
+    "bidfast_current_diff_inspected": {
+      "base": "5fb45d3cd497e1d976a4b4c5dfc05f8841db550d",
+      "head": "8099ee3cf19a05bf95df8718f0534479e279b8ef",
+      "commits": 3,
+      "files": [
+        "package.json",
+        "scripts/check-bidfast-workflow-lineage-governance.mjs",
+        "supabase/migrations/202608061010_harden_bidfast_workflow_lineage_immutability.sql"
+      ]
+    },
+    "browserworker_current_diff_inspected": {
+      "base": "711f24070a4c0a2b367faf77c5eb1201df6d2c6b",
+      "pre_repair_head": "a18c9681f24988c823c71b451f57fb5bec6eef12",
+      "commits": 1,
+      "files": [
+        ".github/workflows/bidfast-governed-parity.yml"
+      ]
+    }
+  },
+  "bidfast": {
+    "repository": "XTREME-SYSTEMS/bidfast",
+    "branch": "auto-builder/bidfast-complete-visual-system",
+    "pull_request": 2,
+    "head_commit": "8099ee3cf19a05bf95df8718f0534479e279b8ef",
+    "deployment_id": "dpl_4Jg4cMoq2EuE6yExtpTrKQn1FTKs",
+    "deployment_reference": "4Jg4cMoq2EuE6yExtpTrKQn1FTKs",
+    "deployment_url": "bidfast-341tyimfo-strategic-minds-advisory.vercel.app"
+  },
+  "source_truth": {
+    "approved_reference_root": "Google Drive BIDFAST visual source of truth",
+    "dashboard_reference_name": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+    "dashboard_reference_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+    "dashboard_reference_sha256": "f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb",
+    "complete_light_dark_multiviewport_pairs": false
+  },
+  "governed_parity_run": {
+    "run_id": 31100271341,
+    "browserworker_commit": "a18c9681f24988c823c71b451f57fb5bec6eef12",
+    "conclusion": "FAILURE",
+    "route_artifacts": [
+      {
+        "index": 0,
+        "route": "/dashboard",
+        "artifact_id": 8967388430,
+        "artifact_name": "bidfast-parity-0",
+        "artifact_sha256": "02bc442cc6cf6b1d91b16ce58b823891d8ad42fa7c20422c896f00568a800808",
+        "score": null,
+        "technical_pass": false,
+        "provenance_pass": true,
+        "error": "Browser proof failed with HTTP 500.",
+        "standalone_screenshot_status": 200,
+        "standalone_screenshot_sha256": "a36ce9d4f7c4575d5383ef57ba1a6f779532117afa48d3502afee0c2ca1c3adc"
+      },
+      {
+        "index": 1,
+        "route": "/analytics",
+        "artifact_id": 8967728026,
+        "artifact_name": "bidfast-parity-1",
+        "artifact_sha256": "b73474995c9d91a1f1a7533e2f473202a5ff58a49000e22d8bb4fc965cb0dd0b",
+        "score": 0.830446,
+        "technical_pass": true,
+        "provenance_pass": true,
+        "integrity_pass": true,
+        "console_errors": 0,
+        "application_network_errors": 0,
+        "http_errors": 0
+      },
+      {
+        "index": 2,
+        "route": "/approvals",
+        "artifact_id": 8967820513,
+        "artifact_name": "bidfast-parity-2",
+        "artifact_sha256": "bb59ff60c836c8204b5c714ccd99bc58b07c61e4777f59027a223ca875cd4153",
+        "score": 0.859067,
+        "technical_pass": true,
+        "provenance_pass": true,
+        "integrity_pass": true,
+        "console_errors": 0,
+        "application_network_errors": 0,
+        "http_errors": 0
+      },
+      {
+        "index": 3,
+        "route": "/opportunities",
+        "artifact_id": 8967898155,
+        "artifact_name": "bidfast-parity-3",
+        "artifact_sha256": "c71eb8af1d52cb5a99798ac824ff93c04827dd207297a0954ce2c3efd8e03064",
+        "score": 0.859703,
+        "technical_pass": true,
+        "provenance_pass": true,
+        "integrity_pass": true,
+        "console_errors": 0,
+        "application_network_errors": 0,
+        "http_errors": 0
+      },
+      {
+        "index": 4,
+        "route": "/estimates/new",
+        "artifact_id": 8967974069,
+        "artifact_name": "bidfast-parity-4",
+        "artifact_sha256": "8ba3b2f426c98970c815c292da6f6459a5683a3db4ddd0460140c9f3c741e9d5",
+        "score": 0.80562,
+        "technical_pass": true,
+        "provenance_pass": true,
+        "integrity_pass": true,
+        "console_errors": 0,
+        "application_network_errors": 0,
+        "http_errors": 0
+      },
+      {
+        "index": 5,
+        "route": "/proposals",
+        "artifact_id": 8968050608,
+        "artifact_name": "bidfast-parity-5",
+        "artifact_sha256": "d2f9840f41035ee5b1e6dc0bdfac660b3c86664b5bd1c7e9a092b7db8212d7ed",
+        "score": 0.819855,
+        "technical_pass": true,
+        "provenance_pass": true,
+        "integrity_pass": true,
+        "console_errors": 0,
+        "application_network_errors": 0,
+        "http_errors": 0
+      },
+      {
+        "index": 6,
+        "route": "/projects/demo-riverside",
+        "artifact_id": 8968128341,
+        "artifact_name": "bidfast-parity-6",
+        "artifact_sha256": "3bdcc1bea46ca00b1f53a5b13df5f7872ef4d82f586e6781af6c91b8c95c0c77",
+        "score": 0.818791,
+        "technical_pass": true,
+        "provenance_pass": true,
+        "integrity_pass": true,
+        "console_errors": 0,
+        "application_network_errors": 0,
+        "http_errors": 0
+      },
+      {
+        "index": 7,
+        "route": "/takeoffs/demo-riverside",
+        "artifact_id": 8968210199,
+        "artifact_name": "bidfast-parity-7",
+        "artifact_sha256": "f48dc5ad66121df85498cee99d9b394a57bc892c9588c30d5bd8d99f05f9520e",
+        "score": 0.818538,
+        "technical_pass": true,
+        "provenance_pass": true,
+        "integrity_pass": true,
+        "console_errors": 0,
+        "application_network_errors": 0,
+        "http_errors": 0
+      },
+      {
+        "index": 8,
+        "route": "/settings/company",
+        "artifact_id": 8968293018,
+        "artifact_name": "bidfast-parity-8",
+        "artifact_sha256": "8345eda1c5af3b68cfe733cb04b1aacd4b5d0c559aaecd8eba2611268b3d9af7",
+        "score": 0.825706,
+        "technical_pass": true,
+        "provenance_pass": true,
+        "integrity_pass": true,
+        "console_errors": 0,
+        "application_network_errors": 0,
+        "http_errors": 0
+      },
+      {
+        "index": 9,
+        "route": "/assistant",
+        "artifact_id": 8968374825,
+        "artifact_name": "bidfast-parity-9",
+        "artifact_sha256": "de910a01e788c45d84a8661aa823c10c8b1db1e31e49981ad0cb95644809ea23",
+        "score": 0.823121,
+        "technical_pass": true,
+        "provenance_pass": true,
+        "integrity_pass": true,
+        "console_errors": 0,
+        "application_network_errors": 0,
+        "http_errors": 0
+      }
+    ],
+    "separate_dashboard_screenshot_artifact": {
+      "artifact_id": 8968451091,
+      "artifact_name": "bidfast-dashboard-screenshot",
+      "artifact_sha256": "58142f030b5821bb8d181bf6299bb038855bfae12011672b6610b359b6a11dbc"
+    },
+    "routes_measured": 9,
+    "routes_technically_passed": 9,
+    "routes_reaching_0_99": 0,
+    "dashboard_score": "NOT_MEASURED_DUE_TO_RETRYABLE_BROWSER_PROOF_500",
+    "operational_pass_rate": "NOT_EXECUTED"
+  },
+  "repair": {
+    "repository": "Strategic-Minds/BROWSERWORKER",
+    "branch": "auto-builder/bidfast-proof-20260728",
+    "pull_request": 9,
+    "commit": "4954e916de7fb5400fef53418d4ed413388fc4d0",
+    "message": "test(validation): add bounded BIDFAST dashboard parity retry",
+    "file": ".github/workflows/bidfast-dashboard-parity-retry-proof.yml",
+    "deployment_reference": "4WM6vbK5Gh4m3oAgt7Xf37sRzjms",
+    "deployment_status": "SUCCESS",
+    "workflow_run_id": 31104809507,
+    "workflow_job_id": 92627105100,
+    "workflow_state": "QUEUED",
+    "tests_weakened": false,
+    "threshold_changed": false,
+    "screenshot_substitution_used": false,
+    "real_components_hidden": false
+  },
+  "blockers": [
+    "The dashboard exact parity score remains unavailable until retry run 31104809507 completes.",
+    "All nine successfully measured approved routes remain below the required 0.99 threshold.",
+    "Complete approved light and dark desktop, tablet, and mobile reference pairs remain unavailable.",
+    "The active Supabase connector cannot access governed project mhaovpyegtysfgualplu.",
+    "The workflow-lineage migration remains unapplied and untested in an isolated governed database branch.",
+    "The complete Account to Organization to Opportunity to Project to Document to Takeoff to Estimate to Proposal to Approval to Audit workflow remains unverified."
+  ],
+  "rollback": {
+    "browserworker_repair": "Revert commit 4954e916de7fb5400fef53418d4ed413388fc4d0.",
+    "bidfast": "No BIDFAST application change was made in this repair cycle.",
+    "database": "No database change was made; no database rollback is required."
+  },
+  "production_status": "LOCKED"
+}

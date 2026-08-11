@@ -1,0 +1,299 @@
+{
+  "receipt_type": "BIDFAST_DASHBOARD_LOGO_Y14_CANDIDATE_RESULT",
+  "created_at": "2026-08-06T23:41:18.071Z",
+  "governance_state": "candidate_validation_failed_or_incomplete_release_locked",
+  "workflow": {
+    "run_id": "31131322828",
+    "workflow_sha": "823d04932702ba4f87e99d3d46cade29259527e7",
+    "job_status": "failure",
+    "event_name": "push",
+    "ref": "refs/heads/auto-builder/bidfast-proof-20260728"
+  },
+  "candidate": {
+    "bidfast_commit": "a6eec0820c7eea1866e8e093bfb449f37e7497d3",
+    "bidfast_ref": "auto-builder/bidfast-complete-visual-system",
+    "rollback_commit": "fb57e2b752ad1a4e67b74a2d238ec77114d46320",
+    "route": "/dashboard",
+    "theme": "light",
+    "viewport": {
+      "name": "mobile",
+      "width": 390,
+      "height": 844
+    }
+  },
+  "approved_reference": {
+    "drive_file_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+    "sha256": "f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb"
+  },
+  "retained_baseline": 0.837024,
+  "release_threshold": 0.99,
+  "http_status": "200",
+  "summary": {
+    "workflow_run_id": "31131322828",
+    "workflow_sha": "823d04932702ba4f87e99d3d46cade29259527e7",
+    "candidate_commit": "a6eec0820c7eea1866e8e093bfb449f37e7497d3",
+    "rollback_commit": "fb57e2b752ad1a4e67b74a2d238ec77114d46320",
+    "route": "/dashboard",
+    "score": 0.834931,
+    "retained_baseline": 0.837024,
+    "release_threshold": 0.99,
+    "release_threshold_pass": false,
+    "source_revision": {
+      "commit_sha": "a6eec0820c7eea1866e8e093bfb449f37e7497d3",
+      "commit_ref": "auto-builder/bidfast-complete-visual-system",
+      "deployment_id": "dpl_8k9Ghcxqg817RDyWKhet7K9dXZHb",
+      "deployment_url": "bidfast-prykb6amf-strategic-minds-advisory.vercel.app"
+    },
+    "reference": {
+      "drive_file_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+      "title": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+      "crop": {
+        "x": 178,
+        "y": 150,
+        "width": 570,
+        "height": 1387
+      },
+      "sha256": "f856235d88dae3b9eabf8f49816abb36a982f2054cc7002b52bdbdac60f207cb"
+    },
+    "live_sha256": "caaaf4cb98fd06c948b7570ebf137c3dc2557a7a79d446d4aa24f5c6f6d1aaa7",
+    "geometry": {
+      "document": {
+        "width": 390,
+        "height": 948
+      },
+      "shell": {
+        "x": 0,
+        "y": 0,
+        "width": 390,
+        "height": 948,
+        "right": 390,
+        "bottom": 948
+      },
+      "header": {
+        "x": 2,
+        "y": 18,
+        "width": 386,
+        "height": 46,
+        "right": 388,
+        "bottom": 64
+      },
+      "logo": {
+        "x": 6,
+        "y": 7.5,
+        "width": 172,
+        "height": 39,
+        "right": 178,
+        "bottom": 46.5
+      },
+      "search": {
+        "x": 2,
+        "y": 74,
+        "width": 386,
+        "height": 41,
+        "right": 388,
+        "bottom": 115
+      },
+      "overview": {
+        "x": 2,
+        "y": 128,
+        "width": 386,
+        "height": 243,
+        "right": 388,
+        "bottom": 371
+      },
+      "overview_heading": {
+        "x": 2,
+        "y": 128,
+        "width": 386,
+        "height": 31,
+        "right": 388,
+        "bottom": 159
+      },
+      "metric_1": {
+        "x": 2,
+        "y": 167,
+        "width": 189,
+        "height": 97,
+        "right": 191,
+        "bottom": 264
+      },
+      "metric_2": {
+        "x": 199,
+        "y": 167,
+        "width": 189,
+        "height": 97,
+        "right": 388,
+        "bottom": 264
+      },
+      "metric_3": {
+        "x": 2,
+        "y": 274,
+        "width": 189,
+        "height": 97,
+        "right": 191,
+        "bottom": 371
+      },
+      "metric_4": {
+        "x": 199,
+        "y": 274,
+        "width": 189,
+        "height": 97,
+        "right": 388,
+        "bottom": 371
+      },
+      "quick_actions": {
+        "x": 2,
+        "y": 420,
+        "width": 386,
+        "height": 68,
+        "right": 388,
+        "bottom": 488
+      },
+      "quick_action_1": {
+        "x": 2,
+        "y": 420,
+        "width": 72.39,
+        "height": 68,
+        "right": 74.39,
+        "bottom": 488
+      },
+      "quick_action_5": {
+        "x": 315.59,
+        "y": 420,
+        "width": 72.41,
+        "height": 68,
+        "right": 388,
+        "bottom": 488
+      },
+      "active_bids_section": {
+        "x": 2,
+        "y": 506,
+        "width": 386,
+        "height": 242,
+        "right": 388,
+        "bottom": 748
+      },
+      "bid_1": {
+        "x": 3,
+        "y": 531,
+        "width": 384,
+        "height": 72,
+        "right": 387,
+        "bottom": 603
+      },
+      "bid_2": {
+        "x": 3,
+        "y": 603,
+        "width": 384,
+        "height": 72,
+        "right": 387,
+        "bottom": 675
+      },
+      "bid_3": {
+        "x": 3,
+        "y": 675,
+        "width": 384,
+        "height": 72,
+        "right": 387,
+        "bottom": 747
+      },
+      "proposal_alerts_section": {
+        "x": 2,
+        "y": 771,
+        "width": 386,
+        "height": 123,
+        "right": 388,
+        "bottom": 894
+      },
+      "alert_1": {
+        "x": 3,
+        "y": 793,
+        "width": 384,
+        "height": 50,
+        "right": 387,
+        "bottom": 843
+      },
+      "alert_2": {
+        "x": 3,
+        "y": 843,
+        "width": 384,
+        "height": 50,
+        "right": 387,
+        "bottom": 893
+      },
+      "bottom_navigation": {
+        "x": -13,
+        "y": 894,
+        "width": 416,
+        "height": 54,
+        "right": 403,
+        "bottom": 948
+      }
+    },
+    "observed_regions": {
+      "header_logo": 0.69465,
+      "active_bid_3": 0.704336,
+      "active_bid_2": 0.714608,
+      "active_bid_1": 0.722198,
+      "metrics_row_2": 0.729406,
+      "bottom_navigation": 0.753053,
+      "quick_actions": 0.761245,
+      "overview_heading": 0.777489,
+      "metrics_row_1": 0.783647,
+      "active_bids_heading": 0.795158,
+      "proposal_alert_2": 0.816409,
+      "search": 0.822644,
+      "proposal_alert_1": 0.829816,
+      "proposal_alerts_heading": 0.834863,
+      "quick_actions_heading": 0.877763
+    },
+    "regional_floors": {
+      "active_bid_3": 0.704336,
+      "active_bid_2": 0.714608,
+      "active_bid_1": 0.722198,
+      "header_logo": 0.722688,
+      "metrics_row_2": 0.729406,
+      "bottom_navigation": 0.753053,
+      "quick_actions": 0.761245,
+      "overview_heading": 0.777489,
+      "metrics_row_1": 0.783647,
+      "active_bids_heading": 0.795158,
+      "proposal_alert_2": 0.816409,
+      "search": 0.822644,
+      "proposal_alert_1": 0.829816,
+      "proposal_alerts_heading": 0.834863,
+      "quick_actions_heading": 0.877763
+    },
+    "console_error_count": 0,
+    "application_network_error_count": 0,
+    "http_error_count": 0,
+    "failures": [
+      "REGRESSION composite_score=0.834931 baseline=0.837024",
+      "REGRESSION region=header_logo score=0.69465 floor=0.722688",
+      "TARGET_NOT_IMPROVED header_logo=0.69465 floor=0.722688"
+    ],
+    "candidate_retained": false,
+    "release_authorized": false
+  },
+  "diagnostic_available": true,
+  "diagnostic_failure": null,
+  "acceptance": {
+    "candidate_retained": false,
+    "release_authorized": false,
+    "production_promotion_authorized": false
+  },
+  "constraints_preserved": {
+    "reference_substitution_used": false,
+    "full_screen_reference_layer_used": false,
+    "real_components_hidden": false,
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "production_resource_changed": false,
+    "database_changed": false
+  },
+  "rollback": {
+    "bidfast_restore_commit": "fb57e2b752ad1a4e67b74a2d238ec77114d46320",
+    "browserworker_receipt_revert": "Revert the commit that adds this receipt if the recorded evidence is inaccurate."
+  },
+  "production_status": "LOCKED"
+}

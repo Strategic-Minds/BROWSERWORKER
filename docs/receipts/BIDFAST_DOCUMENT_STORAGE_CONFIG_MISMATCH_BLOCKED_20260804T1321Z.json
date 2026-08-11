@@ -1,0 +1,130 @@
+{
+  "receipt_type": "BIDFAST_DOCUMENT_STORAGE_CONFIG_MISMATCH_BLOCKED",
+  "created_at": "2026-08-04T13:21:17Z",
+  "phase": "VALIDATE",
+  "step": "preserve the completed exact-revision configuration proof and stop before visual or operational acceptance because the preview targets the wrong Supabase project",
+  "auto_builder_bridge": {
+    "job_id": "bidfast-document-storage-config-mismatch-receipt-20260804T1404Z",
+    "mode": "dry_run",
+    "status": "dry_run_complete",
+    "receipt_id": "receipt_1785852332645",
+    "fallback_used": "governed direct GitHub feature-branch receipt write"
+  },
+  "inspection": {
+    "latest_receipt": "docs/receipts/BIDFAST_DOCUMENT_STORAGE_PREVIEW_BUILD_PASS_20260804T1210Z.json",
+    "bidfast_pull_request": 2,
+    "bidfast_head": "da9aa8faa8591c0c0283955eda7a6682d2ed412c",
+    "browserworker_pull_request": 9,
+    "browserworker_head_before_receipt": "94fb05bdecfd17bf46b74b14b278f0ad5a575d90",
+    "current_branch_diff_inspected": true,
+    "diff_base": "58e19f3429de3e22f767fa0190ae56569514c730",
+    "diff_ahead_by": 4,
+    "diff_files": [
+      "package.json",
+      "scripts/check-bidfast-document-storage-governance.mjs",
+      "supabase/migrations/202608041115_harden_bidfast_document_storage.sql"
+    ]
+  },
+  "bidfast": {
+    "repository": "XTREME-SYSTEMS/bidfast",
+    "requested_repository_alias": "XTREME-AI-SYSTEMS/bidfast",
+    "branch": "auto-builder/bidfast-complete-visual-system",
+    "pull_request": 2,
+    "head_commit": "da9aa8faa8591c0c0283955eda7a6682d2ed412c",
+    "rollback_commit": "58e19f3429de3e22f767fa0190ae56569514c730",
+    "pull_request_state": {
+      "open": true,
+      "draft": true,
+      "merged": false,
+      "mergeable": false
+    },
+    "application_code_changed_this_cycle": false,
+    "visual_code_changed_this_cycle": false,
+    "tests_weakened": false
+  },
+  "approved_visual_source": {
+    "file_name": "01_BIDFAST_MOBILE_EXECUTIVE_DASHBOARD.png",
+    "drive_file_id": "1_GbJt7os0BTg6_9eLBp-Zltd1lk-FHGr",
+    "changed_this_cycle": false
+  },
+  "configuration_proof": {
+    "workflow_name": "BIDFAST Document Storage Config Provenance",
+    "workflow_run_id": 30912325035,
+    "workflow_job_id": 92001838125,
+    "workflow_conclusion": "failure",
+    "application_commit_observed": "da9aa8faa8591c0c0283955eda7a6682d2ed412c",
+    "application_ref_observed": "auto-builder/bidfast-complete-visual-system",
+    "http_status": 409,
+    "expected_supabase_project_ref": "mhaovpyegtysfgualplu",
+    "actual_supabase_project_ref": "prhppuuwcnmfdhwsagug",
+    "configuration_source": {
+      "supabase_url": "environment",
+      "supabase_publishable_key": "environment"
+    },
+    "failures": [
+      "ok=false",
+      "provenance_pass=false",
+      "configuration_pass=false",
+      "project_ref=prhppuuwcnmfdhwsagug"
+    ],
+    "provenance_pass": false,
+    "route_matrix_executed": false,
+    "operational_matrix_executed": false
+  },
+  "immutable_artifact": {
+    "artifact_id": 8894001920,
+    "artifact_name": "bidfast-document-storage-config-provenance-da9aa8f",
+    "artifact_sha256": "f11b0b8e41906baf01e50057c14445481713ec1332957f1f59b5b56c0d48e807",
+    "retention_days": 30,
+    "uploaded_file_count": 3
+  },
+  "supabase_catalog": {
+    "governed_project_id": "mhaovpyegtysfgualplu",
+    "query_mode": "read_only",
+    "public_bidfast_table_count": 0,
+    "public_bidfast_function_count": 0,
+    "takeoff_documents_bucket_count": 0,
+    "bidfast_storage_policy_count": 0,
+    "database_mutation_performed": false
+  },
+  "visual_evidence": {
+    "new_score_claimed": false,
+    "last_retained_dashboard_score": 0.837024,
+    "last_retained_route_count": 10,
+    "last_retained_routes_passed": 10,
+    "last_retained_matrix_pass_rate": 1.0,
+    "last_retained_routes_reaching_0_99": 0,
+    "last_retained_console_error_count": 0,
+    "last_retained_application_network_error_count": 0,
+    "last_retained_http_error_count": 0
+  },
+  "constraints": {
+    "screenshot_substitution_used": false,
+    "real_components_hidden": false,
+    "secrets_changed": false,
+    "vercel_environment_changed": false,
+    "database_mutated": false,
+    "validation_thresholds_changed": false,
+    "merged": false,
+    "production_changed": false
+  },
+  "decision": {
+    "document_storage_candidate_retained_provisionally": true,
+    "configuration_gate_passed": false,
+    "visual_acceptance_complete": false,
+    "operational_acceptance_complete": false,
+    "release_authorized": false,
+    "production_promotion_authorized": false
+  },
+  "blockers": [
+    "The exact BIDFAST revision is deployed, but its preview environment resolves to Supabase project prhppuuwcnmfdhwsagug instead of governed project mhaovpyegtysfgualplu.",
+    "The route matrix and operational workflow matrix were correctly skipped because configuration provenance failed.",
+    "The governed Supabase project currently contains zero public.bidfast_* tables, zero public.bidfast_* functions, no takeoff-documents bucket, and no BIDFAST storage policies.",
+    "No approved route currently has measured visual parity of at least 0.99, and complete approved light/dark multi-viewport reference coverage remains incomplete."
+  ],
+  "rollback": {
+    "application": "Reset the BIDFAST feature branch to 58e19f3429de3e22f767fa0190ae56569514c730 if the document-storage candidate is rejected.",
+    "browserworker": "Revert the receipt commits to return BrowserWorker PR #9 to 94fb05bdecfd17bf46b74b14b278f0ad5a575d90.",
+    "database": "No database rollback is required because no schema or data mutation occurred."
+  }
+}

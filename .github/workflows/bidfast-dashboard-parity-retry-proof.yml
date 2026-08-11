@@ -1,0 +1,158 @@
+name: BIDFAST Dashboard Parity Retry Proof
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/bidfast-dashboard-parity-retry-proof.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bidfast-dashboard-parity-retry-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  BROWSERWORKER_PREVIEW: https://browserworker-git-auto-builder-82ac4c-strategic-minds-advisory.vercel.app
+  BIDFAST_EXPECTED_COMMIT: 8099ee3cf19a05bf95df8718f0534479e279b8ef
+  BIDFAST_EXPECTED_REF: auto-builder/bidfast-complete-visual-system
+  VISUAL_THRESHOLD: '0.99'
+  BROWSERWORKER_BURST_COOLDOWN_SECONDS: '65'
+
+jobs:
+  dashboard-parity:
+    name: Exact dashboard parity with bounded retry
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out BrowserWorker proof branch
+        uses: actions/checkout@v4
+
+      - name: Wait for lightweight health endpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 20); do
+            status="$(curl -sS -o /tmp/health.json -w '%{http_code}' --max-time 30 "${BROWSERWORKER_PREVIEW}/api/health" || true)"
+            if [[ "$status" == "200" ]]; then
+              cat /tmp/health.json
+              exit 0
+            fi
+            sleep 15
+          done
+          echo 'BrowserWorker health endpoint did not become reachable.' >&2
+          exit 1
+
+      - name: Execute revision-pinned dashboard parity proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          endpoint="${BROWSERWORKER_PREVIEW}/api/validation/bidfast-parity-v3?route=%2Fdashboard&expected_commit=${BIDFAST_EXPECTED_COMMIT}"
+          for attempt in $(seq 1 8); do
+            status="$(curl -sS --max-time 210 -D evidence/dashboard.headers.txt -o evidence/dashboard.json -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/dashboard.http-status.txt
+            retryable="$(node - evidence/dashboard.json <<'NODE'
+          const fs = require('node:fs')
+          try {
+            const body = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'))
+            const text = String(body?.error || body?.message || '')
+            const retry = body?.retryable === true || /429|too many requests|burst rate limit|browser proof failed with http 500/i.test(text)
+            process.stdout.write(retry ? 'true' : 'false')
+          } catch {
+            process.stdout.write('false')
+          }
+          NODE
+            )"
+            echo "Parity attempt ${attempt}: HTTP ${status}; retryable=${retryable}"
+            if [[ "$retryable" != "true" || "$attempt" == "8" ]]; then
+              break
+            fi
+            sleep "$BROWSERWORKER_BURST_COOLDOWN_SECONDS"
+          done
+          cat evidence/dashboard.json
+
+      - name: Capture implemented-component dashboard screenshot
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint="${BROWSERWORKER_PREVIEW}/api/bidfast-proof?route=%2Fdashboard&theme=light&viewport=mobile&format=image"
+          sleep "$BROWSERWORKER_BURST_COOLDOWN_SECONDS"
+          for attempt in $(seq 1 8); do
+            status="$(curl -sS --max-time 180 -D evidence/dashboard.live.headers.txt -o evidence/dashboard.live.png -w '%{http_code}' "$endpoint" || true)"
+            printf '%s\n' "$status" > evidence/dashboard.live.http-status.txt
+            if [[ "$status" == "200" ]] && grep -qi '^content-type: image/' evidence/dashboard.live.headers.txt; then
+              break
+            fi
+            retryable="$(node - evidence/dashboard.live.png <<'NODE'
+          const fs = require('node:fs')
+          try {
+            const body = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'))
+            const text = String(body?.error || body?.message || '')
+            process.stdout.write(/429|too many requests|burst rate limit/i.test(text) ? 'true' : 'false')
+          } catch {
+            process.stdout.write('false')
+          }
+          NODE
+            )"
+            echo "Screenshot attempt ${attempt}: HTTP ${status}; retryable=${retryable}"
+            if [[ "$retryable" != "true" || "$attempt" == "8" ]]; then
+              break
+            fi
+            sleep "$BROWSERWORKER_BURST_COOLDOWN_SECONDS"
+          done
+          file evidence/dashboard.live.png | tee evidence/dashboard.live.file.txt
+          sha256sum evidence/dashboard.live.png | tee evidence/dashboard.live.sha256.txt
+
+      - name: Enforce unchanged provenance, technical, integrity, screenshot, and visual gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - evidence/dashboard.json evidence/dashboard.live.png "$VISUAL_THRESHOLD" "$BIDFAST_EXPECTED_COMMIT" "$BIDFAST_EXPECTED_REF" <<'NODE'
+          const crypto = require('node:crypto')
+          const fs = require('node:fs')
+          const [file, screenshotFile, thresholdText, expectedCommit, expectedRef] = process.argv.slice(2)
+          const body = JSON.parse(fs.readFileSync(file, 'utf8'))
+          const threshold = Number(thresholdText)
+          const failures = []
+          if (body.ok !== true) failures.push(`ok=${String(body.ok)}`)
+          if (body.route !== '/dashboard') failures.push(`route=${String(body.route)}`)
+          if (body.provenance_pass !== true) failures.push(`provenance_pass=${String(body.provenance_pass)}`)
+          if (body?.source_revision?.commit_sha !== expectedCommit) failures.push(`commit_sha=${String(body?.source_revision?.commit_sha)}`)
+          if (body?.source_revision?.commit_ref !== expectedRef) failures.push(`commit_ref=${String(body?.source_revision?.commit_ref)}`)
+          if (body.integrity_pass !== true) failures.push(`integrity_pass=${String(body.integrity_pass)}`)
+          if (body.technical_pass !== true) failures.push(`technical_pass=${String(body.technical_pass)}`)
+          const score = body?.metrics?.composite_score
+          if (typeof score !== 'number' || !Number.isFinite(score)) failures.push('measured composite score missing')
+          else if (score < threshold) failures.push(`composite_score=${score} below ${threshold}`)
+          for (const [name, value] of [
+            ['console_errors', body.console_errors],
+            ['app_network_errors', body.app_network_errors],
+            ['http_errors', body.http_errors],
+          ]) {
+            if (!Array.isArray(value)) failures.push(`${name} missing`)
+            else if (value.length !== 0) failures.push(`${name}=${JSON.stringify(value)}`)
+          }
+          if (!fs.existsSync(screenshotFile)) failures.push('implemented-component screenshot missing')
+          else {
+            const screenshotSha = crypto.createHash('sha256').update(fs.readFileSync(screenshotFile)).digest('hex')
+            if (screenshotSha !== body?.live?.sha256) failures.push(`screenshot_sha=${screenshotSha} expected=${String(body?.live?.sha256)}`)
+          }
+          if (body.visual_pass !== true) failures.push(`visual_pass=${String(body.visual_pass)}`)
+          if (body.evidence_pass !== true) failures.push(`evidence_pass=${String(body.evidence_pass)}`)
+          console.log(JSON.stringify({ route: '/dashboard', score: score ?? null, threshold, source_revision: body.source_revision ?? null, failures }, null, 2))
+          if (failures.length) process.exit(1)
+          NODE
+
+      - name: Upload immutable dashboard retry evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bidfast-dashboard-parity-retry-8099ee3
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 30

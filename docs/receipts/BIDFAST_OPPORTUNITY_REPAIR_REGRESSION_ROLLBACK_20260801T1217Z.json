@@ -1,0 +1,101 @@
+{
+  "receipt_type": "bidfast_opportunity_repair_regression_and_rollback",
+  "recorded_at": "2026-08-01T12:17:00Z",
+  "source": {
+    "bidfast_repository": "XTREME-SYSTEMS/bidfast",
+    "bidfast_pr": 2,
+    "bidfast_branch": "auto-builder/bidfast-complete-visual-system",
+    "browserworker_repository": "Strategic-Minds/BROWSERWORKER",
+    "browserworker_pr": 9,
+    "browserworker_branch": "auto-builder/bidfast-proof-20260728",
+    "route": "/opportunities",
+    "theme": "light",
+    "viewport": {
+      "name": "mobile",
+      "width": 390,
+      "height": 844
+    },
+    "required_visual_threshold": 0.99,
+    "retained_baseline": 0.802843
+  },
+  "approved_reference": {
+    "drive_file_id": "1haXSs0QuoSMACLXzo-sVaSGPc1roz0jR",
+    "title": "04_BIDFAST_MOBILE_OPPORTUNITIES_LIST.png",
+    "sha256": "c3cd0b2ed394491128784384e19561457bfe800f4b0182a391b78b888db389ef"
+  },
+  "candidate": {
+    "bidfast_commit": "c8e4866a3e012d0f7a2ee11b6a1c96bb520c5c71",
+    "deployment_id": "dpl_FyiYXZz6LpiweSnjELKKCMStdLVV",
+    "deployment_url": "bidfast-47yn19mdw-strategic-minds-advisory.vercel.app",
+    "browserworker_commit": "ea1754efac84980e9857d298d1537d59e948b163",
+    "workflow_run_id": 30699152186,
+    "job_id": 91366957716,
+    "artifact_id": 8818233336,
+    "artifact_digest": "sha256:15cafebc4f64aa0e0f91e89998b766ed45bbfe0c3b33ae950f0f3ae30626a651",
+    "live_screenshot_sha256": "25d22f009227967062338be6619b8828f8cb31370521929bd7809125d3d23021",
+    "page_height": 949,
+    "metrics": {
+      "pixel_similarity": 0.902932,
+      "structure_similarity": 0.947111,
+      "edge_similarity": 0.087405,
+      "color_similarity": 0.963181,
+      "composite_score": 0.764327
+    },
+    "change_from_baseline": -0.038516,
+    "technical_pass": true,
+    "provenance_pass": true,
+    "integrity_pass": true,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "non_regression_pass": false,
+    "disposition": "REJECTED_AND_REVERTED"
+  },
+  "rollback": {
+    "bidfast_commit": "73b28eed21ae6b84643f96ffb1f7af52a13e4060",
+    "deployment_id": "dpl_GAxzcxG2cv5UvRsH9FYzzkTZ6gPx",
+    "deployment_url": "bidfast-mz817kkue-strategic-minds-advisory.vercel.app",
+    "browserworker_commit": "d99cb07c82dc70cd8e0be68ad6b2303abbb788aa",
+    "workflow_run_id": 30699203561,
+    "job_id": 91367520069,
+    "artifact_id": 8818297694,
+    "artifact_digest": "sha256:6a3babdf389d094a95c212808ec100b1f3e53cc95518a7fe576fefeb2b1da7ca",
+    "live_screenshot_sha256": "6010772f2314ba23f9b6f1af32da26ad42712106777733645d059b6cf782fa08",
+    "page_height": 949,
+    "metrics": {
+      "pixel_similarity": 0.930006,
+      "structure_similarity": 0.969187,
+      "edge_similarity": 0.192847,
+      "color_similarity": 0.973711,
+      "composite_score": 0.802843
+    },
+    "technical_pass": true,
+    "provenance_pass": true,
+    "integrity_pass": true,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "baseline_restored": true,
+    "source_tree_compare_to_f582f4d84f8f23f72f369cdb116f9d5ff6856366": {
+      "files_changed": 0,
+      "ahead_by": 2,
+      "behind_by": 0
+    }
+  },
+  "supabase": {
+    "project_id": "mhaovpyegtysfgualplu",
+    "public_bidfast_table_count": 0,
+    "read_only_check": true,
+    "database_mutated": false,
+    "operational_workflow_status": "BLOCKED"
+  },
+  "governance": {
+    "reference_substitution_used": false,
+    "real_ui_hidden": false,
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "production_changed": false,
+    "legacy_evidence_preserved": true,
+    "production_promotion": "LOCKED"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "schema_version": "bidfast-browserworker-validation-receipt-v1",
+  "timestamp_utc": "2026-08-01T06:45:25Z",
+  "phase": "VALIDATION",
+  "step": "proposal repair rollback validation",
+  "repositories": {
+    "bidfast": {
+      "repository": "XTREME-SYSTEMS/bidfast",
+      "branch": "auto-builder/bidfast-complete-visual-system",
+      "pull_request": 2,
+      "reverted_candidate": "350bb4f606368d1bf338702b73f4e2e4313bb83a",
+      "rollback_head": "ce7a5e979698ec628f2f797d2f59852c705f3dd7",
+      "validated_baseline_tree": "42b8601a6dee4e7455b867f55cebe7c872f0ef7b",
+      "tree_diff_from_validated_baseline": []
+    },
+    "browserworker": {
+      "repository": "Strategic-Minds/BROWSERWORKER",
+      "branch": "auto-builder/bidfast-proof-20260728",
+      "pull_request": 9,
+      "proof_source_commit": "cd43fd18f293d943b1a59d7d6de6b782c108304f"
+    }
+  },
+  "rejected_candidate": {
+    "deployment_id": "dpl_BJTWEp6AjrGZ5f5NcUQ44i1E4RhC",
+    "composite_score": 0.764407,
+    "baseline_score": 0.795438,
+    "absolute_change": -0.031031,
+    "workflow_run_id": 30688212822,
+    "job_id": 91338068049,
+    "artifact_id": 8814701886,
+    "artifact_sha256": "61ee9216ee995aebdb500d603fe8ca65b75287b067523c1dc0aadd15819d5d81"
+  },
+  "verified_rollback": {
+    "deployment_id": "dpl_9ZwtFqfh9QjGNCy2zEhkjt2KmrUs",
+    "deployment_url": "bidfast-ev76a1quw-strategic-minds-advisory.vercel.app",
+    "route": "/proposals",
+    "theme": "light",
+    "viewport": "390x844",
+    "page_height": 1596,
+    "composite_score": 0.795438,
+    "pixel_similarity": 0.923416,
+    "structure_similarity": 0.938787,
+    "edge_similarity": 0.256952,
+    "color_similarity": 0.922981,
+    "live_sha256": "374cbbafbfd06f68af1863ba643abf59cda5638562dca8ae35cdb7e3fdc2498d",
+    "workflow_run_id": 30688298994,
+    "job_id": 91338283599,
+    "artifact_id": 8814739084,
+    "artifact_sha256": "cfe3998e04af269b0383498df41bb3d1868311cd027cd9dd6a5bdc5bc99e5455",
+    "technical_pass": true,
+    "provenance_pass": true,
+    "reference_integrity_pass": true,
+    "screenshot_integrity_pass": true,
+    "console_errors": 0,
+    "application_network_errors": 0,
+    "http_errors": 0,
+    "rollback_baseline_restored": true,
+    "release_threshold_0_99": false
+  },
+  "decision": {
+    "candidate_retained": false,
+    "rollback_retained": true,
+    "production_promotion": "LOCKED"
+  },
+  "safety": {
+    "legacy_evidence_preserved": true,
+    "approved_full_screen_reference_used_as_page_background_overlay_hidden_layer_or_component_substitute": false,
+    "real_components_hidden_to_manufacture_parity": false,
+    "tests_weakened": false,
+    "secrets_exposed": false,
+    "database_mutated": false,
+    "production_mutated": false
+  }
+}

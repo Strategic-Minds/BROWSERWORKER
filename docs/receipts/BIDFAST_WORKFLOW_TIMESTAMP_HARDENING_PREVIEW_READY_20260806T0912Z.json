@@ -1,0 +1,122 @@
+{
+  "receipt_type": "BIDFAST_WORKFLOW_TIMESTAMP_HARDENING_PREVIEW_READY",
+  "created_at": "2026-08-06T09:12:09Z",
+  "governance_state": "preview_only_validation_pending",
+  "repositories": {
+    "bidfast": {
+      "repository": "XTREME-SYSTEMS/bidfast",
+      "requested_alias": "XTREME-AI-SYSTEMS/bidfast",
+      "branch": "auto-builder/bidfast-complete-visual-system",
+      "pull_request": 2,
+      "base_commit": "b533e52e740f624f426ffffe2c35261a2a2eb9e8",
+      "head_commit": "5fb45d3cd497e1d976a4b4c5dfc05f8841db550d",
+      "commits": [
+        {
+          "sha": "cd2caf9a76b5aae6ef0fdae21477b126226328c8",
+          "message": "fix(db): enforce authoritative BIDFAST record timestamps"
+        },
+        {
+          "sha": "81774fa31195388e85bbb937f9ef5e8763edc10e",
+          "message": "test(governance): enforce authoritative workflow timestamps"
+        },
+        {
+          "sha": "5fb45d3cd497e1d976a4b4c5dfc05f8841db550d",
+          "message": "test(governance): run workflow timestamp checks"
+        }
+      ],
+      "exact_delta": {
+        "commits": 3,
+        "files": 3,
+        "additions": 136,
+        "deletions": 1,
+        "paths": [
+          "package.json",
+          "scripts/check-bidfast-workflow-timestamp-governance.mjs",
+          "supabase/migrations/202608060845_harden_bidfast_workflow_timestamps.sql"
+        ]
+      },
+      "preview": {
+        "deployment_reference": "BqKZpXWQV1RRKQNxZJtMin1d8D5x",
+        "status": "SUCCESS",
+        "underlying_dpl_id": "COULD_NOT_VERIFY_ACTIVE_CONNECTOR_SCOPE_DENIED"
+      }
+    },
+    "browserworker": {
+      "repository": "Strategic-Minds/BROWSERWORKER",
+      "branch": "auto-builder/bidfast-proof-20260728",
+      "pull_request": 9,
+      "base_commit": "276c8c65432b639451c6d6946a06f146e0a1c6da",
+      "proof_commit": "47ef2e26dccde3a757544f78f8fe2f6a2541e616",
+      "proof_file": ".github/workflows/bidfast-workflow-timestamp-config-provenance.yml",
+      "expected_bidfast_commit": "5fb45d3cd497e1d976a4b4c5dfc05f8841db550d",
+      "expected_bidfast_ref": "auto-builder/bidfast-complete-visual-system",
+      "expected_supabase_project_ref": "mhaovpyegtysfgualplu",
+      "rollback_commit": "b533e52e740f624f426ffffe2c35261a2a2eb9e8",
+      "artifact_name": "bidfast-workflow-timestamp-config-provenance-5fb45d3",
+      "preview": {
+        "deployment_reference": "Df6aVfwm4T9TdUVQ1ToK7ZSs9rEu",
+        "status": "SUCCESS",
+        "underlying_dpl_id": "COULD_NOT_VERIFY_ACTIVE_CONNECTOR_SCOPE_DENIED"
+      },
+      "workflow_run": {
+        "status": "QUEUED_OR_NOT_VISIBLE_IN_FIRST_PAGE_FANOUT",
+        "run_id": "COULD_NOT_VERIFY",
+        "job_id": "COULD_NOT_VERIFY",
+        "artifact_digest": "PENDING"
+      }
+    }
+  },
+  "confirmed_gap": {
+    "name": "client_controlled_workflow_timestamps",
+    "description": "Multiple implemented BIDFAST workflow clients submit local-clock updated_at values while the prior general schema did not universally override created_at and updated_at at the authoritative database boundary.",
+    "risk": [
+      "backdated_or_future_dated_workflow evidence",
+      "ambiguous audit ordering",
+      "client-clock influence over operational chronology"
+    ]
+  },
+  "candidate_controls": [
+    "Database-owned created_at on insert for BIDFAST accounts, organizations, opportunities, projects, documents, takeoffs, estimates, proposals, and approvals.",
+    "Immutable created_at on update for the same records.",
+    "Database-owned updated_at on insert and update using statement_timestamp().",
+    "Trigger function execution revoked from public, anon, and authenticated roles and granted only to service_role.",
+    "Governance checker registered in npm run governance and therefore in the preview build gate.",
+    "Explicit rollback instructions preserve immutable evidence before trigger removal."
+  ],
+  "validation": {
+    "source_diff_inspected_before_change": true,
+    "latest_receipt_inspected_before_change": true,
+    "bidfast_preview_build": "PASS",
+    "browserworker_preview_build": "PASS",
+    "migration_applied": false,
+    "isolated_database_test": false,
+    "governed_supabase_provenance": "PENDING",
+    "operational_workflow_pass_rate": "NOT_EXECUTED",
+    "visual_parity_remeasured": false,
+    "new_visual_score_claimed": false,
+    "tests_weakened": false,
+    "screenshot_substitution_used": false,
+    "real_components_hidden": false,
+    "production_promoted": false
+  },
+  "source_truth": {
+    "approved_drive_reference_contract": "config/bidfast-approved-references.json",
+    "approved_mobile_light_routes": 10,
+    "complete_light_dark_multiviewport_pairs": false,
+    "legacy_evidence_preserved": true
+  },
+  "blockers": [
+    "Exact workflow timestamp provenance run and artifact are not visible through the first-page workflow fanout.",
+    "The active Supabase connector cannot access governed project mhaovpyegtysfgualplu.",
+    "The active Vercel connector cannot inspect deployments in strategic-minds-advisory, so underlying dpl identifiers and logs remain unavailable.",
+    "The migration has not been installed or tested in an isolated governed Supabase branch.",
+    "Timestamp injection, audit ordering, authorization, tenant isolation, rollback, and full Account to Audit workflow tests remain unexecuted.",
+    "No approved route has newly demonstrated 0.99 visual parity, and complete light/dark multi-viewport source coverage remains incomplete."
+  ],
+  "rollback": {
+    "bidfast": "Return auto-builder/bidfast-complete-visual-system to b533e52e740f624f426ffffe2c35261a2a2eb9e8.",
+    "browserworker": "Revert 47ef2e26dccde3a757544f78f8fe2f6a2541e616 and this receipt commit.",
+    "database": "No database rollback is required because the migration was not applied."
+  },
+  "production_status": "LOCKED"
+}
