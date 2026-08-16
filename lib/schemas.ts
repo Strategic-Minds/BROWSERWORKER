@@ -17,6 +17,8 @@ const BaseStep = z.object({
   timeout_ms: z.number().int().min(100).max(60000).optional(),
 });
 
+const ExtractionLimit = z.number().int().min(100).max(100000).optional();
+
 export const StepSchema = z.discriminatedUnion('action', [
   BaseStep.extend({ action: z.literal('goto'), url: z.string().url() }),
   BaseStep.extend({ action: z.literal('reload') }),
@@ -33,9 +35,9 @@ export const StepSchema = z.discriminatedUnion('action', [
   BaseStep.extend({ action: z.literal('wait'), milliseconds: z.number().int().min(0).max(30000) }),
   BaseStep.extend({ action: z.literal('wait_for_selector'), selector: z.string().min(1) }),
   BaseStep.extend({ action: z.literal('wait_for_url'), url: z.string() }),
-  BaseStep.extend({ action: z.literal('extract_text'), selector: z.string().min(1).optional() }),
-  BaseStep.extend({ action: z.literal('extract_html'), selector: z.string().min(1).optional() }),
-  BaseStep.extend({ action: z.literal('extract_links') }),
+  BaseStep.extend({ action: z.literal('extract_text'), selector: z.string().min(1).optional(), max_chars: ExtractionLimit }),
+  BaseStep.extend({ action: z.literal('extract_html'), selector: z.string().min(1).optional(), max_chars: ExtractionLimit }),
+  BaseStep.extend({ action: z.literal('extract_links'), max_items: z.number().int().min(1).max(500).optional() }),
   BaseStep.extend({ action: z.literal('extract_attribute'), selector: z.string().min(1), attribute: z.string().min(1) }),
   BaseStep.extend({ action: z.literal('screenshot'), fullPage: z.boolean().optional(), selector: z.string().optional() }),
   BaseStep.extend({ action: z.literal('evaluate_safe'), operation: z.enum(['title', 'bodyHeight', 'elementCount', 'performance', 'visibility']), selector: z.string().optional() }),
@@ -77,29 +79,10 @@ export const ReceiptSchema = z.object({
   correlation_id: z.string(),
   worker_version: z.string(),
   browser: z.object({ name: z.string(), version: z.string() }),
-  timing: z.object({
-    started_at: z.string(),
-    completed_at: z.string(),
-    duration_ms: z.number(),
-  }),
-  navigation: z.object({
-    requested_url: z.string(),
-    final_url: z.string(),
-    redirects: z.array(z.string()),
-  }).optional(),
-  steps: z.array(z.object({
-    index: z.number(),
-    action: z.string(),
-    status: z.enum(['pass', 'fail', 'skip']),
-    duration_ms: z.number(),
-    result: z.unknown().optional(),
-    error: z.string().optional(),
-  })),
-  artifacts: z.object({
-    screenshots: z.array(z.string()),
-    console_errors: z.array(z.string()),
-    network_errors: z.array(z.string()),
-  }),
+  timing: z.object({ started_at: z.string(), completed_at: z.string(), duration_ms: z.number() }),
+  navigation: z.object({ requested_url: z.string(), final_url: z.string(), redirects: z.array(z.string()) }).optional(),
+  steps: z.array(z.object({ index: z.number(), action: z.string(), status: z.enum(['pass', 'fail', 'skip']), duration_ms: z.number(), result: z.unknown().optional(), error: z.string().optional() })),
+  artifacts: z.object({ screenshots: z.array(z.string()), console_errors: z.array(z.string()), network_errors: z.array(z.string()) }),
   errors: z.array(z.string()),
   warnings: z.array(z.string()),
   receipt_id: z.string(),
