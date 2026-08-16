@@ -1,4 +1,4 @@
-import { WORKER_VERSION } from '@/lib/browser';
+import { WORKER_VERSION } from '@/lib/version';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
