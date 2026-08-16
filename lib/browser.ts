@@ -1,7 +1,6 @@
 import { chromium as playwrightChromium } from 'playwright-core';
 import type { Browser } from 'playwright-core';
-
-export const WORKER_VERSION = '4.0.0';
+export { WORKER_VERSION } from './version';
 
 /**
  * Launch a Chromium process owned by this BrowserWorker invocation.
