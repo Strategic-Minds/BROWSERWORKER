@@ -1,4 +1,4 @@
-import { WORKER_VERSION } from '@/lib/browser';
+import { WORKER_VERSION } from '@/lib/version';
 export const dynamic = 'force-dynamic';
 
 const SUPPORTED_ACTIONS = [
@@ -14,6 +14,8 @@ export async function GET() {
   return Response.json({
     ok: true,
     worker_version: WORKER_VERSION,
+    provider: 'self_hosted',
+    browserbase_dependency: false,
     supported_actions: SUPPORTED_ACTIONS,
     job_types: ['launch-check', 'website-generator-proof', 'generated-site-validation'],
     limits: {
@@ -22,6 +24,8 @@ export async function GET() {
       max_screenshots: parseInt(process.env.BROWSER_MAX_SCREENSHOTS || '6', 10),
       max_concurrent_jobs: parseInt(process.env.BROWSER_MAX_CONCURRENT_JOBS || '2', 10),
       max_payload_bytes: 262144,
+      max_extract_chars: 100000,
+      max_extract_links: 500,
     },
     viewports: {
       desktop: { width: 1440, height: 1200 },
