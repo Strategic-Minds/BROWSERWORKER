@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Bundle Playwright Core into the server function. Keep only the large Chromium
-  // binary package external so Vercel traces it as a runtime dependency.
+  // Next 16 auto-externalizes Playwright. Force it through the transpile/bundle
+  // pipeline so serverless route handlers can resolve it at runtime.
+  transpilePackages: ['playwright-core'],
+  // Keep only the large Chromium binary package external for Vercel tracing.
   serverExternalPackages: ['@sparticuz/chromium'],
 };
 
